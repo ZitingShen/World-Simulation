@@ -2,82 +2,45 @@
 
 using namespace std;
 
-BOID* new_boid(){
-  BOID* a_boid = (BOID*)malloc(sizeof(BOID));
-  a_boid->pos.reset();
-  a_boid->velocity.reset();
-  a_boid->velocity = SPAWN_VELOCITY;
-  a_boid->partner_radius = PARTNER_RADIUS;
-  a_boid->wing_rotation = rand()%(2*MAX_WING_ROTATION)
-                          - MAX_WING_ROTATION;
-  a_boid->wing_rotation *= DEGREE_TO_RADIAN;
-  a_boid->flock_index = rand()%(DEFAULT_FLOCK_NUM);
-
-  a_boid->pos = (a_boid->flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
-  a_boid->wing_rotation_direction = 1;
-  return a_boid;
-}
-
-BOID* new_boid(const vec4& velocity, float radius, const vec4& pos){
-  BOID* a_boid = (BOID*)malloc(sizeof(BOID));
-  a_boid->pos.reset();
-  a_boid->velocity.reset();
-  a_boid->pos = pos;
-  a_boid->velocity = velocity;
-  a_boid->partner_radius = radius;
-  a_boid->wing_rotation = rand()%(2*MAX_WING_ROTATION)
-                          - MAX_WING_ROTATION;
-  a_boid->wing_rotation *= DEGREE_TO_RADIAN;
-  a_boid->flock_index = rand()%(DEFAULT_FLOCK_NUM);
-  a_boid->wing_rotation_direction = 1;
-  return a_boid;
+BOID::BOID boid(){
+  this->pos = (a_boid->flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
+  this->velocity = SPAWN_VELOCITY;
+  this->partner_radius = PARTNER_RADIUS;
+  this->flock_index = rand()%(DEFAULT_FLOCK_NUM);
 }
 
 bool is_partner(BOID* source, BOID* target){
-  return source->partner_radius >= distance(source->pos, target->pos);
+  return source->partner_radius >= glm::distance(source->pos, target->pos);
 }
 
-void update_velocity(List* a_flock, GOAL* a_goal){
-  if (a_flock == NULL || a_flock->length < 2) return;
-  NODE* current_boid = a_flock->head;
-  NODE* potential_partner;
-  vec4 s_modifier(0, 0, 0, 0);
-  vec4 a_modifier(0, 0, 0, 0);
-  vec4 c_modifier(0, 0, 0, 0);
-  vec4 f_modifier(0, 0, 0, 0);
-  vec4 flock_center;
+void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
+  if (a_flock.size < 2) return;
+  glm::vec3 s_modifier, a_modifier, c_modifier, f_modifier;
+  glm::vec3 flock_center;
   int num_of_partners;
   int num_of_boids_other_flocks;
   bool close_to_goal = false;
   float dis_to_partner;
 
-  BOID* source = NULL;
-  BOID* target = NULL;
-  while (current_boid != NULL){
+  for (auto source = a_flock.begin(); source != a_flock.end(); source++) {
     num_of_partners = 0; //reset for the next boid
     num_of_boids_other_flocks = 0;
-    potential_partner = a_flock->head;
     num_of_partners = 0;
-    close_to_goal = length(a_goal->pos - ((BOID*)(current_boid->data))->pos) < APPROACHING_GOAL;
-    while (potential_partner != NULL){
-      if (potential_partner == current_boid) {
-        potential_partner = potential_partner->next;
-        continue;
-      }
-      source = (BOID*)(current_boid->data);
-      target = (BOID*)(potential_partner->data);
+    close_to_goal = glm::length(a_goal.pos - source.pos) < APPROACHING_GOAL;
+    for (auto target = a_flock.begin(); target != a_flock.end(); target++) {
+      if (potential_partner == current_boid) continue;
       if (is_partner(source, target)){
         if (target->flock_index == source->flock_index) {
           num_of_partners++;
           dis_to_partner = distance(source->pos, target->pos);
           if (dis_to_partner > SCATTERING){
-            s_modifier += (source->pos - target->pos) * 0.95;
+            s_modifier += (source->pos - target->pos) * 0.95f;
             a_modifier += target->velocity;
-            c_modifier += target->pos * 1.05;
+            c_modifier += target->pos * 1.05f;
           }else if (dis_to_partner < COLLIDING){
-            s_modifier += (source->pos - target->pos) * 1.05;
+            s_modifier += (source->pos - target->pos) * 1.05f;
             a_modifier += target->velocity;
-            c_modifier += target->pos * 0.95;
+            c_modifier += target->pos * 0.95f;
           }else{
             s_modifier += source->pos - target->pos;
             a_modifier += target->velocity;
@@ -85,8 +48,8 @@ void update_velocity(List* a_flock, GOAL* a_goal){
           }
           if(close_to_goal){// if close to goal, scatter
             //cout << "now near goal" << endl;
-            s_modifier = s_modifier * 1.1;;
-            a_modifier = a_modifier * 0.9;;
+            s_modifier = s_modifier * 1.1f;;
+            a_modifier = a_modifier * 0.9f;
           } 
         } else {
           num_of_boids_other_flocks++;
@@ -210,36 +173,6 @@ float flock_radius(List* a_flock, int flock_index){
     current = current->next;
   }
   return max_r;
-}
-
-void add_a_boid(List* a_flock){
-  if (a_flock == NULL){return;}  // use init_a_flock to create a new flock
-  int default_cube_length = PARTNER_RADIUS*sqrt(2);
-  int half_cube_length    = default_cube_length/2;
-  vec4 pos;
-  if (a_flock->length == 0) {
-    vec4 pos;
-    pos[0] = (rand() % default_cube_length) - half_cube_length;
-    pos[1] = (rand() % default_cube_length) - half_cube_length;
-    pos[2] = (rand() % default_cube_length) - half_cube_length;
-    pos[3] = 1;
-    list_insert(a_flock, new_boid(SPAWN_VELOCITY, PARTNER_RADIUS, pos), 0);
-    return;
-  }
-
-  BOID* target = (BOID*)list_get(a_flock, rand() % a_flock->length);
-  // spawning within the partner radius of the target
-  pos[0] = target->pos[0] + (rand() % default_cube_length) - half_cube_length;
-  pos[1] = target->pos[1] + (rand() % default_cube_length) - half_cube_length;
-  pos[2] = target->pos[2] + (rand() % default_cube_length) - half_cube_length;
-  pos[3] = 1;
-
-  list_insert(a_flock, new_boid(target->velocity, PARTNER_RADIUS, pos), 0);
-}
-
-void remove_a_boid(List* a_flock){
-  if (a_flock == NULL || a_flock->length == 0) return; //nothing to remove
-  list_delete(a_flock, rand() % a_flock->length);
 }
 
 void init_a_flock(vector<BOID>& a_flock){

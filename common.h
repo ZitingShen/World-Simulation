@@ -46,8 +46,8 @@
 #define RANDOMISE_V_FACTOR        60
 #define SPAWN_CUBE_LENGTH         100.0f
 
-#define BOID_SIZE                 100
-#define GOAL_SIZE				  100
+#define BOID_SIZE                 100.0f
+#define GOAL_SIZE				  100.0f
 
 #define DEFAULT_ACCELERATION_FACTOR    	0.2f
 #define DEFAULT_ACCELERATION_MARGIN   	0.1f

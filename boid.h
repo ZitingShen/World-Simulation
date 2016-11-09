@@ -8,36 +8,32 @@
 #include <limits>
 #include <algorithm>
 
-const vec4 SPAWN_POSITION_I(1000.0, 1000.0, 3000.0, 1);
-const vec4 SPAWN_POSITION_II(-1000.0, -1000.0, 3000.0, 1);
+const glm::vec3 SPAWN_POSITION_I = new glm::vec3(1000.0f, 1000.0f, 3000.0f);
+const glm::vec3 SPAWN_POSITION_II = new glm::vec3(-1000.0f, -1000.0f, 3000.0f);
  //initial speed parallel with y-axis
-const vec4 SPAWN_VELOCITY(0, 0.01, 0, 0);
-const vec4 EMPTY_POS(0, 0, 0, 1);
+const glm::vec3 SPAWN_VELOCITY = new glm::vec3(0.0f, 0.01f, 0.0f);
 
-const vec3 centroid_init(0, 0, 0);
-const vec3 head_init(0, BOID_SIZE*2, 0);
-const vec3 left_init(-BOID_SIZE, -BOID_SIZE, 0);
-const vec3 right_init(BOID_SIZE, -BOID_SIZE, 0);
+const glm::vec3 centroid_init = new glm::vec3(0.0f, 0.0f, 0.0f);
+const glm::vec3 head_init = new glm::vec3(0.0f, BOID_SIZE*2, 0.0f);
+const glm::vec3 left_init = new glm::vec3(-BOID_SIZE, -BOID_SIZE, 0.0f);
+const glm::vec3 right_init = new glm::vec3(BOID_SIZE, -BOID_SIZE, 0.0f);
 
 /* Dynamically dealing with Weights */
-const float SCATTERING = 0.8 * PARTNER_RADIUS; // too far away from partner
-const float COLLIDING  = 0.2 * PARTNER_RADIUS; // too close to partner
-const float FLOCK_RAIUS_CAP = 10 * BOID_SIZE;
-const float APPROACHING_GOAL = GOAL_SIZE * 20.0;
-const float Z_SPEED_CAP = 20;
-const float BOID_SPEED_FLOOR = 55;
-const float PREDATOR_SPEED_CAP = 300;
+const float SCATTERING = 0.8f * PARTNER_RADIUS; // too far away from partner
+const float COLLIDING  = 0.2f * PARTNER_RADIUS; // too close to partner
+const float FLOCK_RAIUS_CAP = 10.0f * BOID_SIZE;
+const float APPROACHING_GOAL = 20.0f * GOAL_SIZE;
+const float Z_SPEED_CAP = 20.0f;
+const float BOID_SPEED_FLOOR = 55.0f;
+const float PREDATOR_SPEED_CAP = 300.0f;
 
 typedef struct _boid{
-  GLfloat wing_rotation;          // for flapping extra credit
-  int wing_rotation_direction;    // 1 for downwards, 0 for upwards
   int flock_index;  
-  vec4 pos;
-  vec4 velocity;             // also determines PA direction; and the degrees of rotation   
-  float partner_radius;           // the radius within which it looks for partners
+  glm::vec3 pos;
+  glm::vec3 velocity;   
+  float partner_radius;// the radius within which it looks for partners
 
   boid();
-  new_boid(const vec4& velocity, float radius, const vec4& pos);
 } BOID;
 
 typedef struct _predator{

@@ -132,12 +132,3 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 void print() {
 
 }
-
-void cleanup(){
-  free(A_GOAL);
-  if (GUARDIAN){
-    delete A_PREDATOR;
-  }
-
-  list_destroy(A_FLOCK);
-}

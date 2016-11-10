@@ -2,7 +2,7 @@
 
 using namespace std;
 
-BOID::BOID boid(){
+BOID::BOID _boid(){
   this->pos = (a_boid->flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
   this->velocity = SPAWN_VELOCITY;
   this->partner_radius = PARTNER_RADIUS;
@@ -56,7 +56,6 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
           f_modifier += source->pos - target->pos;
         }
       }
-      potential_partner = potential_partner->next;
     }
     if (num_of_partners != 0) {
       //cout << "num_of_partners = " << num_of_partners << endl;
@@ -76,101 +75,69 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
     }
 
     source->velocity[2] = max(-Z_SPEED_CAP, min(source->velocity[2], Z_SPEED_CAP));
-
-    current_boid = current_boid->next;
   }
 }
 
-void update_pos(List* a_flock){
-  if (a_flock == NULL || a_flock->length == 0) return;
-  BOID* a_boid;
-  NODE* current = a_flock->head;
-  while (current != NULL){
-    a_boid = (BOID*)(current->data);
+void update_pos(vector<BOID>& a_flock){
+  if (a_flock.size() == 0) return;
+  for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++) {
     a_boid->pos += a_boid->velocity;
-    current = current->next;
   }
 }
 
-void update_wing_rotation(List* a_flock){
-  if (a_flock == NULL || a_flock->length == 0) return;
-  BOID* a_boid;
-  NODE* current = a_flock->head;
-  while (current != NULL){
-    a_boid = (BOID*)(current->data);
-    if (a_boid->wing_rotation > MAX_WING_ROTATION*DEGREE_TO_RADIAN ||
-        a_boid->wing_rotation < -MAX_WING_ROTATION*DEGREE_TO_RADIAN)
-      a_boid->wing_rotation_direction *= -1;
-    a_boid->wing_rotation += a_boid->wing_rotation_direction* WING_ROTATION_PER_FRAME;
-    current = current->next;
-  }
-}
-
-vec4 flock_centroid(List* a_flock, int flock_index){
-  if (a_flock == NULL || a_flock->length == 0)
-    return vec4(0, 0, 0, 1);
-  NODE* current = a_flock->head;
-  vec4 centroid(0, 0, 0, 1);
+glm::vec3 flock_centroid(vector<BOID>& a_flock, int flock_index){
+  glm::vec3 centroid = glm::vec3(0, 0, 0);
+  if (a_flock.size() == 0)
+    return centroid;
   
   int counter = 0;
-  while (current != NULL){
-    if (((BOID*)(current->data))->flock_index != flock_index) {
-      current = current->next;
-      continue;
-    }
-    centroid += ((BOID*)(current->data))->pos;
+  for (auto current = a_flock.begin(); current != a_flock.end(); current++) {
+    if (current->flock_index != flock_index) continue;
+    centroid += current->pos;
     counter++;
-    current = current->next;
   }
   return centroid*(1.0f/counter);
 }
 
-vec4 mid_point(List* a_flock, GOAL* a_goal, int flock_index){
-  if (a_flock == NULL || a_flock->length == 0)
-    return vec4(0, 0, 0, 1);
-  return (flock_centroid(a_flock, flock_index)+(a_goal->pos))*(0.5f);
+glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+  if (a_flock.size() == 0)
+    return glm::vec3(0, 0, 0);
+  return (flock_centroid(a_flock, flock_index)+(a_goal.pos))*(0.5f);
 }
 
-vec4 get_u(List* a_flock, GOAL* a_goal, int flock_index){
-  if (a_flock == NULL || a_flock->length == 0)
-    return vec4(0, 0, 0, 0);
-  return (a_goal->pos - flock_centroid(a_flock, flock_index));
+glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+  if (a_flock.size() == 0)
+    return glm::vec3(0, 0, 0);
+  return (a_goal.pos - flock_centroid(a_flock, flock_index));
 }
 
-float get_d(List* a_flock, GOAL* a_goal, int flock_index){
-  if (a_flock == NULL || a_flock->length == 0)
+float get_d(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+  if (a_flock.size() == 0)
     return 0;
-  return distance(flock_centroid(a_flock, flock_index), a_goal->pos);
+  return glm::distance(flock_centroid(a_flock, flock_index), a_goal.pos);
 }
 
-vec4 get_average_v(List* a_flock, int flock_index){
-  NODE* current=a_flock->head;
-  BOID* a_boid = NULL;
+glm::vec3 get_average_v(vector<BOID>& a_flock, int flock_index){
   int count = 0;
-  vec4 average_v(0,0,0,0);
-  while(current!= NULL){
-    a_boid = (BOID*)(current->data);
+  glm::vec3 average_v = glm::vec3(0, 0, 0);
+  for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++) {
     if (a_boid->flock_index == flock_index){
       average_v += a_boid->velocity;
       count++;
     }
-    current = current->next;
   }
   average_v = average_v * (1.0f / count);
   return average_v;
 }
 
-float flock_radius(List* a_flock, int flock_index){
-  if (a_flock == NULL || a_flock->length == 0)
-    return 0;
+float flock_radius(vector<BOID>& a_flock, int flock_index){
+  if (a_flock.size() == 0) return 0;
   float max_r = 0;
   float dis   = 0;
-  NODE* current = a_flock->head;
-  vec4 centroid = flock_centroid(a_flock, flock_index);
-  while (current != NULL){
-    dis = distance(((BOID*) (current->data))->pos, centroid);
+  glm::vec3 centroid = flock_centroid(a_flock, flock_index);
+  for (auto current = a_flock.begin(); current != a_flock.end(); current++) {
+    dis = distance(current->pos, centroid);
     max_r = max_r < dis ? dis : max_r;
-    current = current->next;
   }
   return max_r;
 }
@@ -188,114 +155,42 @@ void init_a_flock(vector<BOID>& a_flock){
   }
 }
 
-void apply_goal_attraction(List* a_flock, GOAL* a_goal){
-  NODE* current=a_flock->head;
-  vec4 v_modifier(0, 0, 0, 0);
+void apply_goal_attraction(vector<BOID> a_flock, GOAL& a_goal){
+  glm::vec3 v_modifier(0, 0, 0);
   float dis_to_goal;
   float max_attraction;
-  BOID* a_boid = NULL;
-  while (current!=NULL){
-    a_boid = (BOID*)(current->data);
+  float boid_speed, goal_speed = glm::length(a_goal.velocity);
+  for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++) {
     v_modifier = a_goal->pos - a_boid->pos;
-    dis_to_goal = length(v_modifier);
-    max_attraction = 0.6*length(a_boid->velocity);
-
+    dis_to_goal = glm::length(v_modifier);
+    max_attraction = 0.6*glm::length(a_boid->velocity);
+    boid_speed = glm::length(a_boid->velocity);
     v_modifier = v_modifier*ATTRACTION_WEIGHT;
-    if (APPROACHING_GOAL<dis_to_goal){ // not near the goal
+    if (APPROACHING_GOAL < dis_to_goal) { // not near the goal
       a_boid->velocity += v_modifier;
-    }else{ // near goal scenario
-      /* Let's slow down */
-      if (length(a_boid->velocity) > 3.0*length(a_goal->velocity) 
-          && length(a_boid->velocity) > BOID_SPEED_FLOOR
-          ){
-        //cout << length(a_boid->velocity) << endl;
-        //cout << "slowing down" << endl;
-        a_boid->velocity = a_boid->velocity * 0.95;
-        a_boid->velocity += v_modifier;
+    }else if (speed > 3*goal_speed && boid_speed > BOID_SPEED_FLOOR){ // near goal scenario
+      a_boid->velocity = a_boid->velocity * 0.95;
+      a_boid->velocity += v_modifier;
+    }
+    if (boid_speed > 4.0*goal_speed){ //applying absolute cap;
+      a_boid->velocity += v_modifier;
+      
+      if(glm::length(a_boid->velocity) > BOID_SPEED_FLOOR){
+        a_boid->velocity = glm::normalise(a_boid->velocity)*4*goal_speed;
       }
     }
-    if (length(a_boid->velocity) > 4.0*length(a_goal->velocity)){
-      a_boid->velocity += v_modifier;
-      //cout << "applying absolute cap" << endl;
-      if(length(a_boid->velocity) > BOID_SPEED_FLOOR){
-        a_boid->velocity = normalise(a_boid->velocity) * 4.0*length(a_goal->velocity);
-      }
-    }
-    current = current->next; 
   }
 }
 
-void print_flock(List* a_flock) {
+void print_flock(vector<BOID>& a_flock) {
   for (int i = 0; i < DEFAULT_FLOCK_NUM; i++) {
-    vec4 centroid = flock_centroid(a_flock, i);
+    glm::vec3 centroid = flock_centroid(a_flock, i);
     cout << "Flock" << i << "'s centroid: " << centroid[0] << ", " 
     << centroid[1] << ", " << centroid[2] << endl;
     float radius = flock_radius(a_flock, i);
     cout << "Flock" << i << "'s radius: " << radius << endl;
     cout << endl;
   }
-}
-
-PREDATOR* create_a_predator(List* a_flock, GOAL* a_goal, bool& guardian){
-  if (guardian){ // only create if only already exists
-    return NULL;
-  }
-  guardian = true;
-  PREDATOR* a_predator = new PREDATOR;
-  a_predator->pos = (a_goal->pos + (flock_centroid(a_flock, 0) + flock_centroid(a_flock, 1)) * 0.5) * 0.5;
-  a_predator->velocity = a_goal->velocity;
-  a_predator->deterrence_range = 5000;
-  return a_predator;
-}
-
-void move_predator(List* a_flock, PREDATOR* a_predator, GOAL* a_goal, bool& guardian){ // orbiting the goal
-  if (!guardian){
-    return;
-  }  
-  NODE* current=a_flock->head;
-  BOID* a_boid;
-  vec4 target_pos;
-  float nearest = std::numeric_limits<float>::max();
-  while(current != NULL){
-    a_boid = (BOID*)(current->data);
-    if (distance(a_predator->pos, a_boid->pos) < nearest){
-      nearest = distance(a_predator->pos, a_boid->pos);
-      target_pos = a_boid->pos;
-    }
-    current = current->next;
-  }
-
-  vec4 acceleration = target_pos - a_predator->pos;
-  a_predator->velocity += (acceleration * 0.008);
-
-  if (length(a_predator->velocity) > PREDATOR_SPEED_CAP){
-    a_predator->velocity = normalise(a_predator->velocity) * PREDATOR_SPEED_CAP;
-  }
-
-  a_predator->pos += a_predator->velocity;
-  //cout << length(a_predator->velocity) << endl;
-}
-
-void apply_predator_deterrence(List* a_flock, PREDATOR* a_predator, bool& guardian){
-  if (!guardian){
-    return;
-  }
-  NODE* current=a_flock->head;
-  BOID* a_boid = NULL;
-  vec4 dis_to_predator;
-  while (current!=NULL){
-    a_boid = (BOID*)current->data;
-    if (distance(a_boid->pos, a_predator->pos) < a_predator->deterrence_range){
-      dis_to_predator = a_boid->pos - a_predator->pos;
-      a_boid->velocity += dis_to_predator * DETERRENCE_WEIGHT;
-    }
-    current = current->next;
-  }
-}
-
-void delete_predator(PREDATOR* a_predator, bool& guardian){
-  guardian = false;
-  delete a_predator;
 }
 
 void draw_a_flock(){
@@ -392,19 +287,4 @@ void draw_a_flock(){
     current = current->next;
   }
   
-}
-
-void draw_a_predator(){
-  if (!GUARDIAN){
-    return;
-  }
-  glUseProgram(boid_program);
-  glBindVertexArray(vao_goal);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_goal_indices);
-  GLfloat trans[16];
-  memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-  myTranslate(trans, A_PREDATOR->pos[0], A_PREDATOR->pos[1], A_PREDATOR->pos[2]);
-  glUniformMatrix4fv(proj, 1, GL_FALSE, PROJ_MAT);
-  glUniformMatrix4fv(mv, 1, GL_FALSE, trans);
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*) 0);
 }

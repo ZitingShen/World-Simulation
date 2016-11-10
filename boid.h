@@ -33,44 +33,22 @@ typedef struct _boid{
   glm::vec3 velocity;   
   float partner_radius;// the radius within which it looks for partners
 
-  boid();
+  _boid();
 } BOID;
 
-typedef struct _predator{
-  vec4 pos;
-  vec4 velocity;
-  float deterrence_range;
-} PREDATOR;
-
 bool is_partner(BOID* source, BOID* target);
-void update_velocity(List* a_flock, GOAL* a_goal);
-void update_pos(List* a_flock);
-void update_wing_rotation(List* a_flock);
+void update_velocity(vector<BOID>& a_flock, GOAL& a_goal);
+void update_pos(vector<BOID>& a_flock);
 
-vec4 get_current_pos(BOID* a_boid);
-vec4 flock_centroid(List* a_flock, int flock_index);
-vec4 mid_point(List* a_flock, GOAL* a_goal, int flock_index);
-vec4 get_u(List* a_flock, GOAL* a_goal, int flock_index);
-float get_d(List* a_flock, GOAL* a_goal, int flock_index);
-float flock_radius(List* a_flock, int flock_index);
+glm::vec3 get_current_pos(BOID* a_boid);
+glm::vec3 flock_centroid(vector<BOID>& a_flock, int flock_index);
+glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
+glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
+float get_d(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
+float flock_radius(vector<BOID>& a_flock, int flock_index);
 
-vec4 get_average_v(List* a_flock, int flock_index);
-
-void add_a_boid(List* a_flock);
-void remove_a_boid(List* a_flock);
-
-void init_a_flock(List* a_flock);
-
-void apply_goal_attraction(List* a_flock, GOAL* a_goal);
-
-void print_flock(List* a_flock);
-//void update_rotation(BOID* a_boid);
-/* To DO */
-
-PREDATOR* create_a_predator(List* a_flock, GOAL* a_goal, bool& guardian);
-void move_predator(List* a_flock, PREDATOR* a_predator, GOAL* a_goal, bool& guardian);
-void draw_predator(PREDATOR* a_predator, bool& guardian, GLfloat mv_mat[]);
-void apply_predator_deterrence(List* a_flock, PREDATOR* a_predator, bool& guardian);
-void delete_predator(PREDATOR* a_predator, bool& guardian);
-
+glm::vec3 get_average_v(vector<BOID>& a_flock, int flock_index);
+void init_a_flock(vector<BOID>& a_flock);
+void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
+void print_flock(vector<BOID>& a_flock);
 #endif

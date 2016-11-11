@@ -3,6 +3,29 @@
 
 #include "common.h"
 
+const GLfloat CUBE_VERTICES[][3] = {
+                           {-GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE},  
+                           {-GOAL_SIZE, GOAL_SIZE, GOAL_SIZE}, 
+                           {GOAL_SIZE, GOAL_SIZE, GOAL_SIZE}, 
+                           {GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE}, 
+                           {-GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE},
+                           {-GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
+                           {GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
+                           {GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE}};
+
+const GLubyte CUBE_INDICES[36] = {0, 3, 2,
+                                0, 2, 1,
+                                2, 3, 7,
+                                2, 7, 6,
+                                0, 4, 7,
+                                0, 7, 3,
+                                1, 2, 6,
+                                1, 6, 5,
+                                4, 5, 6,
+                                4, 6, 7,
+                                0, 1, 5,
+                                0, 5, 4};
+
 const glm::vec3 DEFAULT_GOAL_SPAWN_VELOCITY = glm::vec3(10.0f, 10.0f, 0.01f); // initiated with a positive speed on Z-axis
 const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 5000.0f, 3000.0f);
 

@@ -15,12 +15,9 @@ MESH::MESH(){
 }
 
 void MESH::setup(GLuint shader){
-  // bind vao
   glGenVertexArrays(1, &this->vao);
-  // generate vbo
   this->vbo = make_bo(GL_ARRAY_BUFFER, &this->vertices[0], 
     this->vertices.size()*sizeof(VERTEX));
-  //generate ebo
   this->ebo = make_bo(GL_ELEMENT_ARRAY_BUFFER, &this->faces.draw_indices[0],
     this->faces.draw_indices.size()*sizeof(GLuint));
   bind(shader);
@@ -55,15 +52,12 @@ void MESH::compute_face_normal(){
                         this->vertices[ this->faces.draw_indices[count    ] ].pos
                       - this->vertices[ this->faces.draw_indices[count + 1] ].pos );
     this->faces.normal.push_back(glm::normalize(normal));
-    this->vertices_flat[count].normal = normal;
-    this->vertices_flat[count+1].normal = normal;
-    this->vertices_flat[count+2].normal = normal;
   }
 }
 
 void MESH::compute_vertex_normal(){
   vector<vector<int>> faces_per_vertex(this->num_v, vector<int>());
-  glm::vec3 normal(0, 0, 0);
+  glm::vec3 normal;
   int num_triangles = this->faces.draw_indices.size() / 3;
   int count = 0;
   for (int i=0; i<num_triangles; i++){  // which face we are looking at
@@ -79,6 +73,7 @@ void MESH::compute_vertex_normal(){
   //  cout << endl;
   count = 0;
   for (int i=0; i<(int)this->num_v; i++){
+    normal = glm::vec3(0, 0, 0);
     for (int j=0; j<(int)faces_per_vertex[i].size(); j++){
       normal += this->faces.normal[faces_per_vertex[i][j]];
     }
@@ -86,31 +81,12 @@ void MESH::compute_vertex_normal(){
     this->vertices[i].normal[0] = normal[0];
     this->vertices[i].normal[1] = normal[1];
     this->vertices[i].normal[2] = normal[2];
-    normal = glm::vec3(0, 0, 0);
     /*
     cout << this->vertices[i].normal[0] << " "
          << this->vertices[i].normal[1] << " "
          << this->vertices[i].normal[2] << " " << endl;
          */
   }
-}
-
-void MESH::compute_light_product(LIGHT& THE_LIGHT) {
-  this->ambient_product = glm::vec4(
-                this->texture.ambient[0]*THE_LIGHT.ambient0[0],
-                this->texture.ambient[1]*THE_LIGHT.ambient0[1],
-                this->texture.ambient[2]*THE_LIGHT.ambient0[2], 1.0f);
-
-  this->diffuse_product = glm::vec4(
-                this->texture.diffuse[0]*THE_LIGHT.diffuse0[0],
-                this->texture.diffuse[1]*THE_LIGHT.diffuse0[1],
-                this->texture.diffuse[2]*THE_LIGHT.diffuse0[2], 1.0f);
-
-  this->specular_product = glm::vec4(
-                this->texture.specular[0]*THE_LIGHT.specular0[0],
-                this->texture.specular[1]*THE_LIGHT.specular0[1],
-                this->texture.specular[2]*THE_LIGHT.specular0[2], 1.0f);
-  //cout << glm::to_string(ambient_product) << endl;
 }
 
 int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
@@ -251,41 +227,21 @@ void print_mesh_info(MESH& mesh){
 }
 
 void MESH::draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, 
-  LIGHT& THE_LIGHT, d_mode DRAW_MODE, s_mode SHADING_MODE) {
+  LIGHT& THE_LIGHT) {
   glLinkProgram(shader);
   glUseProgram(shader);
 
-  GLuint ambient = glGetUniformLocation(shader, "AmbientProduct");
-  GLuint diffuse = glGetUniformLocation(shader, "DiffuseProduct");
-  GLuint specular = glGetUniformLocation(shader, "SpecularProduct");
-  GLuint shineness = glGetUniformLocation(shader, "Shineness");
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
-  glUniform4fv(ambient, 1, glm::value_ptr(this->ambient_product));
-  glUniform4fv(diffuse, 1, glm::value_ptr(this->diffuse_product));
-  glUniform4fv(specular, 1, glm::value_ptr(this->specular_product));
-  glUniform1f(shineness, this->texture.shineness);
 
   GLuint proj = glGetUniformLocation(shader, "Projection");
   glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(PROJ_MAT));
   GLuint mv = glGetUniformLocation(shader, "ModelView");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
-  GLuint trans = glGetUniformLocation(shader, "Transformation");
-  for (unsigned int i = 0; i < id.size(); i++) {
-    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transforms[i]));
-    //cout << i <<": " << glm::to_string(transforms[i]) << endl;
-    
-    glBindVertexArray(this->vao_other);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo_other);
-    glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(), 
-      GL_UNSIGNED_INT, (void*) 0);
-  }
-}
 
-void MESH::rotate() {
-  for (int i = 0; i < spin.size(); i++) {
-    spin[i][0] += 1.0f;
-    spin[i][1] -= 1.0f;
-    spin[i][2] +=1.0f;
+  glBindVertexArray(this->vao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
+  glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(), 
+      GL_UNSIGNED_INT, (void*) 0);
   }
 }

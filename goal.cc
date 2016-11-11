@@ -71,14 +71,22 @@ void GOAL::GOAL print_goal() {
   cout << endl;
 }
 
-void draw_a_goal(){
-  glUseProgram(boid_program);
-  glBindVertexArray(vao_goal);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_goal_indices);
-  GLfloat trans[16];
-  memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-  myTranslate(trans, A_GOAL->pos[0], A_GOAL->pos[1], A_GOAL->pos[2]);
-  glUniformMatrix4fv(proj, 1, GL_FALSE, PROJ_MAT);
-  glUniformMatrix4fv(mv, 1, GL_FALSE, trans);
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*) 0);
+void init_goal_mesh(MESH& mesh, GLuint shader) {
+  mesh.num_v = 8;
+  mesh.num_f = 12;
+  mesh.vertices.resize(8);
+  for (int i = 0; i< 8; i++)
+    mesh.vertices[i] = glm::vec3(CUBE_VERTICES[i][0], 
+      CUBE_VERTICES[i][1], CUBE_VERTICES[i][2]);  
+  for (int i = 0; i < CUBE_INDICES; i++)
+    mesh.faces.draw_indices.add(CUBE_INDICES[i]);
+  mesh.compute_face_normal();
+  mesh.compute_vertex_normal();
+  mesh.setup(shader);
+}
+
+void draw_a_flock(GOAL& goal, MESH& mesh, GLuint shader, 
+  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT& THE_LIGHT){
+  MV_MAT = glm::translate(MV_MAT, a_flock[i].pos);
+  mesh.draw(shader, PROJ_MAT, MV_MAT, THE_LIGHT);
 }

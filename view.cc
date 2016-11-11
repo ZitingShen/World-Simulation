@@ -1,17 +1,16 @@
 #include "view.h"
-#include <algorithm>
 
-void change_view(GLfloat mv_mat[], viewMode viewmode, List *flock, GOAL *goal, int index) {
-  vec4 centroid = (flock_centroid(flock, 0) + flock_centroid(flock, 1)) * 0.5;
-  vec4 midpoint = (mid_point(flock, goal, 0) + mid_point(flock, goal, 1)) * 0.5;
+void change_view(glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, viewMode viewmode, 
+  vector<BOID>& flock, GOAL& goal, int index) {
+  glm::vec3 centroid = (flock_centroid(flock, 0) + flock_centroid(flock, 1)) * 0.5;
+  glm::vec3 midpoint = (mid_point(flock, goal, 0) + mid_point(flock, goal, 1)) * 0.5;
   float distance = (get_d(flock, goal, 0) + get_d(flock, goal, 1)) * 0.5;
-  vec4 camera_pos;
-  vec4 flock_direction = normalise((get_u(flock, goal, 0) + get_u(flock, goal, 1)) * 0.5);
-  vec4 velocity_direction = normalise(get_average_v(flock, index)); 
+  glm::vec3 flock_direction = glm::normalize((get_u(flock, goal, 0) + get_u(flock, goal, 1)) * 0.5);
+  glm::vec3 velocity_direction = glm::normalize(get_average_v(flock, index)); 
 
-  GLfloat eye[] = {0, 2500, TOWER_HEIGHT};
-  GLfloat centre[] = {midpoint[0], midpoint[1], midpoint[2]};
-  GLfloat up[] = {0, 0, 1};
+  glm::vec3 eye = glm::vec3(0, 2500, TOWER_HEIGHT);
+  glm::vec3 centre = glm::vec3(midpoint[0], midpoint[1], midpoint[2]);
+  glm::vec3 up = glm::vec3(0, 0, 1);
 
   switch(viewmode) {
     case TRAILING:
@@ -22,21 +21,18 @@ void change_view(GLfloat mv_mat[], viewMode viewmode, List *flock, GOAL *goal, i
     camera_pos = centroid
                  - flock_direction*distance*0.9
                  - velocity_direction*distance*1.1
-                 + vec4(0, 0, 1, 0)*TOWER_HEIGHT*0.8f;
-    unpack(camera_pos, eye);
+                 + up*TOWER_HEIGHT*0.8f;
     break;
 
     case SIDE:{
-    vec3 side_v3 = cross(reduce(flock_direction), vec3(0, 0, 1));
-    vec4 side_v = side_v3.promote(false);
+    glm::vec3 side_v = glm::cross(flock_direction, up);
     camera_pos = centroid
-                 + normalise(side_v)*distance*3
-                 + vec4(0, 0, 1, 0)*distance*0.3f;
-    unpack(camera_pos, eye);
+                 + glm::normalize(side_v)*distance*3
+                 + glm::vec3(0, 0, 1, 0)*distance*0.3f;
     }
     break;
     default:
     break;
   }
-  myLookAt(mv_mat, eye, centre, up);
+  PROJ_MAT = glm::lookAt(eye, center, up);
 }

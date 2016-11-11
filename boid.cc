@@ -193,98 +193,28 @@ void print_flock(vector<BOID>& a_flock) {
   }
 }
 
-void draw_a_flock(){
-  if (A_FLOCK == NULL) return;
-  NODE* current = A_FLOCK->head;
-  BOID* some_boid = NULL;
-  for (int i = 0; i < A_FLOCK->length; i++){
-    some_boid = (BOID*)(current->data);
-    vec3 velocity3 = normalise(reduce(some_boid->velocity));
-    vec3 initial3 = normalise(reduce(SPAWN_VELOCITY));
-    vec3 rotate_normal = normalise(cross(velocity3, initial3));
-    float angle = oriented_angle(initial3, velocity3, 
+void init_flock_mesh(MESH& mesh, GLuint shader) {
+  mesh.num_v = 4;
+  mesh.num_f = 2;
+  mesh.vertices.resize(4);
+  for (int i = 0; i< 4; i++)
+    mesh.vertices[i] = glm::vec3(A_BOID[i][0], A_BOID[i][1], A_BOID[i][2]);  
+  for (int i = 0; i < BOID_INDEX; i++)
+    mesh.faces.draw_indices.add(BOID_INDEX[i]);
+  mesh.compute_face_normal();
+  mesh.compute_vertex_normal();
+  mesh.setup(shader);
+}
+
+void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
+  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT& THE_LIGHT){
+  for (int i = 0; i < a_flock.size(); i++){
+    glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity, 
+      SPAWN_VELOCITY));
+    float angle = glm::oriented_angle(SPAWN_VELOCITY, a_flock[i].velocity, 
                                 rotate_normal);
-    float shades_angle = oriented_angle(initial3, velocity3, 
-                                       vec3(0, 0, 1)); 
-    GLfloat trans[16];
-
-    glUseProgram(boid_program);
-    glBindVertexArray(vao_left);
-    glUniformMatrix4fv(proj, 1, GL_FALSE, PROJ_MAT);
-    
-    if (some_boid->flock_index == 0) {
-      glBindBuffer(GL_ARRAY_BUFFER, vbo_color_i_left);
-      color = glGetAttribLocation(boid_program, "vColor");
-      glEnableVertexAttribArray(color);
-      glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
-    } else {
-      glBindBuffer(GL_ARRAY_BUFFER, vbo_color_ii_left);
-      color = glGetAttribLocation(boid_program, "vColor");
-      glEnableVertexAttribArray(color);
-      glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
-    }
-    
-    memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-    myTranslate(trans, some_boid->pos[0], some_boid->pos[1], some_boid->pos[2]);
-    myRotate(trans, angle, rotate_normal[0], rotate_normal[1], rotate_normal[2]);
-    myRotate(trans, -some_boid->wing_rotation, 0, 1, 0);
-    glUniformMatrix4fv(mv, 1, GL_FALSE, trans);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-   
-    glUseProgram(shades_program);
-    glBindVertexArray(shades_vao_left);
-    glUniformMatrix4fv(shades_proj, 1, GL_FALSE, PROJ_MAT);
-    memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-    myTranslate(trans, some_boid->pos[0], some_boid->pos[1], SHADES_HEIGHT);
-    myRotate(trans, shades_angle, 0, 0, 1);
-    glUniformMatrix4fv(shades_mv, 1, GL_FALSE, trans);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-   
-    current = current->next;
+    MV_MAT = glm::translate(MV_MAT, a_flock[i].pos);
+    MV_MAT = glm::rotate(MV_MAT, angle, rotate_normal);
+    mesh.draw(shader, PROJ_MAT, MV_MAT, THE_LIGHT);
   }
-
-  current = A_FLOCK->head;
-  for (int i = 0; i < A_FLOCK->length; i++){
-    some_boid = (BOID*)(current->data);
-    vec3 velocity3 = normalise(reduce(some_boid->velocity));
-    vec3 initial3 = normalise(reduce(SPAWN_VELOCITY));
-    vec3 rotate_normal = normalise(cross(velocity3, initial3));
-    float angle = oriented_angle(initial3, velocity3, 
-                                rotate_normal);
-    float shades_angle = oriented_angle(initial3, velocity3, 
-                                       vec3(0, 0, 1));
-    GLfloat trans[16];
-
-    glUseProgram(boid_program);
-    glBindVertexArray(vao_right);
-    glUniformMatrix4fv(proj, 1, GL_FALSE, PROJ_MAT);
-    if (some_boid->flock_index == 0) {
-      glBindBuffer(GL_ARRAY_BUFFER, vbo_color_i_right);
-      color = glGetAttribLocation(boid_program, "vColor");
-      glEnableVertexAttribArray(color);
-      glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
-    } else {
-      glBindBuffer(GL_ARRAY_BUFFER, vbo_color_ii_right);
-      color = glGetAttribLocation(boid_program, "vColor");
-      glEnableVertexAttribArray(color);
-      glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
-    }
-    memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-    myTranslate(trans, some_boid->pos[0], some_boid->pos[1], some_boid->pos[2]);
-    myRotate(trans, angle, rotate_normal[0], rotate_normal[1], rotate_normal[2]);
-    myRotate(trans, some_boid->wing_rotation, 0, 1, 0);
-    glUniformMatrix4fv(mv, 1, GL_FALSE, trans);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    glUseProgram(shades_program);
-    glBindVertexArray(shades_vao_right);
-    glUniformMatrix4fv(shades_proj, 1, GL_FALSE, PROJ_MAT);
-    memcpy(trans, MV_MAT, sizeof(GLfloat)*16);
-    myTranslate(trans, some_boid->pos[0], some_boid->pos[1], SHADES_HEIGHT);
-    myRotate(trans, shades_angle, 0, 0, 1);
-    glUniformMatrix4fv(shades_mv, 1, GL_FALSE, trans);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    current = current->next;
-  }
-  
 }

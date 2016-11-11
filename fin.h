@@ -33,7 +33,6 @@ struct VERTEX{
 };
 
 struct FACES{
-  vector<GLuint> num_v;
   vector<GLuint> draw_indices; // triangulised indices
   vector<glm::vec3> normal;     // nromals of triangulaised faces
 };
@@ -41,23 +40,17 @@ struct FACES{
 class MESH {
   public:
     /* public data member */
-    vector<GLuint> id;
     GLuint num_v;
-    GLuint num_f; // not necessarily the num of triangles to be drawn
-    GLuint num_e;
+    GLuint num_f; // must all be triangles
     vector<VERTEX> vertices;       // vertex pos and vertex normal
-    glm::mat3 scaled;
-    glm::vec3 spin;
-    TEXTURE  texture;
+    vector<TEXTURE> texture;
     FACES     faces;
-    glm::vec4 ambient_product, diffuse_product, specular_product;
     /* Constructor */
     MESH();
     void setup(GLuint shader);
     void bind(GLuint shader);
     void compute_face_normal();
     void compute_vertex_normal();
-    void compute_light_product(LIGHT& THE_LIGHT);
     void draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, 
       LIGHT& THE_LIGHT);
     void rotate();

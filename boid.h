@@ -1,12 +1,19 @@
 #ifndef BOID_H 
 #define BOID_H
 
-#include "list.h"
 #include "goal.h"
+#include "fin.h"
 #include "common.h"
+#include "glm/gtx.transform.hpp"
 #include <time.h>
-#include <limits>
-#include <algorithm>
+
+const GLfloat A_BOID[][3]=
+            {{0, 0, 0}, // position of the centroid
+             {BOID_SIZE, -BOID_SIZE, 0}, // position of the right vertex
+             {0, BOID_SIZE*2, 0}, // position of the head
+             {-BOID_SIZE, -BOID_SIZE, 0}}; // position of the left vertex
+
+const GLuint BOID_INDEX[] = {0, 1, 2, 0, 2, 3};
 
 const glm::vec3 SPAWN_POSITION_I = new glm::vec3(1000.0f, 1000.0f, 3000.0f);
 const glm::vec3 SPAWN_POSITION_II = new glm::vec3(-1000.0f, -1000.0f, 3000.0f);

@@ -13,6 +13,10 @@ const GLfloat CUBE_VERTICES[][3] = {
                            {GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
                            {GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE}};
 
+const GLfloat A_GOAL_TEX[][2] = {
+  
+}
+
 const GLubyte CUBE_INDICES[36] = {0, 3, 2,
                                 0, 2, 1,
                                 2, 3, 7,

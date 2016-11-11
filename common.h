@@ -25,6 +25,7 @@
 
 #define POS_LOCATION              0
 #define NORMAL_LOCATION           1
+#define TEXTURE_LOCATION		  2
 
 #define PARTNER_RADIUS            300
 #define DEFAULT_FLOCK_SIZE        100

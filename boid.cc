@@ -197,10 +197,16 @@ void init_flock_mesh(MESH& mesh, GLuint shader) {
   mesh.num_v = 4;
   mesh.num_f = 2;
   mesh.vertices.resize(4);
-  for (int i = 0; i< 4; i++)
-    mesh.vertices[i] = glm::vec3(A_BOID[i][0], A_BOID[i][1], A_BOID[i][2]);  
+  for (int i = 0; i< 4; i++) {
+    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1], A_BOID[i][2]);  
+    mesh.vertices[i].tex_coords = A_BOID_TEX[i];
+  }
   for (int i = 0; i < BOID_INDEX; i++)
     mesh.faces.draw_indices.add(BOID_INDEX[i]);
+  mesh.textures.resize(1);
+  if (!read_ppm("ppms/fire.ppm", &mesh.texelss[0])) {
+    cerr << "Fail loading texture: ppms/fire.ppm" << endl;
+  }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader);

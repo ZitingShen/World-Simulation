@@ -4,6 +4,7 @@
 #include "goal.h"
 #include "fin.h"
 #include "common.h"
+#include "read_ppm.h"
 #include "glm/gtx.transform.hpp"
 #include <time.h>
 
@@ -12,6 +13,8 @@ const GLfloat A_BOID[][3]=
              {BOID_SIZE, -BOID_SIZE, 0}, // position of the right vertex
              {0, BOID_SIZE*2, 0}, // position of the head
              {-BOID_SIZE, -BOID_SIZE, 0}}; // position of the left vertex
+
+const GLfloat A_BOID_TEX[][2] = {{0.5, 0.3}, {1, 0}, {0.5, 1}, {0.0}};
 
 const GLuint BOID_INDEX[] = {0, 1, 2, 0, 2, 3};
 

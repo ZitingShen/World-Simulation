@@ -75,11 +75,16 @@ void init_goal_mesh(MESH& mesh, GLuint shader) {
   mesh.num_v = 8;
   mesh.num_f = 12;
   mesh.vertices.resize(8);
-  for (int i = 0; i< 8; i++)
-    mesh.vertices[i] = glm::vec3(CUBE_VERTICES[i][0], 
-      CUBE_VERTICES[i][1], CUBE_VERTICES[i][2]);  
+  for (int i = 0; i< 8; i++) {
+    mesh.vertices[i].pos = glm::vec3(CUBE_VERTICES[i][0], 
+      CUBE_VERTICES[i][1], CUBE_VERTICES[i][2]);
+    mesh.vertices[i].tex_coords = A_GOAL_TEX[i];
+  }
   for (int i = 0; i < CUBE_INDICES; i++)
     mesh.faces.draw_indices.add(CUBE_INDICES[i]);
+  if (!read_ppm("ppms/glass.ppm", &mesh.texels[0])) {
+    cerr << "Fail loading texture: ppms/glass.ppm" << endl;
+  }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader);

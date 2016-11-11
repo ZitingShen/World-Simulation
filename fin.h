@@ -21,15 +21,10 @@ typedef struct _light{
  glm::vec4 dropoff_coeff = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f); //a, b, c, d
 } LIGHT;
 
-// TODO
-struct TEXTURE{
-  Image texture0;
-  GLfloat shineness;
-};
-
 struct VERTEX{
   glm::vec3 pos;
   glm::vec3 normal;
+  glm::vec2 tex_coords;
 };
 
 struct FACES{
@@ -43,7 +38,7 @@ class MESH {
     GLuint num_v;
     GLuint num_f; // must all be triangles
     vector<VERTEX> vertices;       // vertex pos and vertex normal
-    vector<TEXTURE> texture;
+    vector<Image> texels;
     FACES     faces;
     /* Constructor */
     MESH();
@@ -56,6 +51,7 @@ class MESH {
     void rotate();
   private:
     GLuint vao, vbo, ebo;
+    GLuint[] textures;
 };
 
 int read_mesh(string filename, MESH& mesh, int count, GLuint shader);

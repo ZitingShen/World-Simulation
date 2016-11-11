@@ -41,6 +41,22 @@ void MESH::bind(GLuint shader){
                         GL_FALSE,
                         sizeof(VERTEX),
                         (GLvoid*)offsetof(VERTEX, normal));
+
+  glGenTextures(1, textures);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, 
+    GL_UNSIGNED_INT, &texels->data[0]);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+  
+  glBindAttribLocation(shader, TEXTURE_LOCATION, "vTex");
+  glEnableVertexAttribArray(TEXTURE_LOCATION);
+  glVertexAttribPointer(TEXTURE_LOCATION, 2, GL_FLOAT,
+                        GL_FALSE,
+                        sizeof(VERTEX),
+                        (GLvoid)*offsetof(VERTEX, tex_coords));
 }
 
 void MESH::compute_face_normal(){
@@ -230,6 +246,11 @@ void MESH::draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT,
   LIGHT& THE_LIGHT) {
   glLinkProgram(shader);
   glUseProgram(shader);
+
+  GLuint tex = glGetUniformLocation(shader, "tex");
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
+  glUniform1i(tex, 0);
 
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));

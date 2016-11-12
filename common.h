@@ -19,9 +19,17 @@
 #define RADIAN_TO_DEGREE          57.29578f // 180 over pi
 #define	DEGREE_TO_RADIAN		  0.00873f
 #define SQRT_2					  1.414213f
+#define TRUE					  1
+#define FALSE					  0
 
 #define CAMERA_NEAR               2.0f
 #define CAMERA_FAR                100000000.0f
+#define TOWER_HEIGHT              8000.0f
+
+#define LIGHT_X                   10.0f
+#define LIGHT_Y                   10.0f
+#define LIGHT_Z                   100.0f
+#define SHINENESS                 0.1f
 
 #define POS_LOCATION              0
 #define NORMAL_LOCATION           1
@@ -39,10 +47,6 @@
 #define ATTRACTION_WEIGHT         0.0005f
 #define STAY_IN_FLOCK_WEIGHT	  0.003f
 #define DETERRENCE_WEIGHT         0.1f // the most significant weight
-
-#define MAX_WING_ROTATION         45
-#define WING_ROTATION_PER_FRAME   0.01f
-#define SHADES_HEIGHT             50
 
 #define RANDOMISE_V_FACTOR        60
 #define SPAWN_CUBE_LENGTH         100.0f

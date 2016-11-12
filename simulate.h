@@ -6,7 +6,10 @@
 #include <map>
 #include <string>
 #include "initshader.h"
+#include "boid.h"
+#include "goal.h"
 #include "fin.h"
+#include "view.h"
 #include "common.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,6 +20,4 @@ void init(GLFWwindow* window);
 void reshape(GLFWwindow* window, int w, int h);
 void framebuffer_resize(GLFWwindow* window, int width, int height);
 void keyboard(GLFWwindow *w, int key, int scancode, int action, int mods);
-void print();
-void cleanup();
 #endif

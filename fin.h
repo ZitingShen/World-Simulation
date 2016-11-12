@@ -7,6 +7,7 @@
 #include <map>
 #include <cstring>
 #include "common.h"
+#include "read_ppm.h"
 #include "glm/gtx/transform.hpp"
 
 using namespace std;
@@ -18,7 +19,7 @@ typedef struct _light{
  glm::vec4 ambient0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
  glm::vec4 specular0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
  glm::vec4 light0;
- glm::vec4 dropoff_coeff = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f); //a, b, c, d
+ glm::vec4 dropoff_coeff = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f);
 } LIGHT;
 
 struct VERTEX{
@@ -51,7 +52,7 @@ class MESH {
     void rotate();
   private:
     GLuint vao, vbo, ebo;
-    GLuint[] textures;
+    GLuint textures[6];
 };
 
 int read_mesh(string filename, MESH& mesh, int count, GLuint shader);

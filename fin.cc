@@ -11,7 +11,6 @@ static GLuint make_bo(GLenum type, const void *buf, GLsizei buf_size) {
 MESH::MESH(){
   this->num_v = 0;
   this->num_f = 0;
-  this->num_e = 0;
 }
 
 void MESH::setup(GLuint shader){
@@ -45,7 +44,7 @@ void MESH::bind(GLuint shader){
   glGenTextures(1, textures);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, 
-    GL_UNSIGNED_INT, &texels->data[0]);
+    GL_UNSIGNED_INT, texels[0].data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -56,7 +55,7 @@ void MESH::bind(GLuint shader){
   glVertexAttribPointer(TEXTURE_LOCATION, 2, GL_FLOAT,
                         GL_FALSE,
                         sizeof(VERTEX),
-                        (GLvoid)*offsetof(VERTEX, tex_coords));
+                        (GLvoid*)offsetof(VERTEX, tex_coords));
 }
 
 void MESH::compute_face_normal(){
@@ -111,7 +110,7 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
   vector<GLuint> holder_indices;
   string off;
   int vec_in_fac;
-  int temp, temp_first;
+  int temp;
   ifstream my_fin;
   my_fin.open(filename);
   if (!my_fin.is_open()){
@@ -126,7 +125,7 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
   /* reading attributs */
   my_fin >> mesh.num_v;
   my_fin >> mesh.num_f;
-  my_fin >> mesh.num_e;
+  //my_fin >> mesh.num_e;
   /* reading vertices */
   mesh.vertices.resize(mesh.num_v);
   for (int i=0; i<(int)mesh.num_v; i++){
@@ -143,20 +142,17 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
   /* reading faces */
   for (int i=0; i<(int)mesh.num_f; i++){
     my_fin >> vec_in_fac;
-    mesh.faces.num_v.push_back(static_cast<GLuint>(vec_in_fac));
+    //mesh.faces.num_v.push_back(static_cast<GLuint>(vec_in_fac));
     if (vec_in_fac == 3){
       for (int j=0; j<vec_in_fac;j++){
         my_fin >> temp;
         mesh.faces.draw_indices.push_back(temp);
       }
-      mesh.faces.edge_indices.push_back(temp_first);
-      mesh.faces.edge_flat.push_back(count-3);
     }else{ // when more than three vertices in a face
       for (int j=0; j<vec_in_fac;j++){
         my_fin >> temp;
         holder_indices.push_back(temp);
       }
-      mesh.faces.edge_indices.push_back(temp_first);
       for (int j=0; j<(vec_in_fac-2);j++){
         mesh.faces.draw_indices.push_back(holder_indices[0]);
         mesh.faces.draw_indices.push_back(holder_indices[j+1]);
@@ -170,6 +166,7 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
     for (int j = 0; j < 3; j++) {
       max_scale = local_max[j]-local_min[j]>max_scale?local_max[j]-local_min[j]:max_scale;
     }
+    /*
     glm::mat4 new_mat;
     new_mat = glm::scale(glm::vec3(
                          MESH_X/max_scale,
@@ -183,6 +180,7 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
     mesh.scaled.push_back(new_mat);
     mesh.transforms.push_back(new_mat);
     mesh.spin.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+    */
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
@@ -192,15 +190,9 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
 
 void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader){
   int i = 0;
-  int id_count = 0;
   for (auto itr_file = filenames.begin(); itr_file != filenames.end(); itr_file++){
     //cout << "reading " << filenames[i] << endl;
-    for (int j = 0; j < itr_file->second; j++) {
-      all_meshes[i].id.push_back(id_count);
-      id_count++;
-    }
     if(!read_mesh(itr_file->first, all_meshes[i], itr_file->second, shader)){
-      id_count -= itr_file->second;
       all_meshes.erase(all_meshes.begin()+i);
     } else {
       i++;
@@ -210,8 +202,7 @@ void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLui
 
 void print_mesh_info(MESH& mesh){
   cout << mesh.num_v << " ";
-  cout << mesh.num_f << " ";
-  cout << mesh.num_e << " " << endl;
+  cout << mesh.num_f << " " << endl;
   /* print vertcies */
   for (int i = 0; i<(int)mesh.num_v; i++){
     for (int j=0; j<3; j++){
@@ -252,17 +243,17 @@ void MESH::draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT,
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glUniform1i(tex, 0);
 
-  GLuint light = glGetUniformLocation(shader, "LightPosition");
-  glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
-
   GLuint proj = glGetUniformLocation(shader, "Projection");
   glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(PROJ_MAT));
   GLuint mv = glGetUniformLocation(shader, "ModelView");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
+  GLuint light = glGetUniformLocation(shader, "LightPosition");
+  glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
+  GLuint shineness = glGetUniformLocation(shader, "Shineness");
+  glUniform1f(shineness, SHINENESS);
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
   glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(), 
       GL_UNSIGNED_INT, (void*) 0);
-  }
 }

@@ -2,6 +2,7 @@
 #define GOAL_H
 
 #include "common.h"
+#include "fin.h"
 
 const GLfloat CUBE_VERTICES[][3] = {
                            {-GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE},  
@@ -13,9 +14,14 @@ const GLfloat CUBE_VERTICES[][3] = {
                            {GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
                            {GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE}};
 
-const GLfloat A_GOAL_TEX[][2] = {
-  
-}
+const GLfloat A_GOAL_TEX[][2] = {{0.0f, 0.0f}, 
+                                 {0.1f, 1.0f}, 
+                                 {0.2f, 0.5f}, 
+                                 {0.3f, 0.33f}, 
+                                 {0.4f, 0.25f}, 
+                                 {0.5f, 0.2f}, 
+                                 {0.6f, 0.15f}, 
+                                 {1.0f, 0.1f}};
 
 const GLubyte CUBE_INDICES[36] = {0, 3, 2,
                                 0, 2, 1,
@@ -44,9 +50,13 @@ typedef struct _goal{
   bool DECELERATE;
 
   _goal();
-  void update_goal_velocity();
-  void update_goal_pos();
-  void teleport_goal();
-  void print_goal();
 } GOAL;
+
+void update_goal_velocity(GOAL& goal);
+void update_goal_pos(GOAL& goal);
+void teleport_goal(GOAL& goal);
+void print_goal(GOAL& goal);
+void init_goal_mesh(MESH& mesh, GLuint shader);
+void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, 
+  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT);
 #endif

@@ -2,19 +2,20 @@
 
 using namespace std;
 
-BOID::BOID _boid(){
-  this->pos = (a_boid->flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
-  this->velocity = SPAWN_VELOCITY;
-  this->partner_radius = PARTNER_RADIUS;
-  this->flock_index = rand()%(DEFAULT_FLOCK_NUM);
+BOID::_boid(){
+  pos = (flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
+  velocity = SPAWN_VELOCITY;
+  partner_radius = PARTNER_RADIUS;
+  flock_index = rand()%(DEFAULT_FLOCK_NUM);
 }
 
-bool is_partner(BOID* source, BOID* target){
-  return source->partner_radius >= glm::distance(source->pos, target->pos);
+bool is_partner(BOID& source, BOID& target){
+  return source.partner_radius >= glm::distance(source.pos, 
+    target.pos);
 }
 
 void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
-  if (a_flock.size < 2) return;
+  if (a_flock.size() < 2) return;
   glm::vec3 s_modifier, a_modifier, c_modifier, f_modifier;
   glm::vec3 flock_center;
   int num_of_partners;
@@ -26,10 +27,10 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
     num_of_partners = 0; //reset for the next boid
     num_of_boids_other_flocks = 0;
     num_of_partners = 0;
-    close_to_goal = glm::length(a_goal.pos - source.pos) < APPROACHING_GOAL;
+    close_to_goal = glm::length(a_goal.pos - source->pos) < APPROACHING_GOAL;
     for (auto target = a_flock.begin(); target != a_flock.end(); target++) {
-      if (potential_partner == current_boid) continue;
-      if (is_partner(source, target)){
+      if (target == source) continue;
+      if (is_partner(*source, *target)){
         if (target->flock_index == source->flock_index) {
           num_of_partners++;
           dis_to_partner = distance(source->pos, target->pos);
@@ -59,9 +60,11 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
     }
     if (num_of_partners != 0) {
       //cout << "num_of_partners = " << num_of_partners << endl;
-      s_modifier = s_modifier*(SEPARATION_WEIGHT/(float)num_of_partners)*1.8;
-      a_modifier = (a_modifier*(1/(float)num_of_partners) - source->velocity)*ALIGNMENT_WEIGHT*0.8;
-      c_modifier = (c_modifier*(1/(float)num_of_partners) - source->pos)*COHESION_WEIGHT;
+      s_modifier = s_modifier*(SEPARATION_WEIGHT/(float)num_of_partners)*1.8f;
+      a_modifier = (a_modifier*(1/(float)num_of_partners) 
+        - source->velocity)*ALIGNMENT_WEIGHT*0.8f;
+      c_modifier = (c_modifier*(1/(float)num_of_partners) 
+        - source->pos)*COHESION_WEIGHT;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
     if (num_of_boids_other_flocks != 0) {
@@ -148,35 +151,34 @@ void init_a_flock(vector<BOID>& a_flock){
 
   for (int i = 0; i < DEFAULT_FLOCK_SIZE; i++){
     BOID a_boid;
-    a_boid->pos[0] += (rand() % default_cube_length) - half_cube_length;
-    a_boid->pos[1] += (rand() % default_cube_length) - half_cube_length;
-    a_boid->pos[2] += (rand() % default_cube_length) - half_cube_length;
-    a_flock.add(a_boid);
+    a_boid.pos[0] += (rand() % default_cube_length) - half_cube_length;
+    a_boid.pos[1] += (rand() % default_cube_length) - half_cube_length;
+    a_boid.pos[2] += (rand() % default_cube_length) - half_cube_length;
+    a_flock.push_back(a_boid);
   }
 }
 
-void apply_goal_attraction(vector<BOID> a_flock, GOAL& a_goal){
+void apply_goal_attraction(vector<BOID>& a_flock, GOAL& a_goal){
   glm::vec3 v_modifier(0, 0, 0);
   float dis_to_goal;
-  float max_attraction;
   float boid_speed, goal_speed = glm::length(a_goal.velocity);
   for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++) {
-    v_modifier = a_goal->pos - a_boid->pos;
+    v_modifier = a_goal.pos - a_boid->pos;
     dis_to_goal = glm::length(v_modifier);
-    max_attraction = 0.6*glm::length(a_boid->velocity);
     boid_speed = glm::length(a_boid->velocity);
     v_modifier = v_modifier*ATTRACTION_WEIGHT;
     if (APPROACHING_GOAL < dis_to_goal) { // not near the goal
       a_boid->velocity += v_modifier;
-    }else if (speed > 3*goal_speed && boid_speed > BOID_SPEED_FLOOR){ // near goal scenario
-      a_boid->velocity = a_boid->velocity * 0.95;
+    }else if (boid_speed > 3*goal_speed 
+    && boid_speed > BOID_SPEED_FLOOR){ // near goal scenario
+      a_boid->velocity = a_boid->velocity * 0.95f;
       a_boid->velocity += v_modifier;
     }
     if (boid_speed > 4.0*goal_speed){ //applying absolute cap;
       a_boid->velocity += v_modifier;
       
       if(glm::length(a_boid->velocity) > BOID_SPEED_FLOOR){
-        a_boid->velocity = glm::normalise(a_boid->velocity)*4*goal_speed;
+        a_boid->velocity = glm::normalize(a_boid->velocity)*goal_speed*4.0f;
       }
     }
   }
@@ -198,14 +200,16 @@ void init_flock_mesh(MESH& mesh, GLuint shader) {
   mesh.num_f = 2;
   mesh.vertices.resize(4);
   for (int i = 0; i< 4; i++) {
-    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1], A_BOID[i][2]);  
-    mesh.vertices[i].tex_coords = A_BOID_TEX[i];
+    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1], 
+      A_BOID[i][2]);  
+    mesh.vertices[i].tex_coords = glm::vec2(A_BOID_TEX[i][0], 
+      A_BOID_TEX[i][1]);
   }
-  for (int i = 0; i < BOID_INDEX; i++)
-    mesh.faces.draw_indices.add(BOID_INDEX[i]);
-  mesh.textures.resize(1);
-  if (!read_ppm("ppms/fire.ppm", &mesh.texelss[0])) {
-    cerr << "Fail loading texture: ppms/fire.ppm" << endl;
+  for (int i = 0; i < 6; i++)
+    mesh.faces.draw_indices.push_back(BOID_INDEX[i]);
+  mesh.texels.resize(1);
+  if (!read_ppm("ppms/paper.ppm", &mesh.texels[0])) {
+    cerr << "Fail loading texture: ppms/paper.ppm" << endl;
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
@@ -213,12 +217,13 @@ void init_flock_mesh(MESH& mesh, GLuint shader) {
 }
 
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT& THE_LIGHT){
-  for (int i = 0; i < a_flock.size(); i++){
+  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT){
+  for (unsigned int i = 0; i < a_flock.size(); i++){
     glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity, 
       SPAWN_VELOCITY));
-    float angle = glm::oriented_angle(SPAWN_VELOCITY, a_flock[i].velocity, 
+    float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity, 
                                 rotate_normal);
+    THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
     MV_MAT = glm::translate(MV_MAT, a_flock[i].pos);
     MV_MAT = glm::rotate(MV_MAT, angle, rotate_normal);
     mesh.draw(shader, PROJ_MAT, MV_MAT, THE_LIGHT);

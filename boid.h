@@ -5,7 +5,8 @@
 #include "fin.h"
 #include "common.h"
 #include "read_ppm.h"
-#include "glm/gtx.transform.hpp"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtx/vector_angle.hpp"
 #include <time.h>
 
 const GLfloat A_BOID[][3]=
@@ -18,15 +19,15 @@ const GLfloat A_BOID_TEX[][2] = {{0.5, 0.3}, {1, 0}, {0.5, 1}, {0.0}};
 
 const GLuint BOID_INDEX[] = {0, 1, 2, 0, 2, 3};
 
-const glm::vec3 SPAWN_POSITION_I = new glm::vec3(1000.0f, 1000.0f, 3000.0f);
-const glm::vec3 SPAWN_POSITION_II = new glm::vec3(-1000.0f, -1000.0f, 3000.0f);
+const glm::vec3 SPAWN_POSITION_I = glm::vec3(1000.0f, 1000.0f, 3000.0f);
+const glm::vec3 SPAWN_POSITION_II = glm::vec3(-1000.0f, -1000.0f, 3000.0f);
  //initial speed parallel with y-axis
-const glm::vec3 SPAWN_VELOCITY = new glm::vec3(0.0f, 0.01f, 0.0f);
+const glm::vec3 SPAWN_VELOCITY = glm::vec3(0.0f, 0.01f, 0.0f);
 
-const glm::vec3 centroid_init = new glm::vec3(0.0f, 0.0f, 0.0f);
-const glm::vec3 head_init = new glm::vec3(0.0f, BOID_SIZE*2, 0.0f);
-const glm::vec3 left_init = new glm::vec3(-BOID_SIZE, -BOID_SIZE, 0.0f);
-const glm::vec3 right_init = new glm::vec3(BOID_SIZE, -BOID_SIZE, 0.0f);
+const glm::vec3 centroid_init = glm::vec3(0.0f, 0.0f, 0.0f);
+const glm::vec3 head_init = glm::vec3(0.0f, BOID_SIZE*2, 0.0f);
+const glm::vec3 left_init = glm::vec3(-BOID_SIZE, -BOID_SIZE, 0.0f);
+const glm::vec3 right_init = glm::vec3(BOID_SIZE, -BOID_SIZE, 0.0f);
 
 /* Dynamically dealing with Weights */
 const float SCATTERING = 0.8f * PARTNER_RADIUS; // too far away from partner
@@ -46,11 +47,10 @@ typedef struct _boid{
   _boid();
 } BOID;
 
-bool is_partner(BOID* source, BOID* target);
+bool is_partner(BOID& source, BOID& target);
 void update_velocity(vector<BOID>& a_flock, GOAL& a_goal);
 void update_pos(vector<BOID>& a_flock);
 
-glm::vec3 get_current_pos(BOID* a_boid);
 glm::vec3 flock_centroid(vector<BOID>& a_flock, int flock_index);
 glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
 glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
@@ -61,4 +61,7 @@ glm::vec3 get_average_v(vector<BOID>& a_flock, int flock_index);
 void init_a_flock(vector<BOID>& a_flock);
 void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);
+void init_flock_mesh(MESH& mesh, GLuint shader);
+void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
+  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT);
 #endif

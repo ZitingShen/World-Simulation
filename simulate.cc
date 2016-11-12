@@ -3,20 +3,19 @@
 using namespace std;
 
 int WIDTH, HEIGHT;
-int IS_PAUSED = GLFW_TRUE;
-int IS_ROTATED = GLFW_FALSE;
+int IS_PAUSED = GLFW_FALSE;
 int PAUSE_TIME = 0;
-int TOTAL_MESHES = 0;
-double pmousex, pmousey;
-glm::mat4 PROJ_MAT, MV_MAT;
-LIGHT THE_LIGHT;
-MESH BOIDS_MESH;
-GLuint SHADER;
-glm::vec3 CENTER, EYE, UP;
 
-vector<BOID> BOIDS;
+glm::mat4 PROJ_MAT = glm::mat4();
+glm::mat4 MV_MAT = glm::mat4();
+LIGHT THE_LIGHT;
+MESH BOIDS_MESH, GOAL_MESH;
+GLuint SHADER;
+
+vector<BOID> A_FLOCK;
 GOAL A_GOAL;
-bool GUARDIAN = false;
+viewMode VIEW_MODE = DEFAULT;
+int INDEX = 0;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -41,7 +40,6 @@ int main(int argc, char *argv[]){
   glewExperimental = GL_TRUE;
   glewInit();
   
-  SHADER = initshader("phong_vs.glsl", "phong_fs.glsl");
   init(window);
 
   glfwMakeContextCurrent(window);
@@ -58,15 +56,23 @@ int main(int argc, char *argv[]){
     glfwPollEvents();
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
-      BOIDS_MESH->draw(SHADER, PROJ_MAT, MV_MAT, THE_LIGHT);
+      draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
+        THE_LIGHT);
+      draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
+        THE_LIGHT);
       glfwSwapBuffers(window);
     }
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
-      change_view(PROJ_MODE, NONE);
-      BOIDS->update();
+      change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, INDEX);
+      update_goal_velocity(A_GOAL);
+      update_goal_pos(A_GOAL);
+      update_velocity(A_FLOCK, A_GOAL);
+      apply_goal_attraction(A_FLOCK, A_GOAL);
+      update_pos(A_FLOCK);
       if (IS_PAUSED && PAUSE_TIME > 0) {
-        print();
+        print_goal(A_GOAL);
+        print_flock(A_FLOCK);
         PAUSE_TIME--;
       }
     }
@@ -78,24 +84,14 @@ int main(int argc, char *argv[]){
 void init(GLFWwindow* window) {
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glColor3f(0.0, 0.0, 0.0);
-  init_a_flock(BOIDS);
-  init_goal(A_GOAL);
+  srand(time(NULL));
+  SHADER = initshader("phong_vs.glsl", "phong_fs.glsl");
+  init_a_flock(A_FLOCK);
+  init_flock_mesh(BOIDS_MESH, SHADER);
+  init_goal_mesh(GOAL_MESH, SHADER);
 
-  //change_perspective(window);
-  
-  CENTER = glm::vec3(0.7*BLOCK, 0, 0.7*BLOCK);
-  EYE = glm::vec3(EYE_X_DISPLACEMENT, EYE_Y_DISPLACEMENT, EYE_Z_DISPLACEMENT);
-  UP = glm::vec3(0, 0, 1);
-  MV_MAT = glm::lookAt(EYE, CENTER, UP);
-
+  glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   THE_LIGHT.light0 = glm::vec4(LIGHT_X, LIGHT_Y, LIGHT_Z, 0);
-  for (auto itr_mesh = MESHES.begin(); itr_mesh != MESHES.end(); itr_mesh++)
-    itr_mesh->compute_light_product(THE_LIGHT);
-  glfwGetCursorPos(window, &pmousex, &pmousey);
-
-  for (auto itr_mesh = MESHES.begin(); itr_mesh != MESHES.end(); itr_mesh++) {
-    TOTAL_MESHES += itr_mesh->spin.size();
-  }
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -103,20 +99,49 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  MV_MAT = glm::lookAt(EYE, CENTER, UP);
+  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, INDEX);
 }
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS) {
     switch(key) {
-   	  case GLFW_KEY_UP: {
-      change_view(PROJ_MODE, ZOOM_IN);
-      }
+   	  case GLFW_KEY_UP:
+      //change_view(ZOOM_IN);
       break;
 
-      case GLFW_KEY_DOWN: {
-      change_view(PROJ_MODE, ZOOM_OUT);
-      }
+      case GLFW_KEY_DOWN:
+      //change_view(ZOOM_OUT);
+      break;
+
+      case GLFW_KEY_P:
+      IS_PAUSED = GLFW_TRUE;
+      PAUSE_TIME++;
+      break;
+
+      case GLFW_KEY_R:
+      IS_PAUSED = GLFW_FALSE;
+      PAUSE_TIME = 0;
+      break;
+
+      case GLFW_KEY_V:
+      VIEW_MODE  = DEFAULT;
+      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+      PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
+
+      case GLFW_KEY_T:
+      VIEW_MODE = TRAILING;
+      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT, 
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
+
+      case GLFW_KEY_G:
+      VIEW_MODE = SIDE;
+      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT, 
+        CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_Q:
@@ -127,8 +152,4 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
     }
   }
-}
-
-void print() {
-
 }

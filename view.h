@@ -9,5 +9,5 @@
 typedef enum viewMode {DEFAULT, TRAILING, SIDE} viewMode;
 
 void change_view(glm::mat4& PROJ_MAT, viewMode viewmode, 
-	vector<BOID>& flock, GOAL& goal, int index);
+	vector<BOID>& flock, GOAL& goal);
 #endif

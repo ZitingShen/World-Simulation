@@ -15,17 +15,17 @@ MESH::MESH(){
 
 void MESH::setup(GLuint shader){
   glGenVertexArrays(1, &this->vao);
-  this->vbo = make_bo(GL_ARRAY_BUFFER, &this->vertices[0], 
-    this->vertices.size()*sizeof(VERTEX));
-  this->ebo = make_bo(GL_ELEMENT_ARRAY_BUFFER, &this->faces.draw_indices[0],
-    this->faces.draw_indices.size()*sizeof(GLuint));
+  vbo = make_bo(GL_ARRAY_BUFFER, &vertices[0], 
+    vertices.size()*sizeof(VERTEX));
+  ebo = make_bo(GL_ELEMENT_ARRAY_BUFFER, &faces.draw_indices[0],
+    faces.draw_indices.size()*sizeof(GLuint));
   bind(shader);
 }
 
 void MESH::bind(GLuint shader){
   // bind vbo
-  glBindVertexArray(this->vao);
-  glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+  glBindVertexArray(vao);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBindAttribLocation(shader, POS_LOCATION, "vPosition");
   glEnableVertexAttribArray(POS_LOCATION);
   glVertexAttribPointer(POS_LOCATION, 3, GL_FLOAT,
@@ -40,15 +40,6 @@ void MESH::bind(GLuint shader){
                         GL_FALSE,
                         sizeof(VERTEX),
                         (GLvoid*)offsetof(VERTEX, normal));
-
-  glGenTextures(1, textures);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, 
-    GL_UNSIGNED_INT, texels[0].data);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   
   glBindAttribLocation(shader, TEXTURE_LOCATION, "vTex");
   glEnableVertexAttribArray(TEXTURE_LOCATION);
@@ -56,6 +47,17 @@ void MESH::bind(GLuint shader){
                         GL_FALSE,
                         sizeof(VERTEX),
                         (GLvoid*)offsetof(VERTEX, tex_coords));
+
+  glGenTextures(1, textures);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
+  //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX, 
+  //  texels[0].sizeY, 0, GL_RGB, GL_UNSIGNED_INT, texels[0].data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 
+    128, 0, GL_RGB, GL_UNSIGNED_INT, texels[0].data);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 }
 
 void MESH::compute_face_normal(){

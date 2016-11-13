@@ -2,11 +2,13 @@
 
 using namespace std;
 
-BOID::_boid(){
-  pos = (flock_index==0)?SPAWN_POSITION_I:SPAWN_POSITION_II;
-  velocity = SPAWN_VELOCITY;
-  partner_radius = PARTNER_RADIUS;
-  flock_index = rand()%(DEFAULT_FLOCK_NUM);
+BOID::BOID(){
+  //pos = SPAWN_POSITION_I;
+  //velocity = SPAWN_VELOCITY;
+  //partner_radius = PARTNER_RADIUS;
+  pos = glm::vec3(1000.0f, 1000.0f, 3000.0f);
+  velocity = glm::vec3(0.0f, 0.01f, 0.0f);
+  partner_radius = 300;
 }
 
 bool is_partner(BOID& source, BOID& target){
@@ -19,43 +21,36 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
   glm::vec3 s_modifier, a_modifier, c_modifier, f_modifier;
   glm::vec3 flock_center;
   int num_of_partners;
-  int num_of_boids_other_flocks;
   bool close_to_goal = false;
   float dis_to_partner;
 
   for (auto source = a_flock.begin(); source != a_flock.end(); source++) {
     num_of_partners = 0; //reset for the next boid
-    num_of_boids_other_flocks = 0;
     num_of_partners = 0;
     close_to_goal = glm::length(a_goal.pos - source->pos) < APPROACHING_GOAL;
     for (auto target = a_flock.begin(); target != a_flock.end(); target++) {
       if (target == source) continue;
       if (is_partner(*source, *target)){
-        if (target->flock_index == source->flock_index) {
-          num_of_partners++;
-          dis_to_partner = distance(source->pos, target->pos);
-          if (dis_to_partner > SCATTERING){
-            s_modifier += (source->pos - target->pos) * 0.95f;
-            a_modifier += target->velocity;
-            c_modifier += target->pos * 1.05f;
-          }else if (dis_to_partner < COLLIDING){
-            s_modifier += (source->pos - target->pos) * 1.05f;
-            a_modifier += target->velocity;
-            c_modifier += target->pos * 0.95f;
-          }else{
-            s_modifier += source->pos - target->pos;
-            a_modifier += target->velocity;
-            c_modifier += target->pos;
-          }
-          if(close_to_goal){// if close to goal, scatter
-            //cout << "now near goal" << endl;
-            s_modifier = s_modifier * 1.1f;;
-            a_modifier = a_modifier * 0.9f;
-          } 
-        } else {
-          num_of_boids_other_flocks++;
-          f_modifier += source->pos - target->pos;
+        num_of_partners++;
+        dis_to_partner = distance(source->pos, target->pos);
+        if (dis_to_partner > SCATTERING){
+          s_modifier += (source->pos - target->pos) * 0.95f;
+          a_modifier += target->velocity;
+          c_modifier += target->pos * 1.05f;
+        }else if (dis_to_partner < COLLIDING){
+          s_modifier += (source->pos - target->pos) * 1.05f;
+          a_modifier += target->velocity;
+          c_modifier += target->pos * 0.95f;
+        }else{
+          s_modifier += source->pos - target->pos;
+          a_modifier += target->velocity;
+          c_modifier += target->pos;
         }
+        if(close_to_goal){// if close to goal, scatter
+          //cout << "now near goal" << endl;
+          s_modifier = s_modifier * 1.1f;;
+          a_modifier = a_modifier * 0.9f;
+        } 
       }
     }
     if (num_of_partners != 0) {
@@ -67,12 +62,8 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
         - source->pos)*COHESION_WEIGHT;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
-    if (num_of_boids_other_flocks != 0) {
-      f_modifier = f_modifier*(DETERRENCE_WEIGHT/(float)num_of_boids_other_flocks);
-      source->velocity += f_modifier;
-    }
 
-    flock_center = flock_centroid(a_flock, source->flock_index);
+    flock_center = flock_centroid(a_flock);
     if (distance(source->pos, flock_center) > FLOCK_RAIUS_CAP){
       source->velocity += (flock_center - source->pos) * STAY_IN_FLOCK_WEIGHT;
     }
@@ -88,56 +79,50 @@ void update_pos(vector<BOID>& a_flock){
   }
 }
 
-glm::vec3 flock_centroid(vector<BOID>& a_flock, int flock_index){
+glm::vec3 flock_centroid(vector<BOID>& a_flock){
   glm::vec3 centroid = glm::vec3(0, 0, 0);
   if (a_flock.size() == 0)
     return centroid;
   
   int counter = 0;
   for (auto current = a_flock.begin(); current != a_flock.end(); current++) {
-    if (current->flock_index != flock_index) continue;
     centroid += current->pos;
     counter++;
   }
   return centroid*(1.0f/counter);
 }
 
-glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal){
   if (a_flock.size() == 0)
     return glm::vec3(0, 0, 0);
-  return (flock_centroid(a_flock, flock_index)+(a_goal.pos))*(0.5f);
+  return (flock_centroid(a_flock)+(a_goal.pos))*(0.5f);
 }
 
-glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal){
   if (a_flock.size() == 0)
     return glm::vec3(0, 0, 0);
-  return (a_goal.pos - flock_centroid(a_flock, flock_index));
+  return (a_goal.pos - flock_centroid(a_flock));
 }
 
-float get_d(vector<BOID>& a_flock, GOAL& a_goal, int flock_index){
+float get_d(vector<BOID>& a_flock, GOAL& a_goal){
   if (a_flock.size() == 0)
     return 0;
-  return glm::distance(flock_centroid(a_flock, flock_index), a_goal.pos);
+  return glm::distance(flock_centroid(a_flock), a_goal.pos);
 }
 
-glm::vec3 get_average_v(vector<BOID>& a_flock, int flock_index){
-  int count = 0;
+glm::vec3 get_average_v(vector<BOID>& a_flock){
   glm::vec3 average_v = glm::vec3(0, 0, 0);
-  for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++) {
-    if (a_boid->flock_index == flock_index){
-      average_v += a_boid->velocity;
-      count++;
-    }
-  }
-  average_v = average_v * (1.0f / count);
+  for (auto a_boid = a_flock.begin(); a_boid != a_flock.end(); a_boid++)
+    average_v += a_boid->velocity;
+  average_v = average_v * (1.0f / a_flock.size());
   return average_v;
 }
 
-float flock_radius(vector<BOID>& a_flock, int flock_index){
+float flock_radius(vector<BOID>& a_flock){
   if (a_flock.size() == 0) return 0;
   float max_r = 0;
   float dis   = 0;
-  glm::vec3 centroid = flock_centroid(a_flock, flock_index);
+  glm::vec3 centroid = flock_centroid(a_flock);
   for (auto current = a_flock.begin(); current != a_flock.end(); current++) {
     dis = distance(current->pos, centroid);
     max_r = max_r < dis ? dis : max_r;
@@ -185,14 +170,12 @@ void apply_goal_attraction(vector<BOID>& a_flock, GOAL& a_goal){
 }
 
 void print_flock(vector<BOID>& a_flock) {
-  for (int i = 0; i < DEFAULT_FLOCK_NUM; i++) {
-    glm::vec3 centroid = flock_centroid(a_flock, i);
-    cout << "Flock" << i << "'s centroid: " << centroid[0] << ", " 
-    << centroid[1] << ", " << centroid[2] << endl;
-    float radius = flock_radius(a_flock, i);
-    cout << "Flock" << i << "'s radius: " << radius << endl;
-    cout << endl;
-  }
+  glm::vec3 centroid = flock_centroid(a_flock);
+  cout << "Flock's centroid: " << centroid[0] << ", " 
+  << centroid[1] << ", " << centroid[2] << endl;
+  float radius = flock_radius(a_flock);
+  cout << "Flock's radius: " << radius << endl;
+  cout << endl;
 }
 
 void init_flock_mesh(MESH& mesh, GLuint shader) {

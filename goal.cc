@@ -2,9 +2,11 @@
 
 using namespace std;
 
-GOAL::_goal(){
-  pos = DEFAULT_GOAL_SPAWN_POSITION;
-  velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+GOAL::GOAL(){
+  //pos = DEFAULT_GOAL_SPAWN_POSITION;
+  pos = glm::vec3 (0.0f, 5000.0f, 3000.0f);
+  //velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+  velocity = glm::vec3(10.0f, 10.0f, 0.01f);
   MOVE_ALONG_X_NEGATIVE = false;
   MOVE_ALONG_X_POSITIVE = false;
   MOVE_ALONG_Y_NEGATIVE = false;
@@ -83,6 +85,7 @@ void init_goal_mesh(MESH& mesh, GLuint shader) {
   }
   for (int i = 0; i < 36; i++)
     mesh.faces.draw_indices.push_back(CUBE_INDICES[i]);
+  mesh.texels.resize(1);
   if (!read_ppm("ppms/fire.ppm", &mesh.texels[0])) {
     cerr << "Fail loading texture: ppms/fire.ppm" << endl;
   }

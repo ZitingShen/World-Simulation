@@ -36,8 +36,7 @@
 #define TEXTURE_LOCATION		  2
 
 #define PARTNER_RADIUS            300
-#define DEFAULT_FLOCK_SIZE        100
-#define DEFAULT_FLOCK_NUM         2
+#define DEFAULT_FLOCK_SIZE        20
 #define MIN_FLOCK_RADIUS	      2000.0
 #define MAX_FLOCK_RADIUS		  3000.0
 
@@ -46,7 +45,6 @@
 #define COHESION_WEIGHT           0.0015f
 #define ATTRACTION_WEIGHT         0.0005f
 #define STAY_IN_FLOCK_WEIGHT	  0.003f
-#define DETERRENCE_WEIGHT         0.1f // the most significant weight
 
 #define RANDOMISE_V_FACTOR        60
 #define SPAWN_CUBE_LENGTH         100.0f

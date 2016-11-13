@@ -15,9 +15,6 @@ using namespace std;
 
 typedef struct _light{
  // using light
- glm::vec4 diffuse0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
- glm::vec4 ambient0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
- glm::vec4 specular0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
  glm::vec4 light0;
  glm::vec4 dropoff_coeff = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f);
 } LIGHT;

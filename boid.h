@@ -38,26 +38,26 @@ const float Z_SPEED_CAP = 20.0f;
 const float BOID_SPEED_FLOOR = 55.0f;
 const float PREDATOR_SPEED_CAP = 300.0f;
 
-typedef struct _boid{
-  int flock_index;  
-  glm::vec3 pos;
-  glm::vec3 velocity;   
-  float partner_radius;// the radius within which it looks for partners
-
-  _boid();
-} BOID;
+class BOID{
+  public:
+    glm::vec3 pos;
+    glm::vec3 velocity;   
+    float partner_radius;// the radius within which it looks for partners
+    
+    BOID();
+};
 
 bool is_partner(BOID& source, BOID& target);
 void update_velocity(vector<BOID>& a_flock, GOAL& a_goal);
 void update_pos(vector<BOID>& a_flock);
 
-glm::vec3 flock_centroid(vector<BOID>& a_flock, int flock_index);
-glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
-glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
-float get_d(vector<BOID>& a_flock, GOAL& a_goal, int flock_index);
-float flock_radius(vector<BOID>& a_flock, int flock_index);
+glm::vec3 flock_centroid(vector<BOID>& a_flock);
+glm::vec3 mid_point(vector<BOID>& a_flock, GOAL& a_goal);
+glm::vec3 get_u(vector<BOID>& a_flock, GOAL& a_goal);
+float get_d(vector<BOID>& a_flock, GOAL& a_goal);
+float flock_radius(vector<BOID>& a_flock);
 
-glm::vec3 get_average_v(vector<BOID>& a_flock, int flock_index);
+glm::vec3 get_average_v(vector<BOID>& a_flock);
 void init_a_flock(vector<BOID>& a_flock);
 void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);

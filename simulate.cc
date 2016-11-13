@@ -3,11 +3,10 @@
 using namespace std;
 
 int WIDTH, HEIGHT;
-int IS_PAUSED = GLFW_FALSE;
+int IS_PAUSED = GLFW_TRUE;
 int PAUSE_TIME = 0;
 
-glm::mat4 PROJ_MAT = glm::mat4();
-glm::mat4 MV_MAT = glm::mat4();
+glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH;
 GLuint SHADER;
@@ -15,7 +14,6 @@ GLuint SHADER;
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
 viewMode VIEW_MODE = DEFAULT;
-int INDEX = 0;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -55,19 +53,11 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
 
-    if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
-      draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
-        THE_LIGHT);
-      draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
-        THE_LIGHT);
-      glfwSwapBuffers(window);
-    }
-
     if(!IS_PAUSED || PAUSE_TIME > 0) {
-      change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, INDEX);
+      change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
       update_goal_velocity(A_GOAL);
       update_goal_pos(A_GOAL);
-      update_velocity(A_FLOCK, A_GOAL);
+      //update_velocity(A_FLOCK, A_GOAL);
       apply_goal_attraction(A_FLOCK, A_GOAL);
       update_pos(A_FLOCK);
       if (IS_PAUSED && PAUSE_TIME > 0) {
@@ -75,6 +65,14 @@ int main(int argc, char *argv[]){
         print_flock(A_FLOCK);
         PAUSE_TIME--;
       }
+    }
+
+    if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
+      draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
+        THE_LIGHT);
+      draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
+        THE_LIGHT);
+      glfwSwapBuffers(window);
     }
   }
   glfwTerminate();
@@ -91,6 +89,8 @@ void init(GLFWwindow* window) {
   init_goal_mesh(GOAL_MESH, SHADER);
 
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+  PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
+    CAMERA_NEAR, CAMERA_FAR);
   THE_LIGHT.light0 = glm::vec4(LIGHT_X, LIGHT_Y, LIGHT_Z, 0);
 }
 
@@ -99,7 +99,7 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, INDEX);
+  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
 }
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {

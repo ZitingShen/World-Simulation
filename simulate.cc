@@ -58,6 +58,7 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
     change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
+    update_light(SUN_POS, THE_LIGHT);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
       update_goal_velocity(A_GOAL);
@@ -66,6 +67,7 @@ int main(int argc, char *argv[]){
       apply_goal_attraction(A_FLOCK, A_GOAL);
       update_pos(A_FLOCK);
       update_sun_pos(SUN_POS);
+      update_light(SUN_POS, THE_LIGHT);
       if (IS_PAUSED && PAUSE_TIME > 0) {
         print_goal(A_GOAL);
         print_flock(A_FLOCK);
@@ -101,7 +103,6 @@ void init(GLFWwindow* window) {
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
     CAMERA_NEAR, CAMERA_FAR);
-  THE_LIGHT.light0 = glm::vec4(LIGHT_X, LIGHT_Y, LIGHT_Z, 0);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {

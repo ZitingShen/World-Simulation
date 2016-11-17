@@ -249,8 +249,11 @@ void MESH::draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT,
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
+
   GLuint shineness = glGetUniformLocation(shader, "Shineness");
-  glUniform1f(shineness, SHINENESS);
+  glUniform1f(shineness, THE_LIGHT.shineness);
+  GLuint ifNight = glGetUniformLocation(shader, "ifNight");
+  glUniform1i(ifNight, THE_LIGHT.ifNight);
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);

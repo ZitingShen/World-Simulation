@@ -26,11 +26,6 @@
 #define CAMERA_FAR                100000000.0f
 #define TOWER_HEIGHT              6000.0f
 
-#define LIGHT_X                   10.0f
-#define LIGHT_Y                   10.0f
-#define LIGHT_Z                   100.0f
-#define SHINENESS                 0.1f
-
 #define POS_LOCATION              0
 #define NORMAL_LOCATION           1
 #define TEXTURE_LOCATION		  2
@@ -63,7 +58,7 @@
 #define DEFAULT_ACCELERATION_MARGIN   	0.1f
 
 #define SUN_POINTS				  10000
-#define SUN_RADIUS				  1000.0f
+#define SUN_RADIUS				  2000.0f
 #define SUN_SIZE				  1000.f
 #define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #endif

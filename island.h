@@ -10,9 +10,9 @@
 
 #define WORLD_SIZE 1000
 #define ISLAND_SIZE 10
-#define SUBDIVISIONS 16
-#define PRECIPICE 72
-#define PERTUBE_LEVEL 12
+#define SUBDIVISIONS 16   // has to be an even number
+#define PRECIPICE 20
+#define PERTUBE_LEVEL 20
 
 using namespace std;
 
@@ -21,6 +21,9 @@ void get_num_f(int& num_f);
 void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices);
 int get_index(int x, int y);
 void create_precipice(vector<glm::vec3>& all_vertices);
+
+float get_random();
+float add_noise(int& noise);
 
 void pertube(vector<glm::vec3>& all_vertices,
              int x_low,

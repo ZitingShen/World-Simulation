@@ -9,9 +9,10 @@
 #include "assert.h"
 
 #define WORLD_SIZE 1000
-#define ISLAND_SIZE 1000
-#define SUBDIVISIONS 512
-#define PRECIPICE 500
+#define ISLAND_SIZE 10
+#define SUBDIVISIONS 16
+#define PRECIPICE 72
+#define PERTUBE_LEVEL 12
 
 using namespace std;
 
@@ -26,8 +27,7 @@ void pertube(vector<glm::vec3>& all_vertices,
              int y_low,
              int x_high,
              int y_high,
-             float pertube_level,
-             float base_height);
+             float pertube_level);
 
 void generate_faces(vector<int>& all_faces);
 

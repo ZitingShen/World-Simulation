@@ -21,6 +21,11 @@ void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices){
       count++;
     }
   }
+  all_vertices[get_index(0, SUBDIVISIONS/2)].z = PRECIPICE;
+  all_vertices[get_index(SUBDIVISIONS/2, 0)].z = PRECIPICE;
+  all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = PRECIPICE;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = PRECIPICE;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 2 * PRECIPICE;
 }
 
 int get_index(int x, int y){
@@ -28,7 +33,7 @@ int get_index(int x, int y){
 }
 
 void create_precipice(vector<glm::vec3>& all_vertices){
-  pertube(all_vertices, 0, 0, SUBDIVISIONS, SUBDIVISIONS, PRECIPICE, 0);
+  pertube(all_vertices, 0, 0, SUBDIVISIONS, SUBDIVISIONS, (float)PERTUBE_LEVEL);
 }
 
 void pertube(vector<glm::vec3>& all_vertices,
@@ -36,8 +41,7 @@ void pertube(vector<glm::vec3>& all_vertices,
              int y_low,
              int x_high,
              int y_high,
-             float pertube_level,
-             float base_height){ // pertube_level should start with 1
+             float pertube_level){
   if ((x_high - x_low == 1) && (y_high - y_low) == 1){
     return; // base case, pertubing finsihed
   }
@@ -47,34 +51,38 @@ void pertube(vector<glm::vec3>& all_vertices,
   int y_mid = (y_low+y_high)/2;
 
   /* pertubing on five points */
-  all_vertices[get_index(x_mid, y_low)].z += base_height + rand() % (int)(pertube_level);
-  all_vertices[get_index(x_low, y_mid)].z += base_height + rand() % (int)(pertube_level);
-  all_vertices[get_index(x_mid, y_mid)].z += base_height + (rand() % (int)(pertube_level)) * 2;
-  all_vertices[get_index(x_mid, y_high)].z += base_height + rand() % (int)(pertube_level);
-  all_vertices[get_index(x_high, y_mid)].z += base_height + rand() % (int)(pertube_level);
+  all_vertices[get_index(x_mid, y_low)].z += 0.25 * (all_vertices[get_index(x_low, y_low)].z
+                                                   + all_vertices[get_index(x_high, y_low)].z)
+                                                   + rand() % (int)(pertube_level);
+  all_vertices[get_index(x_low, y_mid)].z += 0.25 * (all_vertices[get_index(x_low, y_low)].z
+                                                   + all_vertices[get_index(x_low, y_high)].z)
+                                                   + rand() % (int)(pertube_level);
+  all_vertices[get_index(x_mid, y_high)].z += 0.25 * (all_vertices[get_index(x_low, y_high)].z
+                                                   + all_vertices[get_index(x_high, y_high)].z)
+                                                   + rand() % (int)(pertube_level);
+  all_vertices[get_index(x_high, y_mid)].z += 0.25 * (all_vertices[get_index(x_high, y_low)].z
+                                                   + all_vertices[get_index(x_high, y_high)].z)
+                                                   + rand() % (int)(pertube_level);
+  all_vertices[get_index(x_mid, y_mid)].z += 0.25  * (all_vertices[get_index(x_low, y_mid)].z
+                                                   + all_vertices[get_index(x_high, y_mid)].z
+                                                   + all_vertices[get_index(x_low, y_mid)].z
+                                                   + all_vertices[get_index(x_mid, y_high)].z)
+                                                   + (rand() % (int)(pertube_level)) * 2;
 
-  float new_pertube_level = pertube_level / 2.0;
+  float new_pertube_level = 0.5*pertube_level;
 
   pertube(all_vertices, x_low, y_low,
                         x_mid, y_mid, 
-                        new_pertube_level,
-                        0.5 * (all_vertices[get_index(x_low, y_mid)].z + 
-                               all_vertices[get_index(x_mid, y_low)].z));   //lower-left
+                        new_pertube_level);   //lower-left
   pertube(all_vertices, x_mid, y_low,
                         x_high, y_mid, 
-                        new_pertube_level,
-                        0.5 * (all_vertices[get_index(x_high, y_mid)].z + 
-                               all_vertices[get_index(x_mid, y_low)].z));  //lower-right
+                        new_pertube_level);  //lower-right
   pertube(all_vertices, x_low, y_mid,
                         x_mid, y_high, 
-                        new_pertube_level,
-                        0.5 * (all_vertices[get_index(x_low, y_mid)].z + 
-                               all_vertices[get_index(x_mid, y_high)].z));  //upper-left
+                        new_pertube_level);  //upper-left
   pertube(all_vertices, x_mid, y_mid,
                         x_high, y_high,
-                        new_pertube_level,
-                        0.5 * (all_vertices[get_index(x_high, y_mid)].z + 
-                               all_vertices[get_index(x_mid, y_high)].z)); //upper-right
+                        new_pertube_level); //upper-right
 }
 
 void generate_faces(vector<int>& all_faces){
@@ -94,27 +102,6 @@ void generate_faces(vector<int>& all_faces){
       all_faces.push_back(index+1+SUBDIVISIONS);
     }
   }
-  /* add side faces along x axis */
-  /*
-  for(int i=0; i<(SUBDIVISIONS/2); i++){
-    all_faces.push_back(i);
-    all_faces.push_back(SUBDIVISIONS-i);
-    all_faces.push_back(i+1);
-
-    all_faces.push_back(i+1);
-    all_faces.push_back(SUBDIVISIONS-i);
-    all_faces.push_back(SUBDIVISIONS-i-1);
-
-    index = i + SUBDIVISIONS*(SUBDIVISIONS+1);
-    all_faces.push_back(index);
-    all_faces.push_back(SUBDIVISIONS-i);
-    all_faces.push_back(i+1);
-
-    all_faces.push_back(i+1);
-    all_faces.push_back(SUBDIVISIONS-i);
-    all_faces.push_back(SUBDIVISIONS-i-1);
-  }
-  */
 }
 void generate_island_mesh(/*MESH& island,*/ofstream& fout, string filename){
   int num_v, num_f, num_e;

@@ -174,7 +174,7 @@ void print_flock(vector<BOID>& a_flock) {
   cout << endl;
 }
 
-void init_flock_mesh(MESH& mesh, GLuint shader) {
+void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.num_v = 6;
   mesh.num_f = 4;
   mesh.vertices.resize(6);
@@ -192,11 +192,11 @@ void init_flock_mesh(MESH& mesh, GLuint shader) {
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
-  mesh.setup(shader);
+  mesh.setup(shader, PROJ_MAT);
 }
 
-void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT){
+void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, 
+  LIGHT THE_LIGHT){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   for (unsigned int i = 0; i < a_flock.size(); i++) {
     glm::mat4 new_mv = MV_MAT;
@@ -206,6 +206,6 @@ void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader,
                                 rotate_normal);
     new_mv = glm::translate(new_mv, a_flock[i].pos);
     new_mv = glm::rotate(new_mv, angle, rotate_normal);
-    mesh.draw(shader, PROJ_MAT, new_mv, THE_LIGHT);
+    mesh.draw(shader, new_mv, THE_LIGHT);
   }
 }

@@ -72,7 +72,7 @@ void print_goal(GOAL& goal) {
   cout << endl;
 }
 
-void init_goal_mesh(MESH& mesh, GLuint shader) {
+void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.num_v = 8;
   mesh.num_f = 12;
   mesh.vertices.resize(8);
@@ -90,13 +90,12 @@ void init_goal_mesh(MESH& mesh, GLuint shader) {
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
-  mesh.setup(shader);
+  mesh.setup(shader, PROJ_MAT);
 }
 
-void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT){
+void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT){
   glm::mat4 new_mv = MV_MAT;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   new_mv = glm::translate(new_mv, goal.pos);
-  mesh.draw(shader, PROJ_MAT, new_mv, THE_LIGHT);
+  mesh.draw(shader, new_mv, THE_LIGHT);
 }

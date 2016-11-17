@@ -6,7 +6,6 @@
 
 typedef struct _light{
 	glm::vec4 light0 = glm::vec4(10.0f, 10.0f, 100.0f, 0);
- 	GLfloat shineness = 0.1f;
  	GLint ifNight = 0;
 } LIGHT;
 

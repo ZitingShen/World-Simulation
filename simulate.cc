@@ -2,18 +2,23 @@
 
 using namespace std;
 
+int ENABLE_FLOCK = GLFW_TRUE;
+int ENABLE_GOAL = GLFW_TRUE;
+int ENABLE_MOUNTAIN = GLFW_TRUE;
 int WIDTH, HEIGHT;
-int IS_PAUSED = GLFW_TRUE;
+int IS_PAUSED = GLFW_FALSE;
 int PAUSE_TIME = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
-MESH BOIDS_MESH, GOAL_MESH;
+MESH BOIDS_MESH, GOAL_MESH, SUN_MESH;
 GLuint SHADER;
 
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
 viewMode VIEW_MODE = DEFAULT;
+
+glm::vec3 SUN_POS;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -52,14 +57,15 @@ int main(int argc, char *argv[]){
   while(!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
+    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
-      change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
       update_goal_velocity(A_GOAL);
       update_goal_pos(A_GOAL);
-      //update_velocity(A_FLOCK, A_GOAL);
+      update_velocity(A_FLOCK, A_GOAL);
       apply_goal_attraction(A_FLOCK, A_GOAL);
       update_pos(A_FLOCK);
+      update_sun_pos(SUN_POS);
       if (IS_PAUSED && PAUSE_TIME > 0) {
         print_goal(A_GOAL);
         print_flock(A_FLOCK);
@@ -68,10 +74,13 @@ int main(int argc, char *argv[]){
     }
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
-      draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
-        THE_LIGHT);
-      draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
-        THE_LIGHT);
+      if (ENABLE_FLOCK)
+        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
+          THE_LIGHT);
+      if (ENABLE_GOAL)
+        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
+          THE_LIGHT);
+      draw_a_sun(SUN_POS, SUN_MESH, SHADER, PROJ_MAT, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -87,6 +96,7 @@ void init(GLFWwindow* window) {
   init_a_flock(A_FLOCK);
   init_flock_mesh(BOIDS_MESH, SHADER);
   init_goal_mesh(GOAL_MESH, SHADER);
+  init_sun_mesh(SUN_MESH, SHADER);
 
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
@@ -111,6 +121,42 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_DOWN:
       //change_view(ZOOM_OUT);
+      break;
+
+      case GLFW_KEY_F1:
+      ENABLE_FLOCK = 1 - ENABLE_FLOCK;
+      break;
+
+      case GLFW_KEY_F2:
+      ENABLE_GOAL = 1 - ENABLE_GOAL;
+      break;
+
+      case GLFW_KEY_F3:
+      ENABLE_MOUNTAIN = 1 - ENABLE_MOUNTAIN;
+      break;
+
+      case GLFW_KEY_A:
+      A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
+      break;
+
+      case GLFW_KEY_D:
+        A_GOAL.MOVE_ALONG_X_POSITIVE = true;
+      break;
+
+      case GLFW_KEY_W:
+        A_GOAL.MOVE_ALONG_Y_POSITIVE = true;
+      break;
+
+      case GLFW_KEY_S:
+        A_GOAL.MOVE_ALONG_Y_NEGATIVE = true;
+      break;
+
+      case GLFW_KEY_RIGHT:
+        A_GOAL.ACCELERATE = true;
+      break;
+
+      case GLFW_KEY_LEFT:
+        A_GOAL.DECELERATE = true;
       break;
 
       case GLFW_KEY_P:
@@ -148,6 +194,34 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       case GLFW_KEY_ESCAPE:
       glfwSetWindowShouldClose(window, GLFW_TRUE);
       break;
+      default:
+      break;
+    }
+  } else if (action == GLFW_RELEASE) {
+    switch(key) {
+      case GLFW_KEY_A:
+      A_GOAL.MOVE_ALONG_X_NEGATIVE = false;
+      break;
+
+      case GLFW_KEY_D:
+      A_GOAL.MOVE_ALONG_X_POSITIVE = false;
+      break;
+
+      case GLFW_KEY_W:
+      A_GOAL.MOVE_ALONG_Y_POSITIVE = false;
+      break;
+
+      case GLFW_KEY_S:
+      A_GOAL.MOVE_ALONG_Y_NEGATIVE = false;
+
+      case GLFW_KEY_RIGHT:
+      A_GOAL.ACCELERATE = false;
+      break;
+
+      case GLFW_KEY_LEFT:
+      A_GOAL.DECELERATE = false;
+      break;
+
       default:
       break;
     }

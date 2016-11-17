@@ -3,10 +3,9 @@
 using namespace std;
 
 GOAL::GOAL(){
-  //pos = DEFAULT_GOAL_SPAWN_POSITION;
-  pos = glm::vec3 (0.0f, 5000.0f, 3000.0f);
-  //velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
-  velocity = glm::vec3(10.0f, 10.0f, 0.01f);
+  pos = DEFAULT_GOAL_SPAWN_POSITION;
+  velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+
   MOVE_ALONG_X_NEGATIVE = false;
   MOVE_ALONG_X_POSITIVE = false;
   MOVE_ALONG_Y_NEGATIVE = false;
@@ -95,8 +94,9 @@ void init_goal_mesh(MESH& mesh, GLuint shader) {
 }
 
 void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT){
+  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT){
+  glm::mat4 new_mv = MV_MAT;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  MV_MAT = glm::translate(MV_MAT, goal.pos);
-  mesh.draw(shader, PROJ_MAT, MV_MAT, THE_LIGHT);
+  new_mv = glm::translate(new_mv, goal.pos);
+  mesh.draw(shader, PROJ_MAT, new_mv, THE_LIGHT);
 }

@@ -11,12 +11,14 @@ int PAUSE_TIME = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
-MESH BOIDS_MESH, GOAL_MESH;
+MESH BOIDS_MESH, GOAL_MESH, SUN_MESH;
 GLuint SHADER;
 
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
 viewMode VIEW_MODE = DEFAULT;
+
+glm::vec3 SUN_POS;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]){
       update_velocity(A_FLOCK, A_GOAL);
       apply_goal_attraction(A_FLOCK, A_GOAL);
       update_pos(A_FLOCK);
+      update_sun_pos(SUN_POS);
       if (IS_PAUSED && PAUSE_TIME > 0) {
         print_goal(A_GOAL);
         print_flock(A_FLOCK);
@@ -77,6 +80,7 @@ int main(int argc, char *argv[]){
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
           THE_LIGHT);
+      draw_a_sun(SUN_POS, SUN_MESH, SHADER, PROJ_MAT, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -92,6 +96,7 @@ void init(GLFWwindow* window) {
   init_a_flock(A_FLOCK);
   init_flock_mesh(BOIDS_MESH, SHADER);
   init_goal_mesh(GOAL_MESH, SHADER);
+  init_sun_mesh(SUN_MESH, SHADER);
 
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 

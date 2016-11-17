@@ -22,7 +22,7 @@ const GLfloat A_BOID_TEX[][2] = {{0.5, 0.3}, {0.5, 0.3}, {1, 0},
 
 const GLuint BOID_INDEX[] = {0, 2, 3, 0, 3, 5, 4, 2, 1, 5, 4, 1};
 
-const glm::vec3 SPAWN_POSITION_I = glm::vec3(1000.0f, 1000.0f, 3000.0f);
+const glm::vec3 SPAWN_POSITION_I = glm::vec3(200.0f, 200.0f, 3000.0f);
 const glm::vec3 SPAWN_POSITION_II = glm::vec3(-1000.0f, -1000.0f, 3000.0f);
  //initial speed parallel with y-axis
 const glm::vec3 SPAWN_VELOCITY = glm::vec3(0.0f, 0.01f, 0.0f);

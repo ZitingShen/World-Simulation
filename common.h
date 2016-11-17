@@ -61,4 +61,9 @@
 
 #define DEFAULT_ACCELERATION_FACTOR    	0.2f
 #define DEFAULT_ACCELERATION_MARGIN   	0.1f
+
+#define SUN_POINTS				  10000
+#define SUN_RADIUS				  1000.0f
+#define SUN_SIZE				  1000.f
+#define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #endif

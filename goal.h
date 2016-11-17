@@ -37,7 +37,7 @@ const GLubyte CUBE_INDICES[36] = {0, 3, 2,
                                 0, 5, 4};
 
 const glm::vec3 DEFAULT_GOAL_SPAWN_VELOCITY = glm::vec3(0.0f, 0.0f, 0.01f);
-const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 5000.0f, 4000.0f);
+const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 0.0f, 4000.0f);
 
 class GOAL{
   public:

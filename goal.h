@@ -36,8 +36,8 @@ const GLubyte CUBE_INDICES[36] = {0, 3, 2,
                                 0, 1, 5,
                                 0, 5, 4};
 
-const glm::vec3 DEFAULT_GOAL_SPAWN_VELOCITY = glm::vec3(10.0f, 10.0f, 0.01f); // initiated with a positive speed on Z-axis
-const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 5000.0f, 3000.0f);
+const glm::vec3 DEFAULT_GOAL_SPAWN_VELOCITY = glm::vec3(0.0f, 0.0f, 0.01f);
+const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 5000.0f, 4000.0f);
 
 class GOAL{
   public:
@@ -59,5 +59,5 @@ void teleport_goal(GOAL& goal);
 void print_goal(GOAL& goal);
 void init_goal_mesh(MESH& mesh, GLuint shader);
 void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT);
+  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

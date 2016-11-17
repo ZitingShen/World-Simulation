@@ -24,7 +24,7 @@
 
 #define CAMERA_NEAR               2.0f
 #define CAMERA_FAR                100000000.0f
-#define TOWER_HEIGHT              8000.0f
+#define TOWER_HEIGHT              6000.0f
 
 #define LIGHT_X                   10.0f
 #define LIGHT_Y                   10.0f
@@ -40,17 +40,24 @@
 #define MIN_FLOCK_RADIUS	      2000.0
 #define MAX_FLOCK_RADIUS		  3000.0
 
+#define BOID_SIZE                 100.0f
+#define GOAL_SIZE				  100.0f
+
 #define SEPARATION_WEIGHT         0.002f
 #define ALIGNMENT_WEIGHT          0.0008f
 #define COHESION_WEIGHT           0.0015f
 #define ATTRACTION_WEIGHT         0.0005f
 #define STAY_IN_FLOCK_WEIGHT	  0.003f
+#define SCATTERING 				  (0.8f*PARTNER_RADIUS)
+#define COLLIDING				  (0.2f*PARTNER_RADIUS)
+#define FLOCK_RAIUS_CAP			  (10.0f*BOID_SIZE)
+#define APPROACHING_GOAL		  (20.0f*GOAL_SIZE)
+#define Z_SPEED_CAP				  20.0f
+#define BOID_SPEED_FLOOR		  55.0f
+#define PREDATOR_SPEED_CAP		  300.0f
 
 #define RANDOMISE_V_FACTOR        60
 #define SPAWN_CUBE_LENGTH         100.0f
-
-#define BOID_SIZE                 100.0f
-#define GOAL_SIZE				  100.0f
 
 #define DEFAULT_ACCELERATION_FACTOR    	0.2f
 #define DEFAULT_ACCELERATION_MARGIN   	0.1f

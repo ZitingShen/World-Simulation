@@ -10,14 +10,17 @@
 #include <time.h>
 
 const GLfloat A_BOID[][3]=
-            {{0, 0, 0}, // position of the centroid
+            {{0, 0, 0.01f}, // position of the centroid
+             {0, 0, -0.01f},
              {BOID_SIZE, -BOID_SIZE, 0}, // position of the right vertex
-             {0, BOID_SIZE*2, 0}, // position of the head
+             {0, BOID_SIZE*2, 0.01f}, // position of the head
+             {0, BOID_SIZE*2, -0.01f},
              {-BOID_SIZE, -BOID_SIZE, 0}}; // position of the left vertex
 
-const GLfloat A_BOID_TEX[][2] = {{0.5, 0.3}, {1, 0}, {0.5, 1}, {0.0}};
+const GLfloat A_BOID_TEX[][2] = {{0.5, 0.3}, {0.5, 0.3}, {1, 0},
+                                 {0.5, 1}, {0.5, 1}, {0, 0}};
 
-const GLuint BOID_INDEX[] = {0, 1, 2, 0, 2, 3};
+const GLuint BOID_INDEX[] = {0, 2, 3, 0, 3, 5, 4, 2, 1, 5, 4, 1};
 
 const glm::vec3 SPAWN_POSITION_I = glm::vec3(1000.0f, 1000.0f, 3000.0f);
 const glm::vec3 SPAWN_POSITION_II = glm::vec3(-1000.0f, -1000.0f, 3000.0f);
@@ -28,15 +31,6 @@ const glm::vec3 centroid_init = glm::vec3(0.0f, 0.0f, 0.0f);
 const glm::vec3 head_init = glm::vec3(0.0f, BOID_SIZE*2, 0.0f);
 const glm::vec3 left_init = glm::vec3(-BOID_SIZE, -BOID_SIZE, 0.0f);
 const glm::vec3 right_init = glm::vec3(BOID_SIZE, -BOID_SIZE, 0.0f);
-
-/* Dynamically dealing with Weights */
-const float SCATTERING = 0.8f * PARTNER_RADIUS; // too far away from partner
-const float COLLIDING  = 0.2f * PARTNER_RADIUS; // too close to partner
-const float FLOCK_RAIUS_CAP = 10.0f * BOID_SIZE;
-const float APPROACHING_GOAL = 20.0f * GOAL_SIZE;
-const float Z_SPEED_CAP = 20.0f;
-const float BOID_SPEED_FLOOR = 55.0f;
-const float PREDATOR_SPEED_CAP = 300.0f;
 
 class BOID{
   public:
@@ -63,5 +57,5 @@ void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);
 void init_flock_mesh(MESH& mesh, GLuint shader);
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4 MV_MAT, LIGHT THE_LIGHT);
+  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

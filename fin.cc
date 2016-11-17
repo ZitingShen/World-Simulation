@@ -50,10 +50,8 @@ void MESH::bind(GLuint shader){
 
   glGenTextures(1, textures);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
-  //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX, 
-  //  texels[0].sizeY, 0, GL_RGB, GL_UNSIGNED_INT, texels[0].data);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 
-    128, 0, GL_RGB, GL_UNSIGNED_INT, texels[0].data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX, 
+    texels[0].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[0].data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);

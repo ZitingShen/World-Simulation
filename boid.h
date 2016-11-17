@@ -55,7 +55,7 @@ glm::vec3 get_average_v(vector<BOID>& a_flock);
 void init_a_flock(vector<BOID>& a_flock);
 void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);
-void init_flock_mesh(MESH& mesh, GLuint shader);
+void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
+  glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

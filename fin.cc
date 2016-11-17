@@ -13,17 +13,12 @@ MESH::MESH(){
   this->num_f = 0;
 }
 
-void MESH::setup(GLuint shader){
+void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
   glGenVertexArrays(1, &this->vao);
   vbo = make_bo(GL_ARRAY_BUFFER, &vertices[0], 
     vertices.size()*sizeof(VERTEX));
   ebo = make_bo(GL_ELEMENT_ARRAY_BUFFER, &faces.draw_indices[0],
     faces.draw_indices.size()*sizeof(GLuint));
-  bind(shader);
-}
-
-void MESH::bind(GLuint shader){
-  // bind vbo
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBindAttribLocation(shader, POS_LOCATION, "vPosition");
@@ -56,6 +51,14 @@ void MESH::bind(GLuint shader){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+  glLinkProgram(shader);
+  glUseProgram(shader);
+
+  GLuint proj = glGetUniformLocation(shader, "Projection");
+  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(PROJ_MAT));
+  GLuint shineness = glGetUniformLocation(shader, "Shineness");
+  glUniform1f(shineness, SHINENESS);
 }
 
 void MESH::compute_face_normal(){
@@ -104,7 +107,8 @@ void MESH::compute_vertex_normal(){
   }
 }
 
-int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
+int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader, 
+  glm::mat4& PROJ_MAT){
   glm::vec3 local_max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
   glm::vec3 local_min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
   vector<GLuint> holder_indices;
@@ -184,15 +188,16 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader){
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
-  mesh.setup(shader);
+  mesh.setup(shader, PROJ_MAT);
   return GLFW_TRUE;
 }
 
-void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader){
+void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader,
+  glm::mat4& PROJ_MAT){
   int i = 0;
   for (auto itr_file = filenames.begin(); itr_file != filenames.end(); itr_file++){
     //cout << "reading " << filenames[i] << endl;
-    if(!read_mesh(itr_file->first, all_meshes[i], itr_file->second, shader)){
+    if(!read_mesh(itr_file->first, all_meshes[i], itr_file->second, shader, PROJ_MAT)){
       all_meshes.erase(all_meshes.begin()+i);
     } else {
       i++;
@@ -233,25 +238,16 @@ void print_mesh_info(MESH& mesh){
   }
 }
 
-void MESH::draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, 
-  LIGHT& THE_LIGHT) {
-  glLinkProgram(shader);
-  glUseProgram(shader);
-
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT) {
   GLuint tex = glGetUniformLocation(shader, "tex");
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glUniform1i(tex, 0);
-
-  GLuint proj = glGetUniformLocation(shader, "Projection");
-  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(PROJ_MAT));
+  
   GLuint mv = glGetUniformLocation(shader, "ModelView");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
-
-  GLuint shineness = glGetUniformLocation(shader, "Shineness");
-  glUniform1f(shineness, THE_LIGHT.shineness);
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");
   glUniform1i(ifNight, THE_LIGHT.ifNight);
 

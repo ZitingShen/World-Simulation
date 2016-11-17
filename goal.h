@@ -57,7 +57,6 @@ void update_goal_velocity(GOAL& goal);
 void update_goal_pos(GOAL& goal);
 void teleport_goal(GOAL& goal);
 void print_goal(GOAL& goal);
-void init_goal_mesh(MESH& mesh, GLuint shader);
-void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, 
-  glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
+void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
+void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

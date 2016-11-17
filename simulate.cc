@@ -77,12 +77,10 @@ int main(int argc, char *argv[]){
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
       if (ENABLE_FLOCK)
-        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, PROJ_MAT, MV_MAT, 
-          THE_LIGHT);
+        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT);
       if (ENABLE_GOAL)
-        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, PROJ_MAT, MV_MAT,
-          THE_LIGHT);
-      draw_a_sun(SUN_POS, SUN_MESH, SHADER, PROJ_MAT, MV_MAT, THE_LIGHT);
+        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT);
+      draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -95,14 +93,13 @@ void init(GLFWwindow* window) {
   glColor3f(0.0, 0.0, 0.0);
   srand(time(NULL));
   SHADER = initshader("phong_vs.glsl", "phong_fs.glsl");
-  init_a_flock(A_FLOCK);
-  init_flock_mesh(BOIDS_MESH, SHADER);
-  init_goal_mesh(GOAL_MESH, SHADER);
-  init_sun_mesh(SUN_MESH, SHADER);
-
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
     CAMERA_NEAR, CAMERA_FAR);
+  init_a_flock(A_FLOCK);
+  init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT);
+  init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT);
+  init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {

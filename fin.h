@@ -34,19 +34,20 @@ class MESH {
     FACES     faces;
     /* Constructor */
     MESH();
-    void setup(GLuint shader);
+    void setup(GLuint shader, glm::mat4& PROJ_MAT);
     void bind(GLuint shader);
     void compute_face_normal();
     void compute_vertex_normal();
-    void draw(GLuint shader, glm::mat4& PROJ_MAT, glm::mat4& MV_MAT, 
-      LIGHT& THE_LIGHT);
+    void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT);
     void rotate();
   private:
     GLuint vao, vbo, ebo;
     GLuint textures[6];
 };
 
-int read_mesh(string filename, MESH& mesh, int count, GLuint shader);
-void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader);
+int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader, 
+  glm::mat4& PROJ_MAT);
+void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader,
+  glm::mat4& PROJ_MAT);
 void print_mesh_info(MESH& mesh);
 #endif

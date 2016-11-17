@@ -8,16 +8,10 @@
 #include <cstring>
 #include "common.h"
 #include "read_ppm.h"
+#include "light.h"
 #include "glm/gtx/transform.hpp"
 
 using namespace std;
-
-
-typedef struct _light{
- // using light
- glm::vec4 light0;
- glm::vec4 dropoff_coeff = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f);
-} LIGHT;
 
 struct VERTEX{
   glm::vec3 pos;

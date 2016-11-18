@@ -12,8 +12,8 @@ void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   for (int i = 0; i < 6; i++)
     mesh.faces.draw_indices.push_back(OCEAN_INDICES[i]);
   mesh.texels.resize(1);
-  if (!read_ppm("ppms/boat.ppm", &mesh.texels[0])) {
-    cerr << "Fail loading texture: ppms/boat.ppm" << endl;
+  if (!read_ppm(OCEAN_TEXTURE, &mesh.texels[0])) {
+    cerr << "OCEAN_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();

@@ -9,17 +9,17 @@ CFLAGS=-g -Wall -std=c++11 -I/opt/ports/include
 TARGET = simulate
 SRC = $(TARGET).cc
 
-LIB = initshader.o boid.o view.o goal.o read_ppm.o fin.o sun.o light.o ocean.o
+LIB = initshader.o boid.o view.o goal.o read_ppm.o fin.o sun.o light.o ocean.o island.o
 all: simulate
 
 simulate: $(SRC) $(LIB)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) $(SRC) $(LIB)
 
-fin.o: fin.cc
+fin.o: fin.cc fin.h
 	$(CC) $(CFLAGS) -c fin.cc
 
-boid.o: boid.cc
-	$(CC) $(CFLAGS) -c boid.cc
+island.o: island.cc island.h
+	$(CC) $(CFLAGS) -c island.cc
 
 view.o: view.cc
 	$(CC) $(CFLAGS) -c view.cc

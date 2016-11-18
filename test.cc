@@ -2,7 +2,10 @@
 
 int main(){
 	ofstream fout;
-	string filename = "island.off";
-	generate_island_mesh(fout, filename);
+  vector<MESH> islands;
+  unsigned int seed = 31415926;
+	string filename = "island";
+	string texture = "ppms/rock.ppm";
+  generate_island_mesh(islands, seed, texture, fout, filename);
 	return 0;
 }

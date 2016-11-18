@@ -4,7 +4,7 @@ using namespace std;
 
 int ENABLE_FLOCK = GLFW_TRUE;
 int ENABLE_GOAL = GLFW_TRUE;
-int ENABLE_MOUNTAIN = GLFW_TRUE;
+int ENABLE_ISLAND = GLFW_TRUE;
 int WIDTH, HEIGHT;
 int IS_PAUSED = GLFW_FALSE;
 int PAUSE_TIME = 0;
@@ -12,6 +12,7 @@ int PAUSE_TIME = 0;
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH;
+vector<MESH> ISLAND_MESH;
 GLuint SHADER;
 
 vector<BOID> A_FLOCK;
@@ -80,6 +81,8 @@ int main(int argc, char *argv[]){
         draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT);
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT);
+      if (ENABLE_ISLAND)
+        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
@@ -102,6 +105,7 @@ void init(GLFWwindow* window) {
   init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT);
   init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
+  generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -132,7 +136,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
 
       case GLFW_KEY_F3:
-      ENABLE_MOUNTAIN = 1 - ENABLE_MOUNTAIN;
+      ENABLE_ISLAND = 1 - ENABLE_ISLAND;
       break;
 
       case GLFW_KEY_A:

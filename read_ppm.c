@@ -19,7 +19,7 @@ int read_ppm(const char *filename, Image *image) {
     printf("%s is not a P3 PPM file!\n", filename); 
     return FALSE;
   }
-  printf("%s is a P3 PPM file\n",filename);
+  //printf("%s is a P3 PPM file\n",filename);
   fscanf(fd, "%c",&c);
   while(c == '#') {
     fscanf(fd, "%[^\n] ", str);
@@ -29,7 +29,7 @@ int read_ppm(const char *filename, Image *image) {
   ungetc(c,fd); 
   fscanf(fd, "%d %d %d", &n, &m, &k);
   
-  printf("%d rows  %d columns 3 colors max value= %d\n",n,m,k);
+  //printf("%d rows  %d columns 3 colors max value= %d\n",n,m,k);
   image->sizeX = n;
   image->sizeY = m;
   image->n = 3;
@@ -56,7 +56,7 @@ int read_ppm(const char *filename, Image *image) {
       }
     }
   }
-  printf("read image\n");
+  //printf("read image\n");
   return TRUE;
 }
 

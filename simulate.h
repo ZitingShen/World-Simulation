@@ -12,6 +12,7 @@
 #include "view.h"
 #include "common.h"
 #include "sun.h"
+#include "ocean.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

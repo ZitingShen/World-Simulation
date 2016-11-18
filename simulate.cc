@@ -11,7 +11,7 @@ int PAUSE_TIME = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
-MESH BOIDS_MESH, GOAL_MESH, SUN_MESH;
+MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH;
 GLuint SHADER;
 
 vector<BOID> A_FLOCK;
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]){
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
+      draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -100,6 +101,7 @@ void init(GLFWwindow* window) {
   init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT);
   init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT);
   init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
+  init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {

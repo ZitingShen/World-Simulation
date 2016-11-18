@@ -62,4 +62,6 @@
 #define SUN_SIZE				  1000.f
 #define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #define SHINENESS				  0.1f
+
+#define OCEAN_SIZE 				  5000
 #endif

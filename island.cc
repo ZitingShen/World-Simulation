@@ -1,6 +1,6 @@
 #include "island.h"
 
-int SUBDIVISIONS = 2;
+int SUBDIVISIONS = 32;
 int ISLAND_SIZE = WORLD_SIZE / SUBDIVISIONS;
 
 void set_island(int new_division){
@@ -35,11 +35,11 @@ void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices){
       count++;
     }
   }
-  all_vertices[get_index(0, SUBDIVISIONS/2)].z = PRECIPICE;
-  all_vertices[get_index(SUBDIVISIONS/2, 0)].z = PRECIPICE;
-  all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = PRECIPICE;
-  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = PRECIPICE;
-  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 2 * PRECIPICE;
+  all_vertices[get_index(0, SUBDIVISIONS/2)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, 0)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 5 * PRECIPICE + get_random() * PERTUBE_LEVEL;
 }
 
 int get_index(int x, int y){
@@ -111,50 +111,56 @@ void pertube(vector<glm::vec3>& all_vertices,
   int y_mid = (y_low+y_high)/2;
 
   /* pertubing on five points */
+  if ( (int)pertube_level !=  PERTUBE_LEVEL){
   //add_noise(noise);
-  all_vertices[get_index(x_mid+noise, y_low)].z += 0.25 * (all_vertices[get_index(x_low, y_low)].z
-                                                     + all_vertices[get_index(x_high, y_low)].z);
-                                                    // +  get_random() * static_cast<float>(pertube_level);
+  all_vertices[get_index(x_mid, y_low)].z = 0.5 * (all_vertices[get_index(x_low, y_low)].z
+                                                      + all_vertices[get_index(x_high, y_low)].z)
+                                                      + get_random() * static_cast<float>(pertube_level);
+                                                 
   if (all_vertices[get_index(x_mid+noise, y_low)].z == 375){
     cout << all_vertices[get_index(x_low, y_low)].z << " " << all_vertices[get_index(x_high, y_low)].z << endl;
     cout << get_index(x_mid+noise, y_low) << endl;
     cout << get_index(x_low, y_low) << " " << get_index(x_high, y_low) << endl;
   }
   //add_noise(noise);
-  all_vertices[get_index(x_low, y_mid+noise)].z += 0.25 * (all_vertices[get_index(x_low, y_low)].z
-                                                   + all_vertices[get_index(x_low, y_high)].z);
-                                               //    +  get_random() * static_cast<float>(pertube_level);
+  all_vertices[get_index(x_low, y_mid)].z = 0.5 * (all_vertices[get_index(x_low, y_low)].z
+                                                   + all_vertices[get_index(x_low, y_high)].z)
+                                                   + get_random() * static_cast<float>(pertube_level);
+                                           
   if (all_vertices[get_index(x_low, y_mid)].z == 375){
     cout << all_vertices[get_index(x_low, y_low)].z << " " << all_vertices[get_index(x_low, y_high)].z << endl;
     cout << get_index(x_low, y_mid) << endl;
     cout << get_index(x_low, y_low) << " " << get_index(x_low, y_high) << endl;
   }
   //add_noise(noise);
-  all_vertices[get_index(x_mid+noise, y_high)].z += 0.25 * (all_vertices[get_index(x_low, y_high)].z
-                                                   + all_vertices[get_index(x_high, y_high)].z);
-                                                //   +  get_random() * static_cast<float>(pertube_level);
+  all_vertices[get_index(x_mid, y_high)].z = 0.5 * (all_vertices[get_index(x_low, y_high)].z
+                                                   + all_vertices[get_index(x_high, y_high)].z)
+                                                   + get_random() * static_cast<float>(pertube_level);
+                                               
   if (all_vertices[get_index(x_mid, y_high)].z == 375){
     cout << all_vertices[get_index(x_low, y_high)].z << " " << all_vertices[get_index(x_high, y_high)].z << endl;
     cout << get_index(x_mid, y_high) << endl;
     cout << get_index(x_low, y_high) << " " << get_index(x_high, y_high) << endl;
   }
   //add_noise(noise);
-  all_vertices[get_index(x_high, y_mid+noise)].z += 0.25 * (all_vertices[get_index(x_high, y_low)].z
-                                                   + all_vertices[get_index(x_high, y_high)].z);
-                                                //   +  get_random() * static_cast<float>(pertube_level);
+  all_vertices[get_index(x_high, y_mid)].z = 0.5 * (all_vertices[get_index(x_high, y_low)].z
+                                                   + all_vertices[get_index(x_high, y_high)].z)
+                                                   + get_random() * static_cast<float>(pertube_level);
+                                               
   if (all_vertices[get_index(x_high, y_mid+noise)].z == 375){
     cout << all_vertices[get_index(x_high, y_low)].z << " " << all_vertices[get_index(x_high, y_high)].z << endl;
     cout << get_index(x_high, y_mid+noise) << endl;
     cout << get_index(x_high, y_low) << " " << get_index(x_high, y_high) << endl;
   }
   //add_noise(noise);
-  all_vertices[get_index(x_mid+noise, y_mid+noise)].z += 0.25  * (all_vertices[get_index(x_low, y_mid)].z
-                                                          + all_vertices[get_index(x_high, y_mid)].z
-                                                          + all_vertices[get_index(x_low, y_mid)].z
-                                                          + all_vertices[get_index(x_mid, y_high)].z);
-                                                //          + get_random() * static_cast<float>(pertube_level);
+  all_vertices[get_index(x_mid, y_mid)].z = 0.25  * (all_vertices[get_index(x_low, y_mid)].z
+                                                     + all_vertices[get_index(x_high, y_mid)].z
+                                                     + all_vertices[get_index(x_low, y_mid)].z
+                                                     + all_vertices[get_index(x_mid, y_high)].z)
+                                                     + get_random() * static_cast<float>(pertube_level);
+  }
 
-  float new_pertube_level = 0.5*pertube_level;
+  float new_pertube_level = 0.5* pertube_level;
 
   pertube(all_vertices, x_low, y_low,
                         x_mid, y_mid,

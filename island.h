@@ -14,7 +14,7 @@
 
 #define WORLD_SIZE 1024       // edge length of island mesh
 #define PRECIPICE 300
-#define PERTUBE_LEVEL 80
+#define PERTUBE_LEVEL 800
 
 extern int SUBDIVISIONS;   // has to be an even number
 extern int ISLAND_SIZE;

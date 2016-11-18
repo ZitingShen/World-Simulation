@@ -80,7 +80,7 @@ void MESH::compute_vertex_normal(){
   int count = 0;
   for (int i=0; i<num_triangles; i++){  // which face we are looking at
     for (int j=0; j<3; j++){  // all vertices in this face
-      //cout << this->faces.num_v[i] << endl;
+      //cout << "count = " << count << " i= " << i << endl;
       faces_per_vertex[this->faces.draw_indices[count]].push_back(i);
       count++;
     }

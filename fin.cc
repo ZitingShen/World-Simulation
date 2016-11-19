@@ -15,7 +15,7 @@ MESH::MESH(){
 
 void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
   glGenVertexArrays(1, &this->vao);
-  vbo = make_bo(GL_ARRAY_BUFFER, &vertices[0], 
+  vbo = make_bo(GL_ARRAY_BUFFER, &vertices[0],
     vertices.size()*sizeof(VERTEX));
   ebo = make_bo(GL_ELEMENT_ARRAY_BUFFER, &faces.draw_indices[0],
     faces.draw_indices.size()*sizeof(GLuint));
@@ -35,7 +35,7 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
                         GL_FALSE,
                         sizeof(VERTEX),
                         (GLvoid*)offsetof(VERTEX, normal));
-  
+ 
   glBindAttribLocation(shader, TEXTURE_LOCATION, "vTex");
   glEnableVertexAttribArray(TEXTURE_LOCATION);
   glVertexAttribPointer(TEXTURE_LOCATION, 2, GL_FLOAT,
@@ -45,7 +45,7 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
 
   glGenTextures(1, textures);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX, 
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX,
     texels[0].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[0].data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -74,7 +74,7 @@ void MESH::compute_face_normal(){
 }
 
 void MESH::compute_vertex_normal(){
-  vector<vector<int>> faces_per_vertex(this->num_v, vector<int>());
+  vector<vector<int> > faces_per_vertex(this->num_v, vector<int>());
   glm::vec3 normal;
   int num_triangles = this->faces.draw_indices.size() / 3;
   int count = 0;
@@ -107,7 +107,7 @@ void MESH::compute_vertex_normal(){
   }
 }
 
-int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader, 
+int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
   glm::mat4& PROJ_MAT){
   glm::vec3 local_max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
   glm::vec3 local_min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);

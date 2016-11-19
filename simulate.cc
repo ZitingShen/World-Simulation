@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     std::cerr << "ERROR: could not start GLFW3" << std::endl;
     exit(EXIT_FAILURE);
   }
-  
+
   glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -176,21 +176,28 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       case GLFW_KEY_V:
       VIEW_MODE  = DEFAULT;
       glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
+      PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_T:
       VIEW_MODE = TRAILING;
       glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT, 
+      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_G:
       VIEW_MODE = SIDE;
       glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT, 
+      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
+
+      case GLFW_KEY_F: //first person view
+      VIEW_MODE = FP;
+      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 

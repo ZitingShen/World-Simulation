@@ -64,7 +64,7 @@
 #define SHINENESS				  0.1f
 
 #define OCEAN_SIZE 				  5000
-#define SEED                      3.14159265f
+#define SEED                      314159265
 
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"

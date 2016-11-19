@@ -91,7 +91,7 @@ void pertube(vector<glm::vec3>& all_vertices,
   all_vertices[get_index(x_mid, y_low)].z = 0.5 * (all_vertices[get_index(x_low, y_low)].z
                                                       + all_vertices[get_index(x_high, y_low)].z)
                                                       + get_random() * static_cast<float>(pertube_level);
-                                                 
+
   if (all_vertices[get_index(x_mid+noise, y_low)].z == 375){
     cout << all_vertices[get_index(x_low, y_low)].z << " " << all_vertices[get_index(x_high, y_low)].z << endl;
     cout << get_index(x_mid+noise, y_low) << endl;
@@ -101,7 +101,7 @@ void pertube(vector<glm::vec3>& all_vertices,
   all_vertices[get_index(x_low, y_mid)].z = 0.5 * (all_vertices[get_index(x_low, y_low)].z
                                                    + all_vertices[get_index(x_low, y_high)].z)
                                                    + get_random() * static_cast<float>(pertube_level);
-                                           
+
   if (all_vertices[get_index(x_low, y_mid)].z == 375){
     cout << all_vertices[get_index(x_low, y_low)].z << " " << all_vertices[get_index(x_low, y_high)].z << endl;
     cout << get_index(x_low, y_mid) << endl;
@@ -111,7 +111,7 @@ void pertube(vector<glm::vec3>& all_vertices,
   all_vertices[get_index(x_mid, y_high)].z = 0.5 * (all_vertices[get_index(x_low, y_high)].z
                                                    + all_vertices[get_index(x_high, y_high)].z)
                                                    + get_random() * static_cast<float>(pertube_level);
-                                               
+
   if (all_vertices[get_index(x_mid, y_high)].z == 375){
     cout << all_vertices[get_index(x_low, y_high)].z << " " << all_vertices[get_index(x_high, y_high)].z << endl;
     cout << get_index(x_mid, y_high) << endl;
@@ -121,7 +121,7 @@ void pertube(vector<glm::vec3>& all_vertices,
   all_vertices[get_index(x_high, y_mid)].z = 0.5 * (all_vertices[get_index(x_high, y_low)].z
                                                    + all_vertices[get_index(x_high, y_high)].z)
                                                    + get_random() * static_cast<float>(pertube_level);
-                                               
+
   if (all_vertices[get_index(x_high, y_mid+noise)].z == 375){
     cout << all_vertices[get_index(x_high, y_low)].z << " " << all_vertices[get_index(x_high, y_high)].z << endl;
     cout << get_index(x_high, y_mid+noise) << endl;
@@ -169,13 +169,12 @@ void generate_faces(vector<GLuint>& all_faces){
   }
 }
 
-void generate_island_mesh(vector<MESH>& island, unsigned int seed,
-                          string texture,
-                          ofstream& fout, string filename){
-  int num_v, num_f, num_e;
+void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT) {
+                          //ofstream& fout, string filename) {
+  int num_v, num_f;
   string current_file;
   vector<vector<glm::vec3> > all_vertices;
-  srand(seed); // using given seed
+  srand(SEED); // using given seed (UNSIGNED INT)
 
   island.resize(3); // using three levels of island mesh
   all_vertices.resize(3);
@@ -184,7 +183,6 @@ void generate_island_mesh(vector<MESH>& island, unsigned int seed,
     set_island(SUBDIVISIONS*2);
     get_num_v(num_v);
     get_num_f(num_f);
-    num_e = 0;
 
     /* data generation */
     get_all_vertices(num_v, all_vertices[island_index]);
@@ -192,6 +190,7 @@ void generate_island_mesh(vector<MESH>& island, unsigned int seed,
     generate_faces(island[island_index].faces.draw_indices);
 
     /* File IO */
+    /*
     current_file = filename + to_string(island_index) + ".off";
     //cout << current_file << endl;
     fout.open(current_file);
@@ -217,21 +216,33 @@ void generate_island_mesh(vector<MESH>& island, unsigned int seed,
 
     fout.close();
     //cout << "fout done" << endl;
+    */
 
     /* setting up MESH */
     island[island_index].num_v = num_v;
     island[island_index].num_f = num_f;
     island[island_index].vertices.resize(num_v); // resize to num_v
-    island[island_index].texels.resize(num_v);
-    for (int i=0; i<num_v; i++)
+    for (int i=0; i<num_v; i++) {
       island[island_index].vertices[i].pos = all_vertices[island_index][i];
-      island[island_index].texels.resize(1);
-      if (!read_ppm(texture.c_str(), &island[island_index].texels[0])) {
-        cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
+      island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE;
+      island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE;
+    }
+    island[island_index].texels.resize(1);
+    if (!read_ppm(ISLAND_TEXTURE, &island[island_index].texels[0])) {
+      cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
     }
 
     island[island_index].compute_face_normal();
     island[island_index].compute_vertex_normal();
+    island[island_index].setup(shader, PROJ_MAT);
   }
   srand(time(NULL)); // reset to time(NULL)
+}
+
+void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
+  LIGHT THE_LIGHT) {
+  THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
+  glm::mat4 new_mv = MV_MAT;
+  //new_mv = glm::translate(new_mv, a_flock[i].pos);
+  meshes[2].draw(shader, new_mv, THE_LIGHT);
 }

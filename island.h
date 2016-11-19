@@ -3,12 +3,11 @@
 
 #include <vector>
 #include "fin.h"// for mesh data structure
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <time.h>
 #include <glm/glm.hpp>
-#include <math.h>
+#include "common.h"
 #include "assert.h"
 #include "read_ppm.h"
 
@@ -43,8 +42,7 @@ void get_island_centre(MESH& island, glm::vec3& centre);
 
 void generate_faces(vector<GLuint>& all_faces);
 
-void generate_island_mesh(vector<MESH>& island, unsigned int seed,
-						              string texture,
-                          ofstream& fout, string filename);
-
+void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT);
+                          //ofstream& fout, string filename);
+void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

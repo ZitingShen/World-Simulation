@@ -187,8 +187,8 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   for (int i = 0; i < 12; i++)
     mesh.faces.draw_indices.push_back(BOID_INDEX[i]);
   mesh.texels.resize(1);
-  if (!read_ppm("ppms/paper.ppm", &mesh.texels[0])) {
-    cerr << "Fail loading texture: ppms/paper.ppm" << endl;
+  if (!read_ppm(BOID_TEXTURE, &mesh.texels[0])) {
+    cerr << "BOID_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();

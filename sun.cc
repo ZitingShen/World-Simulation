@@ -17,8 +17,8 @@ void init_sun_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   for (int i = 0; i < SUN_POINTS; i++)
     mesh.faces.draw_indices.push_back(i);
   mesh.texels.resize(1);
-  if (!read_ppm("ppms/fire.ppm", &mesh.texels[0])) {
-    cerr << "Fail loading texture: ppms/fire.ppm" << endl;
+  if (!read_ppm(SUN_TEXTURE, &mesh.texels[0])) {
+    cerr << "SUN_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();

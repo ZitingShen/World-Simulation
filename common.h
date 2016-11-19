@@ -70,5 +70,6 @@
 #define GOAL_TEXTURE			  "ppms/fire.ppm"
 #define SUN_TEXTURE				  "ppms/fire.ppm"
 #define OCEAN_TEXTURE			  "ppms/boat.ppm"
-#define ISLAND_TEXTURE			  "ppms/rock.ppm"
+#define ISLAND_TEXTURE			  "ppms/canyon.ppm"
+#define SNOW_TEXTURE			  "ppms/snow.ppm"
 #endif

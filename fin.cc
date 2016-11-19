@@ -43,14 +43,16 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
                         sizeof(VERTEX),
                         (GLvoid*)offsetof(VERTEX, tex_coords));
 
-  glGenTextures(1, textures);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[0].sizeX,
-    texels[0].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[0].data);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+  glGenTextures(texels.size(), textures);
+  for (unsigned int i = 0; i < texels.size(); i++) {
+    glBindTexture(GL_TEXTURE_2D, textures[i]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[i].sizeX,
+      texels[i].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[i].data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+  }
 
   glLinkProgram(shader);
   glUseProgram(shader);
@@ -239,10 +241,12 @@ void print_mesh_info(MESH& mesh){
 }
 
 void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT) {
-  GLuint tex = glGetUniformLocation(shader, "tex");
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glUniform1i(tex, 0);
+  for (unsigned int i = 0; i < texels.size(); i++) {
+    GLuint tex = glGetUniformLocation(shader, "tex"+i);
+    glActiveTexture(GL_TEXTURE0+i);
+    glBindTexture(GL_TEXTURE_2D, textures[i]);
+    glUniform1i(tex, i);
+  }
   
   GLuint mv = glGetUniformLocation(shader, "ModelView");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));

@@ -12,7 +12,7 @@
 #include "assert.h"
 #include "read_ppm.h"
 
-#define WORLD_SIZE 1024       // edge length of island mesh
+#define WORLD_SIZE 2048       // edge length of island mesh
 #define PRECIPICE 300
 #define PERTUBE_LEVEL 800
 
@@ -28,9 +28,7 @@ void get_num_f(int& num_f);
 void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices);
 int get_index(int x, int y);
 void create_precipice(vector<glm::vec3>& all_vertices);
-
 float get_random();
-void add_noise(int& noise);
 
 void pertube(vector<glm::vec3>& all_vertices,
              int x_low,
@@ -40,7 +38,8 @@ void pertube(vector<glm::vec3>& all_vertices,
              float pertube_level);
 
 bool on_edge(int index);
-void optimize_island(vector<glm::vec3>& all_vertices);
+
+void get_island_centre(MESH& island, glm::vec3& centre);
 
 void generate_faces(vector<GLuint>& all_faces);
 

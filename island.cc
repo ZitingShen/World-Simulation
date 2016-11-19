@@ -1,6 +1,6 @@
 #include "island.h"
 
-int SUBDIVISIONS = 32;
+int SUBDIVISIONS = 128;
 int ISLAND_SIZE = WORLD_SIZE / SUBDIVISIONS;
 
 void set_island(int new_division){
@@ -25,8 +25,8 @@ void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices){
   all_vertices.resize(num_v);
   int side_v = sqrt(num_v);
   int count = 0;
-  int x_min = -(floor(side_v/2) * ISLAND_SIZE);
-  int y_min = -(floor(side_v/2) * ISLAND_SIZE);
+  int x_min = -(floor(side_v/2) * (ISLAND_SIZE + get_random() * ISLAND_SIZE));
+  int y_min = -(floor(side_v/2) * (ISLAND_SIZE + get_random() * ISLAND_SIZE));
   for (int i=0; i<side_v; i++){
     for (int j=0; j<side_v; j++){
       all_vertices[count].x = x_min + j*ISLAND_SIZE;
@@ -50,17 +50,6 @@ float get_random(){
   return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 }
 
-void add_noise(int& noise){
-  float yardstick = get_random();
-  //cout << yardstick << endl;
-  if (yardstick < 0.33)
-    noise = -1;
-  else if (yardstick > 0.67)
-    noise = 1;
-  else
-    noise = 0;
-}
-
 void create_precipice(vector<glm::vec3>& all_vertices){
   pertube(all_vertices, 0, 0, SUBDIVISIONS, SUBDIVISIONS, (float)PERTUBE_LEVEL);
 }
@@ -75,25 +64,11 @@ bool on_edge(int index){
    return false;
 }
 
-void optimize_island(vector<glm::vec3>& all_vertices){
-  float average;
-  int index;
-  for(int i=0; i<SUBDIVISIONS; i++){
-      for (int j=0; j<SUBDIVISIONS; j++){
-        index = get_index(j, i);
-        if (!on_edge(index)){
-           average = 0.125 * ( all_vertices[get_index(j-1, i)].z
-                              +all_vertices[get_index(j, i-1)].z
-                              +all_vertices[get_index(j+1, i-1)].z
-                              +all_vertices[get_index(j-1, i-1)].z
-                              +all_vertices[get_index(j+1, i)].z
-                              +all_vertices[get_index(j, i+1)].z
-                              +all_vertices[get_index(j-1,i+1)].z
-                              +all_vertices[get_index(j+1, i+1)].z);
-           all_vertices[index].z = all_vertices[index].z>average?all_vertices[index].z:average;
-        }
-      }
-  }
+void get_island_centre(MESH& island, glm::vec3& centre){
+  int index = get_index(SUBDIVISIONS/2, SUBDIVISIONS/2);
+  centre = glm::vec3(island.vertices[index].pos.x,
+                     island.vertices[index].pos.y,
+                     island.vertices[index].pos.z);
 }
 
 void pertube(vector<glm::vec3>& all_vertices,
@@ -193,6 +168,7 @@ void generate_faces(vector<GLuint>& all_faces){
     }
   }
 }
+
 void generate_island_mesh(vector<MESH>& island, unsigned int seed,
                           string texture,
                           ofstream& fout, string filename){
@@ -213,7 +189,6 @@ void generate_island_mesh(vector<MESH>& island, unsigned int seed,
     /* data generation */
     get_all_vertices(num_v, all_vertices[island_index]);
     create_precipice(all_vertices[island_index]);
-    //optimize_island(all_vertices[island_index]);
     generate_faces(island[island_index].faces.draw_indices);
 
     /* File IO */

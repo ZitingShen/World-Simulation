@@ -21,10 +21,10 @@ fin.o: fin.cc fin.h
 island.o: island.cc island.h
 	$(CC) $(CFLAGS) -c island.cc
 
-view.o: view.cc
+view.o: view.cc view.h
 	$(CC) $(CFLAGS) -c view.cc
 
-goal.o: goal.cc
+goal.o: goal.cc goal.h
 	$(CC) $(CFLAGS) -c goal.cc
 
 sun.o: sun.cc
@@ -33,16 +33,16 @@ sun.o: sun.cc
 ocean.o: ocean.cc
 	$(CC) $(CFLAGS) -c ocean.cc
 
-light.o: light.cc
+light.o: light.cc light.h
 	$(CC) $(CFLAGS) -c light.cc
 
 initshader.o: initshader.c
 	$(CC) $(CFLAGS) -c initshader.c
 
-boid.o: boid.cc
+boid.o: boid.cc boid.h
 	$(CC) $(CFLAGS) -c boid.cc
 
-read_ppm.o: read_ppm.c
+read_ppm.o: read_ppm.c read_ppm.h
 	$(CC) $(CFLAGS) -c read_ppm.c
 
 clean:

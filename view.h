@@ -8,6 +8,8 @@
 
 enum viewMode {DEFAULT, TRAILING, SIDE, FP};
 
-void change_view(glm::mat4& PROJ_MAT, viewMode vm,
-	                vector<BOID>& flock, GOAL& goal);
+void change_view(glm::mat4& PROJ_MAT,
+                  viewMode vm,
+	                vector<BOID>& flock, GOAL& goal
+                  spot_light& s_p);
 #endif

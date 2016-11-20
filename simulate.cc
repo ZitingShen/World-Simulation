@@ -11,6 +11,7 @@ int PAUSE_TIME = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
+spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH;
 vector<MESH> ISLAND_MESH;
 GLuint SHADER;
@@ -20,6 +21,9 @@ GOAL A_GOAL;
 viewMode VIEW_MODE = DEFAULT;
 
 glm::vec3 SUN_POS;
+
+/*  for steerable spotlight */
+mouse mouse_status;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -31,8 +35,8 @@ int main(int argc, char *argv[]){
   glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  
-  GLFWwindow* window = glfwCreateWindow(500, 500, "Make a World", 
+
+  GLFWwindow* window = glfwCreateWindow(500, 500, "Make a World",
   	NULL, NULL);
   if (!window){
     glfwTerminate();
@@ -43,14 +47,15 @@ int main(int argc, char *argv[]){
 
   glewExperimental = GL_TRUE;
   glewInit();
-  
+
   init(window);
 
   glfwMakeContextCurrent(window);
   glfwSetWindowSizeCallback(window, reshape);
+  glfwSetCursorPosCallback(window, cursor);
   glfwSetKeyCallback(window, keyboard);
   glfwSetFramebufferSizeCallback(window, framebuffer_resize);
-  
+
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
@@ -58,8 +63,9 @@ int main(int argc, char *argv[]){
   while(!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
-    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
+    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT);
     update_light(SUN_POS, THE_LIGHT);
+    update_spot_light(SPOT_LIGHT, mouse_status, A_FLOCK, VIEW_MODE);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
       update_goal_velocity(A_GOAL);
@@ -98,7 +104,7 @@ void init(GLFWwindow* window) {
   srand(time(NULL));
   SHADER = initshader("phong_vs.glsl", "phong_fs.glsl");
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-  PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
+  PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
     CAMERA_NEAR, CAMERA_FAR);
   init_a_flock(A_FLOCK);
   init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT);
@@ -106,6 +112,9 @@ void init(GLFWwindow* window) {
   init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
+
+  glfwGetCursorPos(window, &mouse_status.x_pos, &mouse_status.y_pos); // get mouse position
+  initialise_spot_light(SPOT_LIGHT, A_FLOCK);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -113,8 +122,19 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
+  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT);
 }
+
+void cursor(GLFWwindow* window, double xpos, double ypos) {
+  if (VIEW_MODE != FP){
+    mouse_status.x_pos = xpos;
+    mouse_status.y_pos = ypos;
+    return; // only works in first person mode
+  }else{
+    mouse_status.x_pos = xpos;
+    mouse_status.y_pos = ypos;
+  }
+  }
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS) {

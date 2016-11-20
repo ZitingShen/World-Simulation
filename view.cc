@@ -1,7 +1,9 @@
 #include "view.h"
 
-void change_view(glm::mat4& MV_MAT, viewMode vm,
-  vector<BOID>& flock, GOAL& goal) {
+void change_view(glm::mat4& MV_MAT,
+                 viewMode vm,
+                 vector<BOID>& flock, GOAL& goal,
+                 spot_light& s_p){
   glm::vec3 centroid = flock_centroid(flock);
   glm::vec3 midpoint = mid_point(flock, goal);
   float distance = get_d(flock, goal);
@@ -36,8 +38,9 @@ void change_view(glm::mat4& MV_MAT, viewMode vm,
 
     case FP:
       centroid = flock[0].pos;
+      up = up; // to be changed to boid's normal
       eye = centroid
-          + glm::normalize(flock[0].velocity) * BOID_SIZE;
+          + glm::normalize(s_p.coneDirection) * BOID_SIZE;
       break;
 
     default:

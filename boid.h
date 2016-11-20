@@ -35,9 +35,9 @@ const glm::vec3 right_init = glm::vec3(BOID_SIZE, -BOID_SIZE, 0.0f);
 class BOID{
   public:
     glm::vec3 pos;
-    glm::vec3 velocity;   
+    glm::vec3 velocity;
     float partner_radius;// the radius within which it looks for partners
-    
+
     BOID();
 };
 
@@ -56,6 +56,6 @@ void init_a_flock(vector<BOID>& a_flock);
 void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);
 void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
-void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, 
+void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader,
   glm::mat4& MV_MAT, LIGHT THE_LIGHT);
 #endif

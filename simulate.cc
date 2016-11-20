@@ -11,7 +11,7 @@ int PAUSE_TIME = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
-MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH;
+MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
 vector<MESH> ISLAND_MESH;
 GLuint SHADER;
 
@@ -85,6 +85,7 @@ int main(int argc, char *argv[]){
         draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT);
+      draw_octopus(OCTOPUS_MESH, SHADER, MV_MAT, THE_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -103,9 +104,12 @@ void init(GLFWwindow* window) {
   init_a_flock(A_FLOCK);
   init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT);
   init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT);
+  read_mesh("meshes/sphere2.off", SUN_MESH, SHADER, PROJ_MAT);
   init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
+  read_mesh("meshes/octopus.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
+  init_octopus_mesh(OCTOPUS_MESH, SHADER, PROJ_MAT);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {

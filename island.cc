@@ -206,11 +206,6 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
     island[island_index].vertices.resize(num_v); // resize to num_v
     for (int i=0; i<num_v; i++) {
       island[island_index].vertices[i].pos = all_vertices[island_index][i];
-    }
-    glm::vec3 center;
-    get_island_centre(island[island_index], center);
-    GLfloat snow_line = center[2]*0.85f;
-    for (int i=0; i<num_v; i++) {
       island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE-0.1f;
       island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE-0.1f;
     }

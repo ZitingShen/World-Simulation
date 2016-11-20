@@ -109,8 +109,7 @@ void MESH::compute_vertex_normal(){
   }
 }
 
-int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
-  glm::mat4& PROJ_MAT){
+int read_mesh(string filename, MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT){
   glm::vec3 local_max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
   glm::vec3 local_min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
   vector<GLuint> holder_indices;
@@ -131,7 +130,8 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
   /* reading attributs */
   my_fin >> mesh.num_v;
   my_fin >> mesh.num_f;
-  //my_fin >> mesh.num_e;
+  int num_e;
+  my_fin >> num_e;
   /* reading vertices */
   mesh.vertices.resize(mesh.num_v);
   for (int i=0; i<(int)mesh.num_v; i++){
@@ -167,39 +167,17 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
     }
   }
   my_fin.close();
-  for (int i = 0; i < repeated_count; i++) {
-    float max_scale = -FLT_MAX;
-    for (int j = 0; j < 3; j++) {
-      max_scale = local_max[j]-local_min[j]>max_scale?local_max[j]-local_min[j]:max_scale;
-    }
-    /*
-    glm::mat4 new_mat;
-    new_mat = glm::scale(glm::vec3(
-                         MESH_X/max_scale,
-                         MESH_Y/max_scale,
-                         MESH_Z/max_scale));
-    new_mat = glm::translate(new_mat, glm::vec3(
-                          max_scale*(mesh.id[i]%3)*BLOCK,
-                          0,
-                          max_scale*(mesh.id[i]/3)*BLOCK));
-    
-    mesh.scaled.push_back(new_mat);
-    mesh.transforms.push_back(new_mat);
-    mesh.spin.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    */
-  }
-  mesh.compute_face_normal();
-  mesh.compute_vertex_normal();
-  mesh.setup(shader, PROJ_MAT);
+  mesh.center = (local_max+local_min)*0.5f;
+  mesh.size = local_max-local_min;
   return GLFW_TRUE;
 }
 
-void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader,
+void read_all_meshes(vector<string>& filenames, vector<MESH>& all_meshes, GLuint shader,
   glm::mat4& PROJ_MAT){
   int i = 0;
   for (auto itr_file = filenames.begin(); itr_file != filenames.end(); itr_file++){
     //cout << "reading " << filenames[i] << endl;
-    if(!read_mesh(itr_file->first, all_meshes[i], itr_file->second, shader, PROJ_MAT)){
+    if(!read_mesh(*itr_file, all_meshes[i], shader, PROJ_MAT)){
       all_meshes.erase(all_meshes.begin()+i);
     } else {
       i++;
@@ -253,7 +231,7 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT) {
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");
-  glUniform1i(ifNight, THE_LIGHT.ifNight);
+  glUniform1f(ifNight, THE_LIGHT.ifNight);
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);

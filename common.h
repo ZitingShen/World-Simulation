@@ -59,17 +59,18 @@
 
 #define SUN_POINTS				  10000
 #define SUN_RADIUS				  3000.0f
-#define SUN_SIZE				  500.f
+#define SUN_SIZE				  500.0f
 #define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #define SHINENESS				  0.1f
 
 #define OCEAN_SIZE 				  5000
+#define OCTOPUS_SIZE			  1000.0
 #define SEED                      314159265
 
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"
 #define SUN_TEXTURE				  "ppms/fire.ppm"
-#define OCEAN_TEXTURE			  "ppms/boat.ppm"
-#define ISLAND_TEXTURE			  "ppms/canyon.ppm"
+#define OCEAN_TEXTURE			  "ppms/ocean.ppm"
+#define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 #endif

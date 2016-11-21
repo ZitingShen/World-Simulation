@@ -17,8 +17,8 @@ uniform float ifNight;
 uniform int ifSnow;
 
 vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
-  vec3 surface_to_sl = light_position.xyz - vPosition;
-  float angle = degrees(acos(dot(-surface_to_sl, normalize(direction))));
+  vec3 sl_to_surface = vPosition - light_position.xyz;
+  float angle = acos(dot(normalize(sl_to_surface), normalize(direction)));
   if(angle > coneAngle){
     return vec3(0.0, 0.0, 0.0); //out of cone
   }

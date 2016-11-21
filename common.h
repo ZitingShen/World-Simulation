@@ -64,7 +64,7 @@
 #define SHINENESS				  0.1f
 
 #define OCEAN_SIZE 				  5000
-#define OCTOPUS_SIZE			  1000.0
+#define OCTOPUS_SIZE			  1200.0
 #define SEED                      314159265
 
 #define BOID_TEXTURE			  "ppms/paper.ppm"
@@ -73,10 +73,10 @@
 #define OCEAN_TEXTURE			  "ppms/ocean.ppm"
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
-#define OCTOPUS_TEXTURE_POS_X	  "ppms/Tenerife/posx.ppm"
-#define OCTOPUS_TEXTURE_NEG_X	  "ppms/Tenerife/negx.ppm"
-#define OCTOPUS_TEXTURE_POS_Y	  "ppms/Tenerife/posy.ppm"
-#define OCTOPUS_TEXTURE_NEG_Y	  "ppms/Tenerife/negy.ppm"
-#define OCTOPUS_TEXTURE_POS_Z	  "ppms/Tenerife/posz.ppm"
-#define OCTOPUS_TEXTURE_NEG_Z	  "ppms/Tenerife/negz.ppm"
+#define OCTOPUS_TEXTURE_POS_X	  "ppms/environment/right.ppm"
+#define OCTOPUS_TEXTURE_NEG_X	  "ppms/environment/left.ppm"
+#define OCTOPUS_TEXTURE_POS_Y	  "ppms/environment/down.ppm"
+#define OCTOPUS_TEXTURE_NEG_Y	  "ppms/environment/up.ppm"
+#define OCTOPUS_TEXTURE_POS_Z	  "ppms/environment/back.ppm"
+#define OCTOPUS_TEXTURE_NEG_Z	  "ppms/environment/front.ppm"
 #endif

@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
-  glShadeModel(GL_SMOOTH);
+  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
   while(!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -131,7 +131,7 @@ void init(GLFWwindow* window) {
 
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
-  read_mesh("meshes/octopus.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
+  read_mesh("meshes/neptune.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
   init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT);
 }
 

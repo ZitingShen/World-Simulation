@@ -52,5 +52,9 @@ void update_spot_light(spotlight& s_l,
   }
 
   //std::cout << "Spot light pos " << s_l.pos.x << " "<<  s_l.pos.y << " " <<  s_l.pos.z << " " << endl;
+<<<<<<< HEAD
   //std::cout << "Spot direction " << s_l.coneDirection.x << " "<<  s_l.coneDirection.y << " " <<  s_l.coneDirection.z << " " << endl;
+=======
+  //std::cout << "Spot direction" << s_l.coneDirection.x << " "<<  s_l.coneDirection.y << " " <<  s_l.coneDirection.z << " " << endl;
+>>>>>>> 30f12e784117186dd4b8a148da852b2c12e1cbce
 }

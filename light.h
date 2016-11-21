@@ -12,7 +12,7 @@ const float ANGLE = 0.15 * M_PI; // 27 * 2 = 54 degrees
 
 struct LIGHT{
 	glm::vec4 light0 = glm::vec4(10.0f, 10.0f, 100.0f, 0);
- 	GLint ifNight = 0;
+ 	GLfloat ifNight = 0;
 };
 
 struct spotlight{

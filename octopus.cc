@@ -51,6 +51,7 @@ void init_octopus_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   }
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 
@@ -65,20 +66,22 @@ void init_octopus_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
 
 void draw_octopus(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
   glm::vec3& camera) {
-  glm::mat4 new_mv = MV_MAT;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  new_mv = glm::translate(new_mv, OCTOPUS_POS-mesh.center);
-  new_mv = glm::scale(new_mv, glm::vec3(OCTOPUS_SIZE/mesh.size[0], OCTOPUS_SIZE/mesh.size[1], 
-    OCTOPUS_SIZE/mesh.size[2]));
-  new_mv = glm::rotate(new_mv, 200*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
+  glm::mat4 view = glm::translate(OCTOPUS_POS);
+  view = glm::scale(view, glm::vec3(OCTOPUS_SIZE/mesh.size[1], OCTOPUS_SIZE/mesh.size[1], 
+    OCTOPUS_SIZE/mesh.size[1]));
+  view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
+  glm::mat4 move_back = glm::translate(-mesh.center);
   
   GLuint tex = glGetUniformLocation(shader, "cube");
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, mesh.textures[0]);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, mesh.textures[0]);
   glUniform1i(tex, 0);
   
-  GLuint mv = glGetUniformLocation(shader, "ModelView");
-  glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
+  GLuint model = glGetUniformLocation(shader, "Model");
+  glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(MV_MAT*move_back));
+  GLuint vw = glGetUniformLocation(shader, "View");
+  glUniformMatrix4fv(vw, 1, GL_FALSE, glm::value_ptr(view));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");

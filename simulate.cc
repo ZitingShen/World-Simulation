@@ -24,7 +24,7 @@ glm::vec3 SUN_POS;
 
 /*  for steerable spotlight */
 mouse MOUSE_STATUS;
-double xpos, ypos;
+double x_movement, y_movement;
 
 glm::vec3 EYE;
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(500, 500, "Make a World",
+  GLFWwindow* window = glfwCreateWindow(700, 700, "Make a World",
   	NULL, NULL);
   if (!window){
     glfwTerminate();
@@ -70,8 +70,12 @@ int main(int argc, char *argv[]){
     change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection, EYE);
 
     update_light(SUN_POS, THE_LIGHT);
-    update_spot_light(SPOT_LIGHT, xpos, ypos, MOUSE_STATUS,
-                      glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity, VIEW_MODE);
+    update_spot_light(SPOT_LIGHT,
+                      WIDTH, HEIGHT,
+                      MV_MAT,
+                      PROJ_MAT,
+                      MOUSE_STATUS,
+                      glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity, VIEW_MODE == FP);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
       update_goal_velocity(A_GOAL);
@@ -125,7 +129,7 @@ void init(GLFWwindow* window) {
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
 
-  glfwGetCursorPos(window, &xpos, &ypos); // get mouse position
+  glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
   read_mesh("meshes/octopus.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
   init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT);
@@ -139,15 +143,8 @@ void reshape(GLFWwindow* window, int w, int h) {
   change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection, EYE);
 }
 
-void cursor(GLFWwindow* window, double xpos, double ypos) {
-  if (VIEW_MODE != FP){
-    MOUSE_STATUS.x_pos = xpos;
-    MOUSE_STATUS.y_pos = ypos;
-    return; // only works in first person mode
-  }else{
-    MOUSE_STATUS.x_pos = xpos;
-    MOUSE_STATUS.y_pos = ypos;
-  }
+void cursor(GLFWwindow* window, double xpos, double ypos){
+  glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
 }
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -231,7 +228,14 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       case GLFW_KEY_F: //first person view
       VIEW_MODE = FP;
       glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
+      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
+
+      case GLFW_KEY_L:
+      VIEW_MODE = TRAIL_FP;
+      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 

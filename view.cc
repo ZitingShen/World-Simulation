@@ -17,6 +17,9 @@ void change_view(glm::mat4& MV_MAT,
   //glm::vec3 center = glm::vec3(midpoint[0], midpoint[1], midpoint[2]);
   glm::vec3 center = glm::vec3(0, 0.01f, 0);
   glm::vec3 up = glm::vec3(0, 0, 1);
+  glm::vec3 sp_pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
+  float t = (0.0 - flock[0].pos.z) / flock[0].velocity.z;
+  float t_cone = (0.0 - sp_pos.z) / fp_direction.z;
 
   glm::vec3 side_v = glm::cross(flock_direction, up);
 
@@ -41,8 +44,30 @@ void change_view(glm::mat4& MV_MAT,
     case FP:
       centroid = flock[0].pos;
       up = up; // to be changed to boid's normal
+      // looking at the interscetion point with the sea plane
+       //center = glm::vec3(sp_pos.x + t_cone*fp_direction.x,
+       //                  sp_pos.y + t_cone*fp_direction.y,
+       //                  0);
+       cout << fp_direction.x << " " << fp_direction.y << " " << fp_direction.z << endl;
+      //center = glm::vec3(flock[0].pos.x + t*flock[0].velocity.x,
+      //                   flock[0].pos.y + t*flock[0].velocity.y,
+      //                   0);
       eye = centroid
-          + glm::normalize(fp_direction) * BOID_SIZE;
+          + glm::normalize(flock[0].velocity) * BOID_SIZE;
+
+      break;
+
+    case TRAIL_FP:
+      centroid = flock[0].pos;
+      up = up;
+      // looking at the interscetion point with the sea plane
+      center = glm::vec3(flock[0].pos.x + t*flock[0].velocity.x,
+                         flock[0].pos.y + t*flock[0].velocity.y,
+                         0);
+
+      distance = 10 * BOID_SIZE;
+      eye = centroid
+          - (glm::normalize(flock[0].velocity) * distance);
       break;
 
     default:

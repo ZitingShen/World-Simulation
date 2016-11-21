@@ -3,7 +3,7 @@
 out vec4 fColor;
 in vec3 pos_eye, normal_eye;
 in vec2 texCoord;
-in vec3 vPosition;
+in vec3 vPos;
 
 uniform vec4 sp_position; //sp position
 uniform vec3 coneDirection;
@@ -17,13 +17,14 @@ uniform float ifNight;
 uniform int ifSnow;
 
 vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
-  vec3 sl_to_surface = vPosition - light_position.xyz;
-  float angle = acos(dot(normalize(sl_to_surface), normalize(direction)));
+  vec3 sl_to_surface = normalize(vPos - light_position.xyz);
+  float angle = acos(dot(sl_to_surface, normalize(direction)));
   if(angle > coneAngle){
     return vec3(0.0, 0.0, 0.0); //out of cone
   }
 
-  vec3 RedLight = normalize(vec3(1.0, 0.0, 0.0));
+  // dropping off on the brink
+  vec3 RedLight = normalize(vec3(1.0 * ((coneAngle - angle) / coneAngle), 0.0, 0.0));
 
 	vec3 L = normalize(light_position.xyz - pos_eye);
 	vec3 E = normalize(-pos_eye);
@@ -58,6 +59,7 @@ void main() {
   vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
 
   vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
+  //vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
 	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
 	//if (ifSnow == 1)
 	//	shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);

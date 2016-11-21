@@ -237,7 +237,7 @@ void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
   SPOT_LIGHT.pos = SPOT_LIGHT.pos * MV_MAT;
 
   glm::mat4 new_mv = MV_MAT;
-  //new_mv = glm::translate(new_mv, a_flock[i].pos);
+  //new_mv = glm::translate(new_mv, );
   GLuint ifSnow = glGetUniformLocation(shader, "ifSnow");
   glUniform1i(ifSnow, 1);
   meshes[2].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);

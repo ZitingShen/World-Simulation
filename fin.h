@@ -28,6 +28,8 @@ struct FACES{
 class MESH {
   public:
     /* public data member */
+    GLuint vao, vbo, ebo;
+    GLuint textures[6];
     GLuint num_v;
     GLuint num_f; // must all be triangles
     vector<VERTEX> vertices;       // vertex pos and vertex normal
@@ -43,13 +45,11 @@ class MESH {
     void compute_vertex_normal();
     void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT);
     void rotate();
-  private:
-    GLuint vao, vbo, ebo;
-    GLuint textures[6];
 };
 
 int read_mesh(string filename, MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
 void read_all_meshes(vector<string>& filenames, vector<MESH>& all_meshes, GLuint shader,
   glm::mat4& PROJ_MAT);
 void print_mesh_info(MESH& mesh);
+GLuint make_bo(GLenum type, const void *buf, GLsizei buf_size);
 #endif

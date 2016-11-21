@@ -2,14 +2,12 @@
 
 out vec4 fColor;
 in vec3 pos_eye, normal_eye;
-in vec2 texCoord;
-in vec3 vPosition;
+in vec3 R;
 
-uniform sampler2D tex0, tex1, tex2, tex3, tex4, tex5;
+uniform samplerCube cube;
 uniform vec4 LightPosition;
 uniform float Shineness;
 uniform float ifNight;
-uniform int ifSnow;
 
 void main() {
 	vec3 whiteLight = normalize(vec3(1.0, 1.0, 1.0));
@@ -27,8 +25,6 @@ void main() {
 	if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
 
 	vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
-	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
-	//if (ifSnow == 1)
-	//	shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);
+	vec4 shadeTex = vec4(texture(cube, R).rgb, 1.0);
 	fColor = shadeLight*shadeTex;
 }

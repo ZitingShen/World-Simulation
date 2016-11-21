@@ -73,4 +73,10 @@
 #define OCEAN_TEXTURE			  "ppms/ocean.ppm"
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
+#define OCTOPUS_TEXTURE_POS_X	  "ppms/Tenerife/posx.ppm"
+#define OCTOPUS_TEXTURE_NEG_X	  "ppms/Tenerife/negx.ppm"
+#define OCTOPUS_TEXTURE_POS_Y	  "ppms/Tenerife/posy.ppm"
+#define OCTOPUS_TEXTURE_NEG_Y	  "ppms/Tenerife/negy.ppm"
+#define OCTOPUS_TEXTURE_POS_Z	  "ppms/Tenerife/posz.ppm"
+#define OCTOPUS_TEXTURE_NEG_Z	  "ppms/Tenerife/negz.ppm"
 #endif

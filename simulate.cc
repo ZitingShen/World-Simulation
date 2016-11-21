@@ -13,14 +13,14 @@ glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
 vector<MESH> ISLAND_MESH;
-GLuint SHADER;
+GLuint SHADER, ENVIRONMENT_SHADER;
 
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
 viewMode VIEW_MODE = DEFAULT;
 
 glm::vec3 SUN_POS;
-
+glm::vec3 EYE;
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
     std::cerr << "ERROR: could not start GLFW3" << std::endl;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
   while(!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
-    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
+    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, EYE);
     update_light(SUN_POS, THE_LIGHT);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
@@ -85,7 +85,10 @@ int main(int argc, char *argv[]){
         draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT);
-      draw_octopus(OCTOPUS_MESH, SHADER, MV_MAT, THE_LIGHT);
+
+      glUseProgram(ENVIRONMENT_SHADER);
+      draw_octopus(OCTOPUS_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, EYE);
+      glUseProgram(SHADER);
       glfwSwapBuffers(window);
     }
   }
@@ -98,6 +101,7 @@ void init(GLFWwindow* window) {
   glColor3f(0.0, 0.0, 0.0);
   srand(time(NULL));
   SHADER = initshader("phong_vs.glsl", "phong_fs.glsl");
+  ENVIRONMENT_SHADER = initshader("environmental_vs.glsl", "environmental_fs.glsl");
   glfwGetWindowSize(window, &WIDTH, &HEIGHT);
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT, 
     CAMERA_NEAR, CAMERA_FAR);
@@ -109,7 +113,7 @@ void init(GLFWwindow* window) {
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
   read_mesh("meshes/octopus.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
-  init_octopus_mesh(OCTOPUS_MESH, SHADER, PROJ_MAT);
+  init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -117,7 +121,7 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL);
+  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, EYE);
 }
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {

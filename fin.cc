@@ -1,6 +1,6 @@
 #include "fin.h"
 
-static GLuint make_bo(GLenum type, const void *buf, GLsizei buf_size) {
+GLuint make_bo(GLenum type, const void *buf, GLsizei buf_size) {
   GLuint bufnum;
   glGenBuffers(1, &bufnum);
   glBindBuffer(type, bufnum);

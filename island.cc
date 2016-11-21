@@ -81,7 +81,6 @@ void pertube(vector<glm::vec3>& all_vertices,
     return; // base case, pertubing finsihed
   }
   //cout << "pertube level: " << pertube_level << endl;
-  int noise = 0;
   int x_mid = (x_low+x_high)/2;
   int y_mid = (y_low+y_high)/2;
 

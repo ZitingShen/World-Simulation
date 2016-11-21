@@ -57,8 +57,9 @@ void main() {
   // calculating spotlight
   vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
 
-  vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
-	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
+  //vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
+  vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
+  vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
 	//if (ifSnow == 1)
 	//	shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);
 	fColor = shadeLight*shadeTex;

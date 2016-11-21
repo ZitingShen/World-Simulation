@@ -40,6 +40,6 @@ void update_spot_light(spotlight& s_l,
   mouse_pos.x_pos = xpos;
   mouse_pos.y_pos = ypos;
 
-  std::cout << "Spot light pos " << s_l.pos.x << " "<<  s_l.pos.y << " " <<  s_l.pos.z << " " << endl;
-  std::cout << "Spot direction" << s_l.coneDirection.x << " "<<  s_l.coneDirection.y << " " <<  s_l.coneDirection.z << " " << endl;
+  //std::cout << "Spot light pos " << s_l.pos.x << " "<<  s_l.pos.y << " " <<  s_l.pos.z << " " << endl;
+  //std::cout << "Spot direction" << s_l.coneDirection.x << " "<<  s_l.coneDirection.y << " " <<  s_l.coneDirection.z << " " << endl;
 }

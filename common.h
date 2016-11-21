@@ -59,16 +59,24 @@
 
 #define SUN_POINTS				  10000
 #define SUN_RADIUS				  3000.0f
-#define SUN_SIZE				  500.f
+#define SUN_SIZE				  500.0f
 #define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #define SHINENESS				  0.1f
 
 #define OCEAN_SIZE 				  5000
+#define OCTOPUS_SIZE			  1000.0
 #define SEED                      314159265
 
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"
 #define SUN_TEXTURE				  "ppms/fire.ppm"
-#define OCEAN_TEXTURE			  "ppms/boat.ppm"
+#define OCEAN_TEXTURE			  "ppms/water.ppm"
 #define ISLAND_TEXTURE			  "ppms/rock.ppm"
+#define SNOW_TEXTURE			  "ppms/snow.ppm"
+#define OCTOPUS_TEXTURE_POS_X	  "ppms/Tenerife/posx.ppm"
+#define OCTOPUS_TEXTURE_NEG_X	  "ppms/Tenerife/negx.ppm"
+#define OCTOPUS_TEXTURE_POS_Y	  "ppms/Tenerife/posy.ppm"
+#define OCTOPUS_TEXTURE_NEG_Y	  "ppms/Tenerife/negy.ppm"
+#define OCTOPUS_TEXTURE_POS_Z	  "ppms/Tenerife/posz.ppm"
+#define OCTOPUS_TEXTURE_NEG_Z	  "ppms/Tenerife/negz.ppm"
 #endif

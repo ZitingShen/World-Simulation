@@ -13,6 +13,7 @@
 #include "common.h"
 #include "sun.h"
 #include "ocean.h"
+#include "octopus.h"
 #include "island.h"
 #include "light.h"
 

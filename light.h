@@ -5,6 +5,7 @@
 #include "math.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/rotate_vector.hpp" // for rotation
+#include <iostream>
 
 const float STEER_ANGLE = 0.1; // in radian
 const float ANGLE = 0.6;

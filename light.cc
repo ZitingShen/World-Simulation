@@ -5,8 +5,10 @@ using namespace std;
 void update_light(glm::vec3& sun_pos, LIGHT& THE_LIGHT){
 	if (glm::sin(sun_pos[2])*SUN_RADIUS + SUN_SIZE < 0){
 		THE_LIGHT.ifNight = 1;
-	} else {
+	} else if (glm::sin(sun_pos[2])*SUN_RADIUS - 5*SUN_SIZE > 0) {
 		THE_LIGHT.ifNight = 0;
+	} else {
+		THE_LIGHT.ifNight = 1 - (glm::sin(sun_pos[2])*SUN_RADIUS + SUN_SIZE)/(6*SUN_SIZE);
 	}
 }
 
@@ -37,4 +39,7 @@ void update_spot_light(spotlight& s_l,
   }
   mouse_pos.x_pos = xpos;
   mouse_pos.y_pos = ypos;
+
+  std::cout << "Spot light pos " << s_l.pos.x << " "<<  s_l.pos.y << " " <<  s_l.pos.z << " " << endl;
+  std::cout << "Spot direction" << s_l.coneDirection.x << " "<<  s_l.coneDirection.y << " " <<  s_l.coneDirection.z << " " << endl;
 }

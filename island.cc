@@ -169,6 +169,12 @@ void generate_faces(vector<GLuint>& all_faces){
   }
 }
 
+void adjust_position(MESH& island){
+  for (int i=0; i<(int)island.num_v; i++){
+    island.vertices[i].pos.z = island.vertices[i].pos.z - 3000;
+  }
+}
+
 void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT) {
                           //ofstream& fout, string filename) {
   int num_v, num_f;
@@ -188,6 +194,7 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
     get_all_vertices(num_v, all_vertices[island_index]);
     create_precipice(all_vertices[island_index]);
     generate_faces(island[island_index].faces.draw_indices);
+    adjust_position(island[island_index]);
 
     /* File IO */
     /*
@@ -240,9 +247,12 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
 }
 
 void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
-  LIGHT THE_LIGHT) {
+  LIGHT THE_LIGHT, spotlight SPOT_LIGHT){
+
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
+  SPOT_LIGHT.pos = SPOT_LIGHT.pos * MV_MAT;
+
   glm::mat4 new_mv = MV_MAT;
   //new_mv = glm::translate(new_mv, a_flock[i].pos);
-  meshes[2].draw(shader, new_mv, THE_LIGHT);
+  meshes[2].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
 }

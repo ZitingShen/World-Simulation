@@ -14,6 +14,7 @@
 #include "sun.h"
 #include "ocean.h"
 #include "island.h"
+#include "light.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

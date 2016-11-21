@@ -23,7 +23,8 @@ viewMode VIEW_MODE = DEFAULT;
 glm::vec3 SUN_POS;
 
 /*  for steerable spotlight */
-mouse mouse_status;
+mouse MOUSE_STATUS;
+double xpos, ypos;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -63,9 +64,10 @@ int main(int argc, char *argv[]){
   while(!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
-    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT);
+    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection);
     update_light(SUN_POS, THE_LIGHT);
-    update_spot_light(SPOT_LIGHT, mouse_status, A_FLOCK, VIEW_MODE);
+    update_spot_light(SPOT_LIGHT, xpos, ypos, MOUSE_STATUS,
+                      glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity, VIEW_MODE);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
       update_goal_velocity(A_GOAL);
@@ -84,13 +86,13 @@ int main(int argc, char *argv[]){
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
       if (ENABLE_FLOCK)
-        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT);
+        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_GOAL)
-        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT);
+        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)
-        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT);
-      draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT);
-      draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT);
+        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+      draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+      draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       glfwSwapBuffers(window);
     }
   }
@@ -113,8 +115,8 @@ void init(GLFWwindow* window) {
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
 
-  glfwGetCursorPos(window, &mouse_status.x_pos, &mouse_status.y_pos); // get mouse position
-  initialise_spot_light(SPOT_LIGHT, A_FLOCK);
+  glfwGetCursorPos(window, &xpos, &ypos); // get mouse position
+  initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -122,19 +124,19 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT);
+  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection);
 }
 
 void cursor(GLFWwindow* window, double xpos, double ypos) {
   if (VIEW_MODE != FP){
-    mouse_status.x_pos = xpos;
-    mouse_status.y_pos = ypos;
+    MOUSE_STATUS.x_pos = xpos;
+    MOUSE_STATUS.y_pos = ypos;
     return; // only works in first person mode
   }else{
-    mouse_status.x_pos = xpos;
-    mouse_status.y_pos = ypos;
+    MOUSE_STATUS.x_pos = xpos;
+    MOUSE_STATUS.y_pos = ypos;
   }
-  }
+}
 
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS) {
@@ -258,3 +260,4 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
     }
   }
 }
+

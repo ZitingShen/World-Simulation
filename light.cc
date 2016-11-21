@@ -2,35 +2,39 @@
 
 using namespace std;
 
-void update_light(glm::vec3& sun_pos, LIGHT& THE_LIGHT) {
-	if (glm::sin(sun_pos[2])*SUN_RADIUS + SUN_SIZE < 0) {
+void update_light(glm::vec3& sun_pos, LIGHT& THE_LIGHT){
+	if (glm::sin(sun_pos[2])*SUN_RADIUS + SUN_SIZE < 0){
 		THE_LIGHT.ifNight = 1;
 	} else {
 		THE_LIGHT.ifNight = 0;
 	}
 }
 
-void initialise_spot_light(spot_light& s_l, vector<BOID>& flock){
-  s_l.pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
-  s_l.colour = glm::vec3(1.0, 1.0, 1.0);
-  s_l.intensity = 1.0;
-  s_l.coneAngle = 0.8;
-  s_l.coneDirection = normalize(flock[0].velocity);
+void initialise_spot_light(spotlight& s_l, glm::vec4 pos, glm::vec3 direction){
+  s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+  s_l.coneAngle = ANGLE;
+  s_l.coneDirection = normalize(direction);
 }
 
-void update_spot_light(spot_light& s_l,
-                       mouse mouse_pos,
-                       vector<BOID>& flock,
-                       viewMode vm){
-  //double theta; // in radians
-  //glm::vec3 rotate_normal;
-  //if (viewMode != FP){
-    s_l.pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
-    s_l.coneDirection = normalize(flock[0].velocity);
-  //}else{
-  //  s_l.pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
-  //  s_l.coneDirection = normalize(flock[0].velocity);
-  //  //theta = (2 * sqrt( (xpos - mouse_pos.x_pos) * (xpos - mouse_pos.x_pos)
-    //             +(ypos - mouse_pos.y_pos) * (ypos - mouse_pos.y_pos))) / static_cast<double>(BOID_SIZE);
-  //}
+void update_spot_light(spotlight& s_l,
+                       double xpos, double ypos,
+                       mouse& mouse_pos,
+                       glm::vec4 pos,
+                       glm::vec3 direction,
+                       bool vm){
+  float theta = 0;
+  float radius = static_cast<float>(BOID_SIZE);
+  glm::vec3 rotation;
+  if (!vm){ // just follow the boid and its direction
+    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+    s_l.coneDirection = normalize(direction);
+  }else{
+    theta = sqrt(pow(xpos - mouse_pos.x_pos, 2) + pow(ypos - mouse_pos.y_pos, 2)) / radius;
+    rotation = glm::rotate(s_l.coneDirection, theta, direction);
+
+    s_l.pos =glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+    s_l.coneDirection = normalize(rotation);
+  }
+  mouse_pos.x_pos = xpos;
+  mouse_pos.y_pos = ypos;
 }

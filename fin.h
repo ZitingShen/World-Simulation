@@ -38,14 +38,14 @@ class MESH {
     void bind(GLuint shader);
     void compute_face_normal();
     void compute_vertex_normal();
-    void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT);
+    void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT);
     void rotate();
   private:
     GLuint vao, vbo, ebo;
     GLuint textures[6];
 };
 
-int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader, 
+int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
   glm::mat4& PROJ_MAT);
 void read_all_meshes(map<string, int>& filenames, vector<MESH>& all_meshes, GLuint shader,
   glm::mat4& PROJ_MAT);

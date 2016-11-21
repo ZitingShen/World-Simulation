@@ -21,6 +21,7 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
     faces.draw_indices.size()*sizeof(GLuint));
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
   glBindAttribLocation(shader, POS_LOCATION, "vPosition");
   glEnableVertexAttribArray(POS_LOCATION);
   glVertexAttribPointer(POS_LOCATION, 3, GL_FLOAT,
@@ -180,7 +181,7 @@ int read_mesh(string filename, MESH& mesh, int repeated_count, GLuint shader,
                           max_scale*(mesh.id[i]%3)*BLOCK,
                           0,
                           max_scale*(mesh.id[i]/3)*BLOCK));
-    
+
     mesh.scaled.push_back(new_mat);
     mesh.transforms.push_back(new_mat);
     mesh.spin.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -238,12 +239,12 @@ void print_mesh_info(MESH& mesh){
   }
 }
 
-void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT) {
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT) {
   GLuint tex = glGetUniformLocation(shader, "tex");
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glUniform1i(tex, 0);
-  
+
   GLuint mv = glGetUniformLocation(shader, "ModelView");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
@@ -251,8 +252,19 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT) {
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");
   glUniform1i(ifNight, THE_LIGHT.ifNight);
 
+
+  /* Adding spotlight */
+  GLuint sl_coneAngle = glGetUniformLocation(shader, "coneAngle");
+  glUniform1f(sl_coneAngle, SPOT_LIGHT.coneAngle);
+
+  GLuint sl_position = glGetUniformLocation(shader, "sp_position");
+  glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
+
+  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
+  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
+
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
-  glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(), 
+  glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(),
       GL_UNSIGNED_INT, (void*) 0);
 }

@@ -9,7 +9,7 @@ BOID::BOID(){
 }
 
 bool is_partner(BOID& source, BOID& target){
-  return source.partner_radius >= glm::distance(source.pos, 
+  return source.partner_radius >= glm::distance(source.pos,
     target.pos);
 }
 
@@ -46,15 +46,15 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
           //cout << "now near goal" << endl;
           s_modifier = s_modifier * 1.1f;;
           a_modifier = a_modifier * 0.9f;
-        } 
+        }
       }
     }
     if (num_of_partners != 0) {
       //cout << "num_of_partners = " << num_of_partners << endl;
       s_modifier = s_modifier*(SEPARATION_WEIGHT/(float)num_of_partners)*1.8f;
-      a_modifier = (a_modifier*(1.0f/num_of_partners) 
+      a_modifier = (a_modifier*(1.0f/num_of_partners)
         - source->velocity)*ALIGNMENT_WEIGHT*0.8f;
-      c_modifier = (c_modifier*(1.0f/num_of_partners) 
+      c_modifier = (c_modifier*(1.0f/num_of_partners)
         - source->pos)*COHESION_WEIGHT;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
@@ -195,17 +195,17 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.setup(shader, PROJ_MAT);
 }
 
-void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, 
-  LIGHT THE_LIGHT){
+void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& MV_MAT,
+  LIGHT THE_LIGHT, spotlight SPOT_LIGHT){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   for (unsigned int i = 0; i < a_flock.size(); i++) {
     glm::mat4 new_mv = MV_MAT;
-    glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity, 
+    glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity,
       SPAWN_VELOCITY));
-    float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity, 
+    float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity,
                                 rotate_normal);
     new_mv = glm::translate(new_mv, a_flock[i].pos);
     new_mv = glm::rotate(new_mv, angle, rotate_normal);
-    mesh.draw(shader, new_mv, THE_LIGHT);
+    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
   }
 }

@@ -2,6 +2,7 @@
 #define GOAL_H
 
 #include "common.h"
+#include "light.h"
 #include "fin.h"
 
 const GLfloat CUBE_VERTICES[][3] = {
@@ -58,5 +59,6 @@ void update_goal_pos(GOAL& goal);
 void teleport_goal(GOAL& goal);
 void print_goal(GOAL& goal);
 void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
-void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
+void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
+                 spotlight SPOT_LIGHT);
 #endif

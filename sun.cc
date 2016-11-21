@@ -25,12 +25,14 @@ void init_sun_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.setup(shader, PROJ_MAT);
 }
 
-void draw_a_sun(glm::vec3& sun_pos, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT) {
+void draw_a_sun(glm::vec3& sun_pos, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
+                spotlight SPOT_LIGHT){
   glm::mat4 new_mv = MV_MAT;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  new_mv = glm::translate(new_mv, glm::vec3(sun_pos[0], SUN_RADIUS*glm::cos(sun_pos[1]), 
+  SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
+  new_mv = glm::translate(new_mv, glm::vec3(sun_pos[0], SUN_RADIUS*glm::cos(sun_pos[1]),
     SUN_RADIUS*glm::sin(sun_pos[2])));
-  mesh.draw(shader, new_mv, THE_LIGHT);
+  mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
 }
 
 void update_sun_pos(glm::vec3& sun_pos) {

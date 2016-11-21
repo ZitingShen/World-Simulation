@@ -38,11 +38,14 @@ void pertube(vector<glm::vec3>& all_vertices,
 
 bool on_edge(int index);
 
+void adjust_position(MESH& island);
+
 void get_island_centre(MESH& island, glm::vec3& centre);
 
 void generate_faces(vector<GLuint>& all_faces);
 
 void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT);
                           //ofstream& fout, string filename);
-void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT);
+void draw_island(vector<MESH>& meshes, GLuint shader,
+                 glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT);
 #endif

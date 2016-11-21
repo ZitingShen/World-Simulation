@@ -22,10 +22,6 @@
 #define TRUE					  1
 #define FALSE					  0
 
-#define CAMERA_NEAR               2.0f
-#define CAMERA_FAR                100000000.0f
-#define TOWER_HEIGHT              6000.0f
-
 #define POS_LOCATION              0
 #define NORMAL_LOCATION           1
 #define TEXTURE_LOCATION		  2
@@ -35,8 +31,8 @@
 #define MIN_FLOCK_RADIUS	      2000.0
 #define MAX_FLOCK_RADIUS		  3000.0
 
-#define BOID_SIZE                 100.0f
-#define GOAL_SIZE				  100.0f
+#define BOID_SIZE                 30.0f
+#define GOAL_SIZE				  30.0f
 
 #define SEPARATION_WEIGHT         0.002f
 #define ALIGNMENT_WEIGHT          0.0008f

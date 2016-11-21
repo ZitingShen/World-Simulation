@@ -16,6 +16,7 @@
 #include "octopus.h"
 #include "island.h"
 #include "light.h"
+#include "anti_collision.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

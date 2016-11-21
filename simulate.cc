@@ -14,6 +14,7 @@ LIGHT THE_LIGHT;
 spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
 vector<MESH> ISLAND_MESH;
+vector<PREDATOR> PREDATORS;
 GLuint SHADER, ENVIRONMENT_SHADER;
 
 vector<BOID> A_FLOCK;
@@ -27,6 +28,9 @@ mouse MOUSE_STATUS;
 double x_movement, y_movement;
 
 glm::vec3 EYE;
+
+int island_index = 2;
+float TOWER = 6000.0;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -67,7 +71,7 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
 
-    change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection, EYE);
+    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, SPOT_LIGHT.coneDirection, EYE);
 
     update_light(SUN_POS, THE_LIGHT);
     update_spot_light(SPOT_LIGHT,
@@ -82,6 +86,7 @@ int main(int argc, char *argv[]){
       update_goal_pos(A_GOAL);
       update_velocity(A_FLOCK, A_GOAL);
       apply_goal_attraction(A_FLOCK, A_GOAL);
+      apply_predator_deterrence(PREDATORS, A_FLOCK);
       update_pos(A_FLOCK);
       update_sun_pos(SUN_POS);
       update_light(SUN_POS, THE_LIGHT);
@@ -128,6 +133,7 @@ void init(GLFWwindow* window) {
   init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
+  create_predators(PREDATORS, ISLAND_MESH);
 
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
@@ -140,7 +146,7 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, A_FLOCK, A_GOAL, SPOT_LIGHT.coneDirection, EYE);
+  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, SPOT_LIGHT.coneDirection, EYE);
 }
 
 void cursor(GLFWwindow* window, double xpos, double ypos){
@@ -151,11 +157,11 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS) {
     switch(key) {
    	  case GLFW_KEY_UP:
-      //change_view(ZOOM_IN);
+        zoom_in(TOWER);
       break;
 
       case GLFW_KEY_DOWN:
-      //change_view(ZOOM_OUT);
+        zoom_out(TOWER);
       break;
 
       case GLFW_KEY_F1:
@@ -184,6 +190,10 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_S:
         A_GOAL.MOVE_ALONG_Y_NEGATIVE = true;
+      break;
+
+      case GLFW_KEY_M:
+        island_index = island_index==2?0:island_index+1; //switch between mesh
       break;
 
       case GLFW_KEY_RIGHT:

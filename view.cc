@@ -2,8 +2,10 @@
 
 void change_view(glm::mat4& MV_MAT,
                  viewMode vm,
+                 float tower,
                  std::vector<BOID>& flock,
                  GOAL& goal,
+                 glm::vec3& island_centre,
                  glm::vec3& fp_direction,
                  glm::vec3& eye){
   glm::vec3 centroid = flock_centroid(flock);
@@ -13,13 +15,14 @@ void change_view(glm::mat4& MV_MAT,
   glm::vec3 flock_direction = glm::normalize(get_u(flock, goal));
   glm::vec3 velocity_direction = glm::normalize(get_average_v(flock));
 
-  eye = glm::vec3(0, 0, TOWER_HEIGHT);
+  eye = glm::vec3(0, 0, tower);
   //glm::vec3 center = glm::vec3(midpoint[0], midpoint[1], midpoint[2]);
-  glm::vec3 center = glm::vec3(0, 0.01f, 0);
+  //cout << island_centre.x << " " << island_centre.y << " " << island_centre.z << endl;
+  glm::vec3 center = glm::vec3(island_centre.x, 0.1f, island_centre.z);
   glm::vec3 up = glm::vec3(0, 0, 1);
-  glm::vec3 sp_pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
+  //glm::vec3 sp_pos = flock[0].pos + normalize(flock[0].velocity) * BOID_SIZE;
   float t = (0.0 - flock[0].pos.z) / flock[0].velocity.z;
-  float t_cone = (0.0 - sp_pos.z) / fp_direction.z;
+  //float t_cone = (0.0 - sp_pos.z) / fp_direction.z;
 
   glm::vec3 side_v = glm::cross(flock_direction, up);
 
@@ -32,7 +35,7 @@ void change_view(glm::mat4& MV_MAT,
       eye = centroid
           - flock_direction*distance*0.9f
           - velocity_direction*distance*1.1f
-          + up*TOWER_HEIGHT*0.8f;
+          + up*tower*0.8f;
       break;
 
     case SIDE:
@@ -48,7 +51,7 @@ void change_view(glm::mat4& MV_MAT,
        //center = glm::vec3(sp_pos.x + t_cone*fp_direction.x,
        //                  sp_pos.y + t_cone*fp_direction.y,
        //                  0);
-       cout << fp_direction.x << " " << fp_direction.y << " " << fp_direction.z << endl;
+      // cout << fp_direction.x << " " << fp_direction.y << " " << fp_direction.z << endl;
       //center = glm::vec3(flock[0].pos.x + t*flock[0].velocity.x,
       //                   flock[0].pos.y + t*flock[0].velocity.y,
       //                   0);
@@ -74,4 +77,13 @@ void change_view(glm::mat4& MV_MAT,
     break;
   }
   MV_MAT = glm::lookAt(eye, center, up);
+}
+
+
+void zoom_in(float& tower){
+  tower = tower==2000?2000:tower-2000;
+}
+
+void zoom_out(float& tower){
+  tower = tower==8000?8000:tower+2000;
 }

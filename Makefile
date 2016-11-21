@@ -1,15 +1,15 @@
 ifeq ($(shell uname -s), Darwin)
-LDFLAGS=-L/opt/ports/lib -framework OpenGL -lglfw -lGLEW -lm
+LDFLAGS=-L/usr/local/Cellar/glfw3/3.2.1 -framework OpenGL -lglfw3 -lGLEW -lm
 else
-LDFLAGS=-lX11 -lGL -lGLU -lglfw -lGLEW -lm
+LDFLAGS=-lX11 -lGL -lGLU -lglfw3 -lGLEW -lm
 endif
 CC = g++
-CFLAGS=-g -Wall -std=c++11 -I/opt/ports/include
+CFLAGS=-g -Wall -std=c++11 -I/usr/local/Cellar/glfw3/3.2.1
 
 TARGET = simulate
 SRC = $(TARGET).cc
 
-LIB = initshader.o boid.o view.o goal.o read_ppm.o fin.o sun.o light.o ocean.o island.o octopus.o
+LIB = initshader.o boid.o view.o goal.o read_ppm.o fin.o sun.o light.o ocean.o island.o octopus.o anti_collision.o
 all: simulate
 
 simulate: $(SRC) $(LIB)
@@ -47,6 +47,9 @@ boid.o: boid.cc boid.h
 
 read_ppm.o: read_ppm.c read_ppm.h
 	$(CC) $(CFLAGS) -c read_ppm.c
+
+anti_collision.o: anti_collision.cc anti_collision.h
+	$(CC) $(CFLAGS) -c anti_collision.cc
 
 clean:
 	rm $(TARGET) $(LIB)

@@ -6,10 +6,6 @@
 #include "goal.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-
-#define CAMERA_NEAR               2.0f
-#define CAMERA_FAR                100000000.0f
-
 enum viewMode {DEFAULT, TRAILING, SIDE, FP, TRAIL_FP};
 
 void change_view(glm::mat4& PROJ_MAT,
@@ -22,5 +18,5 @@ void change_view(glm::mat4& PROJ_MAT,
 
 void zoom_in(float& tower);
 void zoom_out(float& tower);
-
+void zoom_reset(float& tower);
 #endif

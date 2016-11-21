@@ -49,8 +49,8 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[i].sizeX,
       texels[i].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[i].data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   }

@@ -30,7 +30,7 @@ double x_movement, y_movement;
 glm::vec3 EYE;
 
 int island_index = 2;
-float TOWER = 6000.0;
+float TOWER = TOWER_INITIAL_HEIGHT;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)
-        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, EYE);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
 
@@ -162,6 +162,10 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_DOWN:
         zoom_out(TOWER);
+      break;
+
+      case GLFW_KEY_N:
+        zoom_reset(TOWER);
       break;
 
       case GLFW_KEY_F1:

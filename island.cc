@@ -160,11 +160,11 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
   int num_v, num_f;
   string current_file;
   vector<vector<glm::vec3> > all_vertices;
-  srand(SEED); // using given seed (UNSIGNED INT)
 
   island.resize(3); // using three levels of island mesh
   all_vertices.resize(3);
   for (int island_index=0; island_index<3; island_index++){
+    srand(SEED); // using given seed (UNSIGNED INT)
     //cout << "getting no. " << island_index << endl;
     set_island(SUBDIVISIONS*2);
     get_num_v(num_v);
@@ -212,8 +212,8 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
     island[island_index].vertices.resize(num_v); // resize to num_v
     for (int i=0; i<num_v; i++) {
       island[island_index].vertices[i].pos = all_vertices[island_index][i];
-      island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE-0.1f;
-      island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE-0.1f;
+      island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE+0.85f;
+      island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE+0.85f;
     }
     island[island_index].texels.resize(2);
     if (!read_ppm(ISLAND_TEXTURE, &island[island_index].texels[0])) {
@@ -231,14 +231,21 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
 }
 
 void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
-  LIGHT THE_LIGHT, spotlight SPOT_LIGHT){
+  LIGHT THE_LIGHT, spotlight SPOT_LIGHT, glm::vec3& eye){
 
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos * MV_MAT;
 
   glm::mat4 new_mv = MV_MAT;
-  //new_mv = glm::translate(new_mv, );
+  new_mv = glm::translate(new_mv, ISLAND_POS);
   GLuint ifSnow = glGetUniformLocation(shader, "ifSnow");
   glUniform1i(ifSnow, 1);
-  meshes[2].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+  float distance = glm::distance(eye, ISLAND_POS);
+  if(distance > 6000) {
+    meshes[0].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+  } else if (distance > 4000) {
+    meshes[1].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+  } else{
+    meshes[2].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+  }
 }

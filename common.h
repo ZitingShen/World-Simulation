@@ -34,6 +34,10 @@
 #define BOID_SIZE                 30.0f
 #define GOAL_SIZE				  30.0f
 
+#define WORLD_SIZE 				  2048.0f       // edge length of island mesh
+#define PRECIPICE 				  300.0f
+#define PERTUBE_LEVEL 			  800.0f
+
 #define SEPARATION_WEIGHT         0.002f
 #define ALIGNMENT_WEIGHT          0.0008f
 #define COHESION_WEIGHT           0.0015f
@@ -62,6 +66,14 @@
 #define OCEAN_SIZE 				  5000
 #define OCTOPUS_SIZE			  1200.0
 #define SEED                      314159265
+
+#define TOWER_INITIAL_HEIGHT	  6000.0f
+#define TOWER_ZOOM_STEP			  2000.0f
+#define TOWER_MIN				  2000.0f
+#define TOWER_MAX		          8000.0f
+
+#define CAMERA_NEAR               2.0f
+#define CAMERA_FAR                100000000.0f
 
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"

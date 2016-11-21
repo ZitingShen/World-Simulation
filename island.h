@@ -11,9 +11,7 @@
 #include "assert.h"
 #include "read_ppm.h"
 
-#define WORLD_SIZE 2048       // edge length of island mesh
-#define PRECIPICE 300
-#define PERTUBE_LEVEL 800
+const glm::vec3 ISLAND_POS = glm::vec3(0.0f, 0.0f, 0.0f);
 
 extern int SUBDIVISIONS;   // has to be an even number
 extern int ISLAND_SIZE;
@@ -47,5 +45,5 @@ void generate_faces(vector<GLuint>& all_faces);
 void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT);
                           //ofstream& fout, string filename);
 void draw_island(vector<MESH>& meshes, GLuint shader,
-                 glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT);
+                 glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT, glm::vec3& eye);
 #endif

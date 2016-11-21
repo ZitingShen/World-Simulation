@@ -81,9 +81,13 @@ void change_view(glm::mat4& MV_MAT,
 
 
 void zoom_in(float& tower){
-  tower = tower==2000?2000:tower-2000;
+  tower = tower==TOWER_MIN?TOWER_MIN:tower-TOWER_ZOOM_STEP;
 }
 
 void zoom_out(float& tower){
-  tower = tower==8000?8000:tower+2000;
+  tower = tower==TOWER_MAX?TOWER_MAX:tower+TOWER_ZOOM_STEP;
+}
+
+void zoom_reset(float& tower) {
+  tower = TOWER_INITIAL_HEIGHT;
 }

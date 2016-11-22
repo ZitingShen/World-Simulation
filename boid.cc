@@ -221,9 +221,11 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
 }
 
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& MV_MAT,
-  LIGHT THE_LIGHT, spotlight SPOT_LIGHT){
+  LIGHT THE_LIGHT, spotlight SPOT_LIGHT, bool if_fp){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  for (unsigned int i = 0; i < a_flock.size(); i++) {
+  for (unsigned int i = 0; i < a_flock.size(); i++){
+    if (if_fp && i == 0)
+      continue; // dont draw the boid with headlight when in FP mode
     glm::mat4 new_mv = MV_MAT;
     glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity,
       SPAWN_VELOCITY));

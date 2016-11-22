@@ -48,7 +48,7 @@
 #define FLOCK_RAIUS_CAP			  (10.0f*BOID_SIZE)
 #define APPROACHING_GOAL		  (20.0f*GOAL_SIZE)
 #define Z_SPEED_CAP				  20.0f
-#define BOID_SPEED_FLOOR		  55.0f
+#define BOID_SPEED_FLOOR		  30.0f
 #define PREDATOR_SPEED_CAP		  300.0f
 
 #define RANDOMISE_V_FACTOR        60

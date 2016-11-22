@@ -56,7 +56,7 @@ void change_view(glm::mat4& MV_MAT,
       //                   flock[0].pos.y + t*flock[0].velocity.y,
       //                   0);
       eye = centroid
-          + glm::normalize(flock[0].velocity) * distance;
+          + glm::normalize(flock[0].velocity) * distance * (tower/500.0f);
 
       break;
 

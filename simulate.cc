@@ -99,7 +99,7 @@ int main(int argc, char *argv[]){
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
       if (ENABLE_FLOCK)
-        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, VIEW_MODE == FP);
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)

@@ -21,10 +21,10 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
   bool close_to_goal = false;
   float dis_to_partner;
 
-  for (auto source = a_flock.begin(); source != a_flock.end(); source++) {
+  for (auto source = a_flock.begin(); source != a_flock.end(); source++){
     num_of_partners = 0; //reset for the next boid
     close_to_goal = glm::length(a_goal.pos - source->pos) < APPROACHING_GOAL;
-    for (auto target = a_flock.begin(); target != a_flock.end(); target++) {
+    for (auto target = a_flock.begin(); target != a_flock.end(); target++){
       if (target == source) continue;
       if (is_partner(*source, *target)){
         num_of_partners++;
@@ -49,13 +49,15 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
         }
       }
     }
-    if (num_of_partners != 0) {
+    if (num_of_partners != 0){
       //cout << "num_of_partners = " << num_of_partners << endl;
       s_modifier = s_modifier*(SEPARATION_WEIGHT/(float)num_of_partners)*1.8f;
       a_modifier = (a_modifier*(1.0f/num_of_partners)
         - source->velocity)*ALIGNMENT_WEIGHT*0.8f;
       c_modifier = (c_modifier*(1.0f/num_of_partners)
         - source->pos)*COHESION_WEIGHT;
+      if (source->pos == a_flock[0].pos) // clear view for the first person view
+        s_modifier = 10.0f * s_modifier;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
 
@@ -190,7 +192,7 @@ void apply_goal_attraction(vector<BOID>& a_flock, GOAL& a_goal){
 
 void print_flock(vector<BOID>& a_flock) {
   glm::vec3 centroid = flock_centroid(a_flock);
-  cout << "Flock's centroid: " << centroid[0] << ", " 
+  cout << "Flock's centroid: " << centroid[0] << ", "
   << centroid[1] << ", " << centroid[2] << endl;
   float radius = flock_radius(a_flock);
   cout << "Flock's radius: " << radius << endl;
@@ -202,9 +204,9 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.num_f = 4;
   mesh.vertices.resize(6);
   for (int i = 0; i< 6; i++) {
-    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1], 
-      A_BOID[i][2]);  
-    mesh.vertices[i].tex_coords = glm::vec2(A_BOID_TEX[i][0], 
+    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1],
+      A_BOID[i][2]);
+    mesh.vertices[i].tex_coords = glm::vec2(A_BOID_TEX[i][0],
       A_BOID_TEX[i][1]);
   }
   for (int i = 0; i < 12; i++)
@@ -219,14 +221,17 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
 }
 
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& MV_MAT,
-  LIGHT THE_LIGHT, spotlight SPOT_LIGHT){
+  LIGHT THE_LIGHT, spotlight SPOT_LIGHT, bool if_fp){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  for (unsigned int i = 0; i < a_flock.size(); i++) {
+  for (unsigned int i = 0; i < a_flock.size(); i++){
+    if (if_fp && i == 0)
+      continue; // dont draw the boid with headlight when in FP mode
     glm::mat4 new_mv = MV_MAT;
     glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity,
       SPAWN_VELOCITY));
     float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity,
                                 rotate_normal);
+
     new_mv = glm::translate(new_mv, a_flock[i].pos);
     new_mv = glm::rotate(new_mv, angle, rotate_normal);
     mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);

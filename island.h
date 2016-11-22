@@ -36,8 +36,6 @@ void pertube(vector<glm::vec3>& all_vertices,
 
 bool on_edge(int index);
 
-void adjust_position(MESH& island);
-
 void get_island_centre(MESH& island, glm::vec3& centre);
 
 void generate_faces(vector<GLuint>& all_faces);

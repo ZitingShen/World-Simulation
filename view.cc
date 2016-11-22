@@ -6,7 +6,6 @@ void change_view(glm::mat4& MV_MAT,
                  std::vector<BOID>& flock,
                  GOAL& goal,
                  glm::vec3& island_centre,
-                 glm::vec3& fp_direction,
                  glm::vec3& eye){
   glm::vec3 centroid = flock_centroid(flock);
   //glm::vec3 midpoint = mid_point(flock, goal);
@@ -30,23 +29,24 @@ void change_view(glm::mat4& MV_MAT,
     case TRAILING:
       centroid = flock_centroid(flock);
       distance = get_d(flock, goal);
-      distance = (distance < 4000)?4000:distance;
-      //std::cout << distance << std::endl;
+      distance = (distance < 800)?800:distance;
       eye = centroid
-          - flock_direction*distance*0.9f
-          - velocity_direction*distance*1.1f
+          - flock_direction*distance*1.0f
+          - velocity_direction*distance*1.0f
           + up*tower*0.8f;
       break;
 
     case SIDE:
       eye = centroid
-          + glm::normalize(side_v)*distance*3.0f
+          + glm::normalize(side_v)*distance*(tower/2000.0f)*3.0f
           + up*distance*0.3f;
+      center = centroid;
       break;
 
     case FP:
       centroid = flock[0].pos;
-      up = up; // to be changed to boid's normal
+      up = up;
+      distance = 2.0f * BOID_SIZE;
       // looking at the interscetion point with the sea plane
        //center = glm::vec3(sp_pos.x + t_cone*fp_direction.x,
        //                  sp_pos.y + t_cone*fp_direction.y,
@@ -56,7 +56,7 @@ void change_view(glm::mat4& MV_MAT,
       //                   flock[0].pos.y + t*flock[0].velocity.y,
       //                   0);
       eye = centroid
-          + glm::normalize(flock[0].velocity) * BOID_SIZE;
+          + glm::normalize(flock[0].velocity) * distance * (tower/500.0f);
 
       break;
 

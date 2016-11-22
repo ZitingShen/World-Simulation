@@ -58,5 +58,5 @@ void print_flock(vector<BOID>& a_flock);
 void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
 
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader,
-  glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT);
+  glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT, bool if_fp);
 #endif

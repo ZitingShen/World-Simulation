@@ -24,7 +24,8 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   }
 
   // dropping off on the brink
-  vec3 RedLight = normalize(vec3(1.0 * ((coneAngle - angle) / coneAngle), 0.0, 0.0));
+  float attenuation = (coneAngle - angle) / coneAngle;
+  vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
 	vec3 L = normalize(light_position.xyz - pos_eye);
 	vec3 E = normalize(-pos_eye);

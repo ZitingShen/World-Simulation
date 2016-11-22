@@ -3,7 +3,7 @@
 using namespace std;
 
 BOID::BOID(){
-  pos = SPAWN_POSITION_I;
+  pos = SPAWN_POSITION;
   velocity = SPAWN_VELOCITY;
   partner_radius = PARTNER_RADIUS;
 }
@@ -136,6 +136,29 @@ void init_a_flock(vector<BOID>& a_flock){
     a_boid.pos[2] += (rand() % default_cube_length) - half_cube_length;
     a_flock.push_back(a_boid);
   }
+}
+
+void teleport_flock(vector<BOID>& a_flock, GOAL& goal, const glm::vec3& pos) {
+  int default_cube_length = SPAWN_CUBE_LENGTH*SQRT_2;
+  int half_cube_length = default_cube_length*0.5f;
+  srand(SEED);
+  for (int i = 0; i < DEFAULT_FLOCK_SIZE; i++){
+    a_flock[i].pos[0] = pos[0] + (rand() % default_cube_length) - half_cube_length;
+    a_flock[i].pos[1] = pos[1] + (rand() % default_cube_length) - half_cube_length;
+    a_flock[i].pos[2] = pos[2] + (rand() % default_cube_length) - half_cube_length;
+    a_flock[i].velocity = SPAWN_VELOCITY;
+  }
+
+  goal.pos = pos;
+  goal.velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+
+  goal.MOVE_ALONG_X_NEGATIVE = false;
+  goal.MOVE_ALONG_X_POSITIVE = false;
+  goal.MOVE_ALONG_Y_NEGATIVE = false;
+  goal.MOVE_ALONG_Y_POSITIVE = false;
+  goal.ACCELERATE = false;
+  goal.DECELERATE = false;
+  srand(time(NULL));
 }
 
 void apply_goal_attraction(vector<BOID>& a_flock, GOAL& a_goal){

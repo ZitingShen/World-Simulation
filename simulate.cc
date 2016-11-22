@@ -156,6 +156,18 @@ void cursor(GLFWwindow* window, double xpos, double ypos){
 void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS) {
     switch(key) {
+      case GLFW_KEY_1:
+        teleport_flock(A_FLOCK, A_GOAL, TELEPORT_POS1);
+      break;
+
+      case GLFW_KEY_2:
+        teleport_flock(A_FLOCK, A_GOAL, TELEPORT_POS2);
+      break;
+
+      case GLFW_KEY_3:
+        teleport_flock(A_FLOCK, A_GOAL, TELEPORT_POS3);
+      break;
+
    	  case GLFW_KEY_UP:
         zoom_in(TOWER);
       break;

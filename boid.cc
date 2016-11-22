@@ -21,10 +21,10 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
   bool close_to_goal = false;
   float dis_to_partner;
 
-  for (auto source = a_flock.begin(); source != a_flock.end(); source++) {
+  for (auto source = a_flock.begin(); source != a_flock.end(); source++){
     num_of_partners = 0; //reset for the next boid
     close_to_goal = glm::length(a_goal.pos - source->pos) < APPROACHING_GOAL;
-    for (auto target = a_flock.begin(); target != a_flock.end(); target++) {
+    for (auto target = a_flock.begin(); target != a_flock.end(); target++){
       if (target == source) continue;
       if (is_partner(*source, *target)){
         num_of_partners++;
@@ -49,13 +49,15 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
         }
       }
     }
-    if (num_of_partners != 0) {
+    if (num_of_partners != 0){
       //cout << "num_of_partners = " << num_of_partners << endl;
       s_modifier = s_modifier*(SEPARATION_WEIGHT/(float)num_of_partners)*1.8f;
       a_modifier = (a_modifier*(1.0f/num_of_partners)
         - source->velocity)*ALIGNMENT_WEIGHT*0.8f;
       c_modifier = (c_modifier*(1.0f/num_of_partners)
         - source->pos)*COHESION_WEIGHT;
+      if (source->pos == a_flock[0].pos) // clear view for the first person view
+        s_modifier = 10.0f * s_modifier;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
 

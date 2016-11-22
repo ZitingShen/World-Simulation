@@ -13,6 +13,8 @@ glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
+MESH WALNUT_MESH;
+vector<glm::vec3> WALNUT_POS;
 vector<MESH> ISLAND_MESH;
 vector<PREDATOR> PREDATORS;
 GLuint SHADER, ENVIRONMENT_SHADER;
@@ -106,6 +108,7 @@ int main(int argc, char *argv[]){
         draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, EYE);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+      draw_tree(WALNUT_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, WALNUT_POS, 200.0f);
 
       glUseProgram(ENVIRONMENT_SHADER);
       draw_octopus(OCTOPUS_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, EYE);
@@ -134,6 +137,9 @@ void init(GLFWwindow* window) {
   init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
   generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
   create_predators(PREDATORS, ISLAND_MESH);
+  read_mesh("meshes/walnut.off", WALNUT_MESH, SHADER, PROJ_MAT);
+  init_tree_mesh(WALNUT_MESH, ISLAND_MESH[2], "ppms/walnut.ppm", SHADER, 
+  PROJ_MAT, WALNUT_POS, 20);
 
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);

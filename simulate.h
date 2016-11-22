@@ -17,6 +17,7 @@
 #include "island.h"
 #include "light.h"
 #include "anti_collision.h"
+#include "tree.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

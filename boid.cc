@@ -192,7 +192,7 @@ void apply_goal_attraction(vector<BOID>& a_flock, GOAL& a_goal){
 
 void print_flock(vector<BOID>& a_flock) {
   glm::vec3 centroid = flock_centroid(a_flock);
-  cout << "Flock's centroid: " << centroid[0] << ", " 
+  cout << "Flock's centroid: " << centroid[0] << ", "
   << centroid[1] << ", " << centroid[2] << endl;
   float radius = flock_radius(a_flock);
   cout << "Flock's radius: " << radius << endl;
@@ -204,9 +204,9 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   mesh.num_f = 4;
   mesh.vertices.resize(6);
   for (int i = 0; i< 6; i++) {
-    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1], 
-      A_BOID[i][2]);  
-    mesh.vertices[i].tex_coords = glm::vec2(A_BOID_TEX[i][0], 
+    mesh.vertices[i].pos = glm::vec3(A_BOID[i][0], A_BOID[i][1],
+      A_BOID[i][2]);
+    mesh.vertices[i].tex_coords = glm::vec2(A_BOID_TEX[i][0],
       A_BOID_TEX[i][1]);
   }
   for (int i = 0; i < 12; i++)
@@ -229,6 +229,7 @@ void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& M
       SPAWN_VELOCITY));
     float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity,
                                 rotate_normal);
+
     new_mv = glm::translate(new_mv, a_flock[i].pos);
     new_mv = glm::rotate(new_mv, angle, rotate_normal);
     mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);

@@ -149,12 +149,6 @@ void generate_faces(vector<GLuint>& all_faces){
   }
 }
 
-void adjust_position(MESH& island){
-  for (int i=0; i<(int)island.num_v; i++){
-    island.vertices[i].pos.z = island.vertices[i].pos.z - 3000;
-  }
-}
-
 void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT) {
                           //ofstream& fout, string filename) {
   int num_v, num_f;
@@ -171,10 +165,11 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
     get_num_f(num_f);
 
     /* data generation */
+    island[island_index].num_v = num_v;
+    island[island_index].num_f = num_f;
     get_all_vertices(num_v, all_vertices[island_index]);
     create_precipice(all_vertices[island_index]);
     generate_faces(island[island_index].faces.draw_indices);
-    //adjust_position(island[island_index]);
 
     /* File IO */
     /*
@@ -206,12 +201,17 @@ void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_M
     */
 
     /* setting up MESH */
-    
     island[island_index].num_v = num_v;
     island[island_index].num_f = num_f;
     island[island_index].vertices.resize(num_v); // resize to num_v
+    float sea_level = (all_vertices[island_index][SUBDIVISIONS/2].z
+                     + all_vertices[island_index][num_v - SUBDIVISIONS/2].z
+                     + all_vertices[island_index][num_v/2].z
+                     + all_vertices[island_index][num_v/2 - SUBDIVISIONS].z) / 4.0f;
     for (int i=0; i<num_v; i++) {
-      island[island_index].vertices[i].pos = all_vertices[island_index][i];
+      island[island_index].vertices[i].pos = glm::vec3(all_vertices[island_index][i].x,
+                                                       all_vertices[island_index][i].y,
+                                                       all_vertices[island_index][i].z - sea_level); // sunken island
       island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE+0.85f;
       island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE+0.85f;
     }
@@ -241,6 +241,7 @@ void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
   GLuint ifSnow = glGetUniformLocation(shader, "ifSnow");
   glUniform1i(ifSnow, 1);
   float distance = glm::distance(eye, ISLAND_POS);
+
   if(distance > 6000) {
     meshes[0].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
   } else if (distance > 4000) {

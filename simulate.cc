@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
 
-    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, SPOT_LIGHT.coneDirection, EYE);
+    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, EYE);
 
     update_light(SUN_POS, THE_LIGHT);
     update_spot_light(SPOT_LIGHT,
@@ -146,7 +146,7 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, SPOT_LIGHT.coneDirection, EYE);
+  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, EYE);
 }
 
 void cursor(GLFWwindow* window, double xpos, double ypos){

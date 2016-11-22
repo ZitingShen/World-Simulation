@@ -8,7 +8,7 @@
 #include <iostream>
 
 const float STEER_ANGLE = 0.1; // in radian
-const float ANGLE = 0.15 * M_PI; // 27 * 2 = 54 degrees
+const float ANGLE = 0.1 * M_PI; // 18 * 2 = 36 degrees
 
 struct LIGHT{
 	glm::vec4 light0 = glm::vec4(10.0f, 10.0f, 100.0f, 0);

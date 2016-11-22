@@ -6,7 +6,6 @@ void change_view(glm::mat4& MV_MAT,
                  std::vector<BOID>& flock,
                  GOAL& goal,
                  glm::vec3& island_centre,
-                 glm::vec3& fp_direction,
                  glm::vec3& eye){
   glm::vec3 centroid = flock_centroid(flock);
   //glm::vec3 midpoint = mid_point(flock, goal);
@@ -30,18 +29,18 @@ void change_view(glm::mat4& MV_MAT,
     case TRAILING:
       centroid = flock_centroid(flock);
       distance = get_d(flock, goal);
-      distance = (distance < 4000)?4000:distance;
-      //std::cout << distance << std::endl;
+      distance = (distance < 800)?800:distance;
       eye = centroid
-          - flock_direction*distance*0.9f
-          - velocity_direction*distance*1.1f
+          - flock_direction*distance*1.0f
+          - velocity_direction*distance*1.0f
           + up*tower*0.8f;
       break;
 
     case SIDE:
       eye = centroid
-          + glm::normalize(side_v)*distance*3.0f
+          + glm::normalize(side_v)*distance*(tower/2000.0f)*3.0f
           + up*distance*0.3f;
+      center = centroid;
       break;
 
     case FP:

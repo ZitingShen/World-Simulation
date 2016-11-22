@@ -13,12 +13,9 @@ void update_light(glm::vec3& sun_pos, LIGHT& THE_LIGHT){
 }
 
 void initialise_spot_light(spotlight& s_l, glm::vec4 pos, glm::vec3 direction){
-  s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+  s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * 3.0f * BOID_SIZE, 1);
   s_l.coneAngle = ANGLE;
   s_l.coneDirection = normalize(direction);
-  //s_l.pos = glm::vec4(0, 0, 5000, 1);
-  //s_l.coneAngle = ANGLE;
-  //s_l.coneDirection = glm::vec3(0, 0, -1);
 }
 
 void update_spot_light(spotlight& s_l,
@@ -30,7 +27,7 @@ void update_spot_light(spotlight& s_l,
                        glm::vec3 direction,
                        bool vm){
   if (!vm){ // just follow the boid and its direction
-    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * 3.0f * BOID_SIZE, 1);
     s_l.coneDirection = normalize(direction);
   }else{
     //theta = sqrt(pow(xpos - mouse_pos.x_pos, 2) + pow(ypos - mouse_pos.y_pos, 2)) / radius;
@@ -47,7 +44,7 @@ void update_spot_light(spotlight& s_l,
     glm::vec4 worldPos = inv * screenPos;
 
     s_l.coneDirection = glm::normalize(glm::vec3(worldPos));
-    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
+    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * 3.0f *  BOID_SIZE, 1);
   }
 
   //std::cout << "Spot light pos " << s_l.pos.x << " "<<  s_l.pos.y << " " <<  s_l.pos.z << " " << endl;

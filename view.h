@@ -14,7 +14,7 @@ void change_view(glm::mat4& PROJ_MAT,
 	               std::vector<BOID>& flock,
                  GOAL& goal,
                  glm::vec3& island_centre,
-                 glm::vec3& fp_direction, glm::vec3& eye);
+                 glm::vec3& eye);
 
 void zoom_in(float& tower);
 void zoom_out(float& tower);

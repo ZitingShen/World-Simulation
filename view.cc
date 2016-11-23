@@ -17,7 +17,7 @@ void camera::change_view(glm::mat4& MV_MAT,
                          glm::vec3& env_centre,
                          glm::vec3& cone_direction){
 
-  glm::vec3 centroid;
+  glm::vec3 centroid = flock_centroid(flock);
   glm::vec3 camera_movement;
   float distance;
   float t_cone;
@@ -29,23 +29,20 @@ void camera::change_view(glm::mat4& MV_MAT,
 
   switch(this->current_vm){
     case DEFAULT:
-      centroid = flock_centroid(flock);
       this->eye = glm::vec3(0, 0, tower);
       this->center = glm::vec3(island_centre.x, 0.1f, island_centre.z);
       break;
 
     case TRAILING:
-      distance = 800.0f;
-      centroid = flock_centroid(flock);
+      distance = 600.0f;
       this->eye = centroid
-                  - flock_direction*distance*1.0f
-                  - velocity_direction*distance*1.0f
+                  - flock_direction*distance*1.0f;
+                  - flock_direction*distance*1.0f;
                   + this->up*(this->tower*0.8f);
       this->center = centroid;
       break;
 
     case SIDE:
-      centroid = flock_centroid(flock);
       distance = get_d(flock, goal);
       this->eye = centroid
           + glm::normalize(side_v)*distance*(this->tower/2000.0f)*3.0f
@@ -54,7 +51,6 @@ void camera::change_view(glm::mat4& MV_MAT,
       break;
 
     case FP:
-      centroid = flock[0].pos;
       distance = 2.0f * BOID_SIZE;
       // looking at the interscetion point with the sea plane
       t_cone = (0.0 - sp_pos.z) / cone_direction.z;
@@ -66,8 +62,8 @@ void camera::change_view(glm::mat4& MV_MAT,
       if (glm::length(camera_movement) > CAMERA_SPEED_CAP)
         camera_movement = glm::normalize(camera_movement) * CAMERA_SPEED_CAP;
 
-      this->eye = centroid
-                + glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
+      this->eye = flock[0].pos
+               + glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
       this->center = center + camera_movement;
       break;
     case ENV:

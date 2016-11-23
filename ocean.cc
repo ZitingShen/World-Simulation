@@ -1,6 +1,7 @@
 #include "ocean.h"
 
-void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
+void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, 
+  int &TEXTURE_COUNTER) {
   mesh.num_v = 4;
   mesh.num_f = 2;
   mesh.vertices.resize(4);

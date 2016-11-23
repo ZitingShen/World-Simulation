@@ -72,6 +72,10 @@ void camera::change_view(glm::mat4& MV_MAT,
                             ENV_RADIUS*glm::sin(this->env_cam_pos[1]),
                             this->env_cam_pos[2]);
       this->center = env_centre;
+    case FP_TRAILING:
+      this->eye = centroid;
+      this->center = flock_direction;
+      break;
 
     default:
       break;

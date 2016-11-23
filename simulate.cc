@@ -85,6 +85,7 @@ int main(int argc, char *argv[]){
       update_goal_velocity(A_GOAL);
       update_goal_pos(A_GOAL);
       update_velocity(A_FLOCK, A_GOAL);
+      cout << glm::length(A_FLOCK[0].velocity) << endl;
       apply_goal_attraction(A_FLOCK, A_GOAL);
       apply_predator_deterrence(PREDATORS, A_FLOCK);
       update_pos(A_FLOCK);
@@ -267,6 +268,13 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_L:
         MY_CAMERA.current_vm = ENV;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
+      
+      case GLFW_KEY_O:
+        MY_CAMERA.current_vm = FP_TRAILING;
         glfwGetWindowSize(window, &WIDTH, &HEIGHT);
         PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);

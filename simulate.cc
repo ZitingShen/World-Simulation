@@ -14,8 +14,8 @@ glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, SPHERE_MESH;
-MESH ISLAND_MESH, WALNUT_MESH;
-vector<glm::vec3> WALNUT_POS;
+MESH ISLAND_MESH, TREE_MESH;
+vector<glm::vec3> TREE_POS;
 vector<vector<GLuint>> ISLAND_INDICES;
 vector<GLuint> ISLAND_EBOS;
 vector<PREDATOR> PREDATORS;
@@ -111,12 +111,11 @@ int main(int argc, char *argv[]){
       draw_a_sun(SUN_POS, ISLAND_MESH.vertices[ISLAND_MESH.vertices.size()/2].pos, SUN_MESH, 
         SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
-      draw_tree(WALNUT_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, WALNUT_POS, 200.0f);
+      draw_tree(TREE_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, TREE_POS, 200.0f);
 
       glUseProgram(ENVIRONMENT_SHADER);
-      draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
-        SPOT_LIGHT, SPHERE_POS);
-      //glUseProgram(SHADER);
+      //draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
+      //  SPOT_LIGHT, SPHERE_POS);
       glfwSwapBuffers(window);
     }
   }
@@ -143,9 +142,9 @@ void init(GLFWwindow* window) {
   generate_island_mesh(ISLAND_MESH, ISLAND_INDICES, ISLAND_EBOS, SHADER, PROJ_MAT, 
     TEXTURE_COUNTER);
   create_predators(PREDATORS, ISLAND_MESH);
-  read_mesh("meshes/walnut.off", WALNUT_MESH, SHADER, PROJ_MAT);
-  init_tree_mesh(WALNUT_MESH, ISLAND_MESH, TREE_TEXTURE, SHADER, 
-  PROJ_MAT, WALNUT_POS, 20, TEXTURE_COUNTER);
+  read_mesh("meshes/gnarly.off", TREE_MESH, SHADER, PROJ_MAT);
+  init_tree_mesh(TREE_MESH, ISLAND_MESH, TREE_TEXTURE, SHADER, 
+    PROJ_MAT, TREE_POS, 20, TEXTURE_COUNTER);
   read_mesh("meshes/sphere2.off", SPHERE_MESH, SHADER, PROJ_MAT);
   init_environment_mesh(SPHERE_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position

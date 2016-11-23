@@ -4,8 +4,7 @@ void init_tree_mesh(MESH& mesh, MESH& island_mesh, const char *texture, GLuint s
   glm::mat4& PROJ_MAT, vector<glm::vec3>& tree_pos, int TREE_NUM, int &TEXTURE_COUNTER) {
   for (unsigned int i = 0; i< mesh.num_v; i++) {
     mesh.vertices[i].pos -= mesh.center;
-    if (mesh.vertices[i].pos[2] < 0 && 
-      (mesh.vertices[i].pos[1] < 0.2f && mesh.vertices[i].pos[1] > -0.2f)) {
+    if (mesh.vertices[i].pos[2] < 0) {
       mesh.vertices[i].tex_coords = glm::vec2(
         static_cast<float>(rand())/static_cast<float>(RAND_MAX)*0.5f, 
         static_cast<float>(rand())/static_cast<float>(RAND_MAX)*0.5f);
@@ -16,9 +15,21 @@ void init_tree_mesh(MESH& mesh, MESH& island_mesh, const char *texture, GLuint s
     }
   }
   srand(SEED);
+  float high_point = -FLT_MAX;
+  int x = 0, y = 0;
+  for(int i = 0; i <= SUBDIVISIONS; i++) {
+    for(int j = 0; j <= SUBDIVISIONS; j++) {
+      if (island_mesh.vertices[get_index(i, j)].pos[2] > high_point) {
+        high_point = island_mesh.vertices[get_index(i, j)].pos[2];
+        x = i;
+        y = j;
+      }
+    }
+  }
   for (int i = 0; i < TREE_NUM; i++) {
-    int random_pos = rand() / (int) WORLD_SIZE;
-    tree_pos.push_back(island_mesh.vertices[random_pos].pos);
+    int random1 = rand() % (SUBDIVISIONS/2) - (SUBDIVISIONS/4);
+    int random2 = rand() % (SUBDIVISIONS/2) - (SUBDIVISIONS/4);
+    tree_pos.push_back(island_mesh.vertices[get_index(x+random1, y+random2)].pos);
   }
   srand(time(NULL));
   mesh.texels.resize(1);

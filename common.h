@@ -89,7 +89,7 @@
 #define OCEAN_TEXTURE			  "ppms/ocean.ppm"
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
-#define TREE_TEXTURE		      "ppms/walnut.ppm"
+#define TREE_TEXTURE		      "ppms/gnarly.ppm"
 #define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/right.ppm"
 #define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/left.ppm"
 #define ENVIRONMENT_TEXTURE_POS_Y "ppms/environment/down.ppm"

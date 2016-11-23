@@ -36,8 +36,8 @@ void camera::change_view(glm::mat4& MV_MAT,
     case TRAILING:
       distance = 600.0f;
       this->eye = centroid
-                  - velocity_direction*distance*1.0f*(this->tower/2000.0f);
-                  - flock_direction*distance*1.0f*(this->tower/2000.0f);
+                  - velocity_direction*distance*1.0f*(this->tower/2000.0f)
+                  - flock_direction*distance*1.0f*(this->tower/2000.0f)
                   + this->up*0.8f;
       this->center = centroid;
       break;

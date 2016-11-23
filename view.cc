@@ -68,8 +68,8 @@ void camera::change_view(glm::mat4& MV_MAT,
     case ENV:
       this->env_cam_pos[0] += ENV_MOVEMENT;
       this->env_cam_pos[1] += ENV_MOVEMENT;
-      this->eye = glm::vec3((1500.0)*glm::cos(this->env_cam_pos[0]) + env_centre[0],
-                            (1500.0)*glm::sin(this->env_cam_pos[1]) + env_centre[1],
+      this->eye = glm::vec3((1800.0)*glm::cos(this->env_cam_pos[0]) + env_centre[0],
+                            (1800.0)*glm::sin(this->env_cam_pos[1]) + env_centre[1],
                             env_centre[2]);
       this->center = env_centre;
       break;

@@ -114,8 +114,8 @@ int main(int argc, char *argv[]){
       draw_tree(TREE_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, TREE_POS, 200.0f);
 
       glUseProgram(ENVIRONMENT_SHADER);
-      //draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
-      //  SPOT_LIGHT, SPHERE_POS);
+      draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
+        SPOT_LIGHT, SPHERE_POS);
       glfwSwapBuffers(window);
     }
   }

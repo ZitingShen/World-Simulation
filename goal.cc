@@ -3,9 +3,11 @@
 using namespace std;
 
 GOAL::GOAL(){
-  this->pos = DEFAULT_GOAL_SPAWN_POSITION;
+  //this->pos = DEFAULT_GOAL_SPAWN_POSITION;
+  this->pos = glm::vec3(GOAL_RADIUS, GOAL_RADIUS, 5000.0f);
   this->planet = glm::vec3(0, 0, DEFAULT_GOAL_SPAWN_POSITION[2]);
-  this->velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+  //this->velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+  this->velocity = glm::vec3(0.0f, 0.0f, 0.01f);
 
   this->MOVE_ALONG_X_NEGATIVE = false;
   this->MOVE_ALONG_X_POSITIVE = false;

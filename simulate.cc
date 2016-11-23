@@ -74,8 +74,6 @@ int main(int argc, char *argv[]){
 
     MY_CAMERA.change_view(MV_MAT, A_FLOCK, A_GOAL, ISLAND_MESH.center, ENV_CENTRE, 
       SPOT_LIGHT.coneDirection);
-
-    update_light(SUN_POS, THE_LIGHT);
     update_spot_light(SPOT_LIGHT,
                       WIDTH, HEIGHT,
                       MV_MAT,
@@ -204,7 +202,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       case GLFW_KEY_F3:
       ENABLE_ISLAND = 1 - ENABLE_ISLAND;
       break;
-
+ 
       case GLFW_KEY_A:
       A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
       break;

@@ -228,7 +228,8 @@ void print_mesh_info(MESH& mesh){
   }
 }
 
-void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT) {
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, 
+  spotlight SPOT_LIGHT) {
   for (unsigned int i = 0; i < texels.size(); i++) {
     GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
     glUniform1i(tex, texture_counter+i);
@@ -242,12 +243,13 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SP
   glUniform1f(ifNight, THE_LIGHT.ifNight);
 
   /* Adding spotlight */
+  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
+  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
   GLuint sl_coneAngle = glGetUniformLocation(shader, "coneAngle");
   glUniform1f(sl_coneAngle, SPOT_LIGHT.coneAngle);
   GLuint sl_position = glGetUniformLocation(shader, "sp_position");
   glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
-  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
-  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
+  
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -255,8 +257,8 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SP
       GL_UNSIGNED_INT, (void*) 0);
 }
 
-void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT,
-  GLuint ebo) {
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, 
+  spotlight SPOT_LIGHT, GLuint ebo) {
   for (unsigned int i = 0; i < texels.size(); i++) {
     GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
     glUniform1i(tex, texture_counter+i);
@@ -270,12 +272,13 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SP
   glUniform1f(ifNight, THE_LIGHT.ifNight);
 
   /* Adding spotlight */
+  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
+  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
   GLuint sl_coneAngle = glGetUniformLocation(shader, "coneAngle");
   glUniform1f(sl_coneAngle, SPOT_LIGHT.coneAngle);
   GLuint sl_position = glGetUniformLocation(shader, "sp_position");
   glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
-  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
-  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
+  
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);

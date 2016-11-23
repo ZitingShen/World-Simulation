@@ -63,7 +63,10 @@
 #define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
 #define SHINENESS				  0.1f
 
-#define OCEAN_SIZE 				  5000
+#define GOAL_RADIUS    8000.0f
+#define GOAL_MOVEMENT  (0.3*DEGREE_TO_RADIAN)
+
+#define OCEAN_SIZE 				  50000
 #define OCTOPUS_SIZE			  1200.0
 #define SEED                      314159265
 
@@ -75,10 +78,13 @@
 #define CAMERA_NEAR               2.0f
 #define CAMERA_FAR                100000000.0f
 
+#define ENV_RADIUS    3000.0f
+#define ENV_MOVEMENT  (0.2*DEGREE_TO_RADIAN)
+
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"
 #define SUN_TEXTURE				  "ppms/fire.ppm"
-#define OCEAN_TEXTURE			  "ppms/ocean.ppm"
+#define OCEAN_TEXTURE			  "ppms/rock.ppm"
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 #define OCTOPUS_TEXTURE_POS_X	  "ppms/environment/right.ppm"
@@ -87,4 +93,9 @@
 #define OCTOPUS_TEXTURE_NEG_Y	  "ppms/environment/up.ppm"
 #define OCTOPUS_TEXTURE_POS_Z	  "ppms/environment/back.ppm"
 #define OCTOPUS_TEXTURE_NEG_Z	  "ppms/environment/front.ppm"
+
+#define OCTOPUS_POS_X 500.0f
+#define OCTOPUS_POS_Y 500.0f
+#define OCTOPUS_POS_Z 1000.0f
+
 #endif

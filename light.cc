@@ -29,7 +29,7 @@ void update_spot_light(spotlight& s_l,
   if (!vm){ // just follow the boid and its direction
     s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * 3.0f * BOID_SIZE, 1);
     s_l.coneDirection = normalize(direction);
-  }else{
+  }else{ // other wise the headlight follows our cursor
     float mouseX = mouse_pos.x_pos / (width  * 0.5f) - 1.0f;
     float mouseY = mouse_pos.y_pos / (height * 0.5f) - 1.0f;
     glm::mat4 inv = glm::inverse(PROJ_MAT * MV_MAT);
@@ -37,6 +37,6 @@ void update_spot_light(spotlight& s_l,
     glm::vec4 worldPos = inv * screenPos;
 
     s_l.coneDirection = glm::normalize(glm::vec3(worldPos));
-    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * 3.0f *  BOID_SIZE, 1);
+    s_l.pos = glm::vec4(glm::vec3(pos) + normalize(direction) * BOID_SIZE, 1);
   }
 }

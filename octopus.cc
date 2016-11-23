@@ -65,9 +65,10 @@ void init_octopus_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
 }
 
 void draw_octopus(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
-  glm::vec3& camera) {
+  glm::vec3& camera, spotlight SPOT_LIGHT){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  glm::mat4 view = glm::translate(OCTOPUS_POS);
+  glm::vec3 octopus_pos = glm::vec3(OCTOPUS_POS_X, OCTOPUS_POS_Y, OCTOPUS_POS_Z);
+  glm::mat4 view = glm::translate(octopus_pos);
   view = glm::scale(view, glm::vec3(OCTOPUS_SIZE/mesh.size[1], OCTOPUS_SIZE/mesh.size[1], 
     OCTOPUS_SIZE/mesh.size[1]));
   view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -88,6 +89,16 @@ void draw_octopus(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
   glUniform1f(ifNight, THE_LIGHT.ifNight);
   GLuint cam = glGetUniformLocation(shader, "Camera");
   glUniform3fv(cam, 1, glm::value_ptr(camera));
+
+  /* Adding spotlight */
+  GLuint sl_pos = glGetUniformLocation(shader, "sp_position");
+  glUniform4fv(sl_pos, 1, glm::value_ptr(SPOT_LIGHT.pos));
+
+  GLuint sl_dir = glGetUniformLocation(shader, "coneDirection");
+  glUniform3fv(sl_dir, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
+
+  GLuint sl_angle = glGetUniformLocation(shader, "coneAngle");
+  glUniform1f(sl_angle, SPOT_LIGHT.coneAngle);
 
   glBindVertexArray(mesh.vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);

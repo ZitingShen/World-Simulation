@@ -86,7 +86,6 @@ int main(int argc, char *argv[]){
       update_goal_velocity(A_GOAL);
       update_goal_pos(A_GOAL);
       update_velocity(A_FLOCK, A_GOAL);
-      cout << glm::length(A_FLOCK[0].velocity) << endl;
       apply_goal_attraction(A_FLOCK, A_GOAL);
       apply_predator_deterrence(PREDATORS, A_FLOCK);
       update_pos(A_FLOCK);

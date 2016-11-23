@@ -33,5 +33,4 @@ void draw_a_sun(glm::vec3& sun_pos, MESH& mesh, GLuint shader, glm::mat4& MV_MAT
 void update_sun_pos(glm::vec3& sun_pos){
   sun_pos[1] += SUN_MOVEMENT;
   sun_pos[2] += SUN_MOVEMENT;
-  cout << sun_pos[0] << " " << sun_pos[1] << " " << sun_pos[2] << endl;
 }

@@ -2,7 +2,7 @@
 
 camera::camera(float tower){
   /* defualt view setup */
-  this->eye = glm::vec3(0, 0, 30000); //glm::vec3(0, 0, tower);
+  this->eye = glm::vec3(0, 0, tower); //glm::vec3(0, 0, tower);
   this->up = glm::vec3(0, 0, 1);
   this->center = glm::vec3(0, 0.1f, 0);
   this->env_cam_pos = glm::vec3(0, 0, 5000);

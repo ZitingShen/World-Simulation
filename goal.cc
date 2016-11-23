@@ -73,7 +73,6 @@ void update_goal_velocity(GOAL& goal){
 
 void update_goal_pos(GOAL& goal){
   goal.pos += goal.velocity;
-  cout << glm::to_string(goal.pos) << endl;
 }
 
 void teleport_goal(GOAL& goal){

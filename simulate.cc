@@ -99,6 +99,7 @@ int main(int argc, char *argv[]){
       }
     }
 
+    glUseProgram(SHADER);
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
       if (ENABLE_FLOCK)
         draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]){
       glUseProgram(ENVIRONMENT_SHADER);
       draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
         SPOT_LIGHT, SPHERE_POS);
-      glUseProgram(SHADER);
+      //glUseProgram(SHADER);
       glfwSwapBuffers(window);
     }
   }
@@ -133,6 +134,7 @@ void init(GLFWwindow* window) {
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
     CAMERA_NEAR, CAMERA_FAR);
   init_a_flock(A_FLOCK);
+  initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
   init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
   init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
   read_mesh("meshes/sphere2.off", SUN_MESH, SHADER, PROJ_MAT);
@@ -147,8 +149,7 @@ void init(GLFWwindow* window) {
   read_mesh("meshes/sphere2.off", SPHERE_MESH, SHADER, PROJ_MAT);
   init_environment_mesh(SPHERE_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
-  initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
-
+ 
   MY_CAMERA.current_vm = DEFAULT;
 }
 

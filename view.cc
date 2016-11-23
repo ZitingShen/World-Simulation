@@ -66,8 +66,9 @@ void camera::change_view(glm::mat4& MV_MAT,
       if (glm::length(camera_movement) > CAMERA_SPEED_CAP)
         camera_movement = glm::normalize(camera_movement) * CAMERA_SPEED_CAP;
 
-      this->eye = centroid
-                + glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
+      //this->eye = glm::vec3(0, 0, tower);
+      this->eye = centroid;
+                //+ glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
       this->center = center + camera_movement;
       break;
     case ENV:

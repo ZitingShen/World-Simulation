@@ -1,6 +1,7 @@
 #ifndef TREE_H 
 #define TREE_H
 #include "common.h"
+#include "island.h"
 #include "fin.h"
 #include "read_ppm.h"
 #include <time.h>

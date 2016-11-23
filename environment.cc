@@ -73,7 +73,7 @@ void draw_environment(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LI
   glm::mat4 view = glm::translate(environment_pos);
   view = glm::scale(view, glm::vec3(ENVIRONMENT_SIZE/mesh.size[1], ENVIRONMENT_SIZE/mesh.size[1], 
     ENVIRONMENT_SIZE/mesh.size[1]));
-  view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
+  //view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
   glm::mat4 move_back = glm::translate(-mesh.center);
   
   GLuint tex = glGetUniformLocation(shader, "cube");

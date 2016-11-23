@@ -4,7 +4,7 @@ using namespace std;
 
 GOAL::GOAL(){
   this->pos = DEFAULT_GOAL_SPAWN_POSITION;
-  this->planet =
+  this->planet = glm::vec3(0, 0, DEFAULT_GOAL_SPAWN_POSITION[2]);
   this->velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
 
   this->MOVE_ALONG_X_NEGATIVE = false;
@@ -73,6 +73,7 @@ void update_goal_velocity(GOAL& goal){
 
 void update_goal_pos(GOAL& goal){
   goal.pos += goal.velocity;
+  cout << glm::to_string(goal.pos) << endl;
 }
 
 void teleport_goal(GOAL& goal){

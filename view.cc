@@ -31,7 +31,6 @@ void camera::change_view(glm::mat4& MV_MAT,
     case DEFAULT:
       centroid = flock_centroid(flock);
       this->eye = glm::vec3(0, 0, tower);
-      this->up  = glm::vec3(0, 0, 1);
       this->center = glm::vec3(island_centre.x, 0.1f, island_centre.z);
       break;
 
@@ -40,9 +39,8 @@ void camera::change_view(glm::mat4& MV_MAT,
       centroid = flock_centroid(flock);
       this->eye = centroid
                   - flock_direction*distance*1.0f
-                  - velocity_direction*distance*1.0f;
-                  + this->up*this->tower*0.8f;
-      this->up  = glm::vec3(0, 0, 1);
+                  - velocity_direction*distance*1.0f
+                  + this->up*(this->tower*0.8f);
       this->center = centroid;
       break;
 
@@ -52,7 +50,6 @@ void camera::change_view(glm::mat4& MV_MAT,
       this->eye = centroid
           + glm::normalize(side_v)*distance*(this->tower/2000.0f)*3.0f
           + this->up*distance*0.3f;
-      this->up = glm::vec3(0, 0, 1);
       this->center = centroid;
       break;
 
@@ -71,7 +68,6 @@ void camera::change_view(glm::mat4& MV_MAT,
 
       this->eye = centroid
                 + glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
-      this->up = glm::vec3(0, 0, 1);
       this->center = center + camera_movement;
       break;
     case ENV:
@@ -80,7 +76,6 @@ void camera::change_view(glm::mat4& MV_MAT,
       this->eye = glm::vec3(ENV_RADIUS*glm::cos(this->env_cam_pos[0]),
                             ENV_RADIUS*glm::sin(this->env_cam_pos[1]),
                             this->env_cam_pos[2]);
-      this->up = glm::vec3(0, 0, 1);
       this->center = env_centre;
 
     default:

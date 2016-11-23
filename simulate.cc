@@ -103,8 +103,8 @@ int main(int argc, char *argv[]){
       if (ENABLE_FLOCK)
         draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
           MY_CAMERA.current_vm == FP);
-      //if (ENABLE_GOAL)
-      //  draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+      if (ENABLE_GOAL)
+        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)
         draw_island(ISLAND_MESH, ISLAND_EBOS, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
           MY_CAMERA.eye);
@@ -142,7 +142,7 @@ void init(GLFWwindow* window) {
     TEXTURE_COUNTER);
   create_predators(PREDATORS, ISLAND_MESH);
   read_mesh("meshes/walnut.off", WALNUT_MESH, SHADER, PROJ_MAT);
-  init_tree_mesh(WALNUT_MESH, ISLAND_MESH, "ppms/walnut.ppm", SHADER, 
+  init_tree_mesh(WALNUT_MESH, ISLAND_MESH, TREE_TEXTURE, SHADER, 
   PROJ_MAT, WALNUT_POS, 20, TEXTURE_COUNTER);
   read_mesh("meshes/sphere2.off", SPHERE_MESH, SHADER, PROJ_MAT);
   init_environment_mesh(SPHERE_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);

@@ -30,7 +30,7 @@ void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices){
   all_vertices[get_index(SUBDIVISIONS/2, 0)].z = get_random() * PERTUBE_LEVEL;
   all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = get_random() * PERTUBE_LEVEL;
   all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = get_random() * PERTUBE_LEVEL;
-  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 2*get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = get_random() * PERTUBE_LEVEL+get_random()*PERTUBE_LEVEL+get_random()*PERTUBE_LEVEL;
 }
 
 int get_index(int x, int y){
@@ -165,15 +165,16 @@ void generate_island_mesh(MESH& mesh, vector<vector<GLuint>>& index_groups, vect
   srand(time(NULL)); // reset to time(NULL)
   /* setting up MESH */
   mesh.vertices.resize(num_v); // resize to num_v
-  float sea_level = all_vertices[SUBDIVISIONS/2].z;
-  sea_level = all_vertices[num_v-SUBDIVISIONS/2].z>sea_level?all_vertices[num_v-SUBDIVISIONS/2].z:sea_level;
-  sea_level = all_vertices[num_v/2].z>sea_level?all_vertices[num_v/2].z:sea_level;
-  sea_level = all_vertices[num_v/2-SUBDIVISIONS].z>sea_level?all_vertices[num_v/2-SUBDIVISIONS].z:sea_level;
-
+  float sea_level = -FLT_MAX;
+  for(int i = 0; i <= SUBDIVISIONS; i++) {
+    sea_level = all_vertices[get_index(i, 0)].z>sea_level?all_vertices[get_index(i, 0)].z:sea_level;
+    sea_level = all_vertices[get_index(0, i)].z>sea_level?all_vertices[get_index(0, i)].z:sea_level;
+    sea_level = all_vertices[get_index(i, SUBDIVISIONS)].z>sea_level?all_vertices[get_index(i, SUBDIVISIONS)].z:sea_level;
+    sea_level = all_vertices[get_index(SUBDIVISIONS, i)].z>sea_level?all_vertices[get_index(SUBDIVISIONS, i)].z:sea_level;
+  }
   for (int i=0; i<num_v; i++) {
-    mesh.vertices[i].pos = glm::vec3(all_vertices[i].x,
-                                                     all_vertices[i].y,
-                                                     all_vertices[i].z - sea_level); // sunken island
+    mesh.vertices[i].pos = glm::vec3(all_vertices[i].x, all_vertices[i].y, 
+      all_vertices[i].z - sea_level); // sunken island
     mesh.vertices[i].tex_coords[0] = mesh.vertices[i].pos[0]/WORLD_SIZE+0.85f;
     mesh.vertices[i].tex_coords[1] = mesh.vertices[i].pos[1]/WORLD_SIZE+0.85f;
   }

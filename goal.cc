@@ -3,19 +3,34 @@
 using namespace std;
 
 GOAL::GOAL(){
-  pos = DEFAULT_GOAL_SPAWN_POSITION;
-  velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
+  this->pos = DEFAULT_GOAL_SPAWN_POSITION;
+  this->planet =
+  this->velocity = DEFAULT_GOAL_SPAWN_VELOCITY;
 
-  MOVE_ALONG_X_NEGATIVE = false;
-  MOVE_ALONG_X_POSITIVE = false;
-  MOVE_ALONG_Y_NEGATIVE = false;
-  MOVE_ALONG_Y_POSITIVE = false;
-  ACCELERATE = false;
-  DECELERATE = false;
+  this->MOVE_ALONG_X_NEGATIVE = false;
+  this->MOVE_ALONG_X_POSITIVE = false;
+  this->MOVE_ALONG_Y_NEGATIVE = false;
+  this->MOVE_ALONG_Y_POSITIVE = false;
+  this->ACCELERATE = false;
+  this->DECELERATE = false;
+
+  this->steer = false;
+}
+
+void GOAL::toggle_steer(){
+  this->steer = !this->steer;
 }
 
 void update_goal_velocity(GOAL& goal){
   //float temp_z;
+  if (!goal.steer){
+    goal.planet[0] += GOAL_MOVEMENT;
+    goal.planet[1] += GOAL_MOVEMENT;
+    goal.pos[0] = GOAL_RADIUS*glm::cos(goal.planet[0]);
+    goal.pos[1] = GOAL_RADIUS*glm::sin(goal.planet[1]);
+    //cout << "not steering" << endl;
+  }else{
+    //cout << "steering" << endl;
   if (goal.MOVE_ALONG_X_POSITIVE){
     if (goal.velocity[0] < 0){
       goal.velocity[0] = -goal.velocity[0];
@@ -52,6 +67,7 @@ void update_goal_velocity(GOAL& goal){
   if (goal.DECELERATE){
     goal.velocity =  goal.velocity*float(1 - DEFAULT_ACCELERATION_FACTOR);
     goal.velocity[2] = 0.01f; // do not accerlate on Z
+  }
   }
 }
 
@@ -101,5 +117,9 @@ void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
   new_mv = glm::translate(new_mv, goal.pos);
+
+  new_mv = glm::translate(new_mv, glm::vec3(goal.pos[0],
+                                            goal.pos[1],
+                                            goal.pos[2])-mesh.center);
   mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
 }

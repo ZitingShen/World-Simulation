@@ -13,7 +13,7 @@ int TEXTURE_COUNTER = 0;
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 spotlight SPOT_LIGHT;
-MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
+MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, SPHERE_MESH;
 MESH ISLAND_MESH, WALNUT_MESH;
 vector<glm::vec3> WALNUT_POS;
 vector<vector<GLuint>> ISLAND_INDICES;
@@ -21,19 +21,17 @@ vector<GLuint> ISLAND_EBOS;
 vector<PREDATOR> PREDATORS;
 GLuint SHADER, ENVIRONMENT_SHADER;
 
+camera MY_CAMERA(TOWER_INITIAL_HEIGHT);
+
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
-viewMode VIEW_MODE = DEFAULT;
 
 glm::vec3 SUN_POS;
-
+glm::vec3 SPHERE_POS = glm::vec3(SPHERE_POS_X, SPHERE_POS_Y, SPHERE_POS_Z);
+glm::vec3 ENV_CENTRE = SPHERE_POS;
 /*  for steerable spotlight */
 mouse MOUSE_STATUS;
 double x_movement, y_movement;
-
-glm::vec3 EYE;
-
-float TOWER = TOWER_INITIAL_HEIGHT;
 
 int main(int argc, char *argv[]){
   if (!glfwInit ()) {
@@ -74,7 +72,8 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
 
-    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH.center, EYE);
+    MY_CAMERA.change_view(MV_MAT, A_FLOCK, A_GOAL, ISLAND_MESH.center, ENV_CENTRE, 
+      SPOT_LIGHT.coneDirection);
 
     update_light(SUN_POS, THE_LIGHT);
     update_spot_light(SPOT_LIGHT,
@@ -82,7 +81,7 @@ int main(int argc, char *argv[]){
                       MV_MAT,
                       PROJ_MAT,
                       MOUSE_STATUS,
-                      glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity, VIEW_MODE == FP);
+                      glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity, MY_CAMERA.current_vm == FP);
 
     if(!IS_PAUSED || PAUSE_TIME > 0) {
       update_goal_velocity(A_GOAL);
@@ -102,17 +101,20 @@ int main(int argc, char *argv[]){
 
     if(glfwGetWindowAttrib(window, GLFW_VISIBLE)){
       if (ENABLE_FLOCK)
-        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, VIEW_MODE == FP);
-      if (ENABLE_GOAL)
-        draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+        draw_a_flock(A_FLOCK, BOIDS_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
+          MY_CAMERA.current_vm == FP);
+      //if (ENABLE_GOAL)
+      //  draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)
-        draw_island(ISLAND_MESH, ISLAND_EBOS, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, EYE);
+        draw_island(ISLAND_MESH, ISLAND_EBOS, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
+          MY_CAMERA.eye);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_tree(WALNUT_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, WALNUT_POS, 200.0f);
 
       glUseProgram(ENVIRONMENT_SHADER);
-      draw_octopus(OCTOPUS_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, EYE);
+      draw_environment(SPHERE_MESH, ENVIRONMENT_SHADER, MV_MAT, THE_LIGHT, MY_CAMERA.eye, 
+        SPOT_LIGHT, SPHERE_POS);
       glUseProgram(SHADER);
       glfwSwapBuffers(window);
     }
@@ -142,11 +144,12 @@ void init(GLFWwindow* window) {
   read_mesh("meshes/walnut.off", WALNUT_MESH, SHADER, PROJ_MAT);
   init_tree_mesh(WALNUT_MESH, ISLAND_MESH, "ppms/walnut.ppm", SHADER, 
   PROJ_MAT, WALNUT_POS, 20, TEXTURE_COUNTER);
-  read_mesh("meshes/neptune.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
-  init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);
+  read_mesh("meshes/sphere2.off", SPHERE_MESH, SHADER, PROJ_MAT);
+  init_environment_mesh(SPHERE_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
-  
+
+  MY_CAMERA.current_vm = DEFAULT;
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -154,7 +157,8 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH.center, EYE);
+  MY_CAMERA.change_view(MV_MAT, A_FLOCK, A_GOAL, ISLAND_MESH.center, ENV_CENTRE, 
+    SPOT_LIGHT.coneDirection);
 }
 
 void cursor(GLFWwindow* window, double xpos, double ypos){
@@ -177,15 +181,15 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
 
    	  case GLFW_KEY_UP:
-        zoom_in(TOWER);
+        MY_CAMERA.zoom_in();
       break;
 
       case GLFW_KEY_DOWN:
-        zoom_out(TOWER);
+        MY_CAMERA.zoom_out();
       break;
 
       case GLFW_KEY_N:
-        zoom_reset(TOWER);
+        MY_CAMERA.zoom_reset();
       break;
 
       case GLFW_KEY_F1:
@@ -225,80 +229,82 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
 
       case GLFW_KEY_P:
-      IS_PAUSED = GLFW_TRUE;
-      PAUSE_TIME++;
+        IS_PAUSED = GLFW_TRUE;
+        PAUSE_TIME++;
       break;
 
       case GLFW_KEY_R:
-      IS_PAUSED = GLFW_FALSE;
-      PAUSE_TIME = 0;
+        IS_PAUSED = GLFW_FALSE;
+        PAUSE_TIME = 0;
       break;
 
       case GLFW_KEY_V:
-      VIEW_MODE  = DEFAULT;
-      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
+        MY_CAMERA.current_vm  = DEFAULT;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_T:
-      VIEW_MODE = TRAILING;
-      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
+        MY_CAMERA.current_vm = TRAILING;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_G:
-      VIEW_MODE = SIDE;
-      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
+        MY_CAMERA.current_vm = SIDE;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_F: //first person view
-      VIEW_MODE = FP;
-      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
+        MY_CAMERA.current_vm = FP;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_L:
-      VIEW_MODE = TRAIL_FP;
-      glfwGetWindowSize(window, &WIDTH, &HEIGHT);
-      PROJ_MAT = glm::perspective(30.0f, WIDTH*1.0f/HEIGHT,
+        MY_CAMERA.current_vm = ENV;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
 
       case GLFW_KEY_Q:
       case GLFW_KEY_ESCAPE:
-      glfwSetWindowShouldClose(window, GLFW_TRUE);
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
       break;
+
       default:
       break;
     }
   } else if (action == GLFW_RELEASE) {
     switch(key) {
       case GLFW_KEY_A:
-      A_GOAL.MOVE_ALONG_X_NEGATIVE = false;
+        A_GOAL.MOVE_ALONG_X_NEGATIVE = false;
       break;
 
       case GLFW_KEY_D:
-      A_GOAL.MOVE_ALONG_X_POSITIVE = false;
+        A_GOAL.MOVE_ALONG_X_POSITIVE = false;
       break;
 
       case GLFW_KEY_W:
-      A_GOAL.MOVE_ALONG_Y_POSITIVE = false;
+        A_GOAL.MOVE_ALONG_Y_POSITIVE = false;
       break;
 
       case GLFW_KEY_S:
-      A_GOAL.MOVE_ALONG_Y_NEGATIVE = false;
+        A_GOAL.MOVE_ALONG_Y_NEGATIVE = false;
+      break;
 
       case GLFW_KEY_RIGHT:
-      A_GOAL.ACCELERATE = false;
+        A_GOAL.ACCELERATE = false;
       break;
 
       case GLFW_KEY_LEFT:
-      A_GOAL.DECELERATE = false;
+        A_GOAL.DECELERATE = false;
       break;
 
       default:

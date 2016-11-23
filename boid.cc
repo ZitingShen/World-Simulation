@@ -56,8 +56,8 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
         - source->velocity)*ALIGNMENT_WEIGHT*0.8f;
       c_modifier = (c_modifier*(1.0f/num_of_partners)
         - source->pos)*COHESION_WEIGHT;
-      if (source->pos == a_flock[0].pos) // clear view for the first person view
-        s_modifier = 10.0f * s_modifier;
+      //if (source->pos == a_flock[0].pos) // clear view for the first person view
+      //  s_modifier = 10.0f * s_modifier;
       source->velocity += s_modifier + a_modifier + c_modifier;
     }
 

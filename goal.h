@@ -6,22 +6,22 @@
 #include "fin.h"
 
 const GLfloat CUBE_VERTICES[][3] = {
-                           {-GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE},  
-                           {-GOAL_SIZE, GOAL_SIZE, GOAL_SIZE}, 
-                           {GOAL_SIZE, GOAL_SIZE, GOAL_SIZE}, 
-                           {GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE}, 
+                           {-GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE},
+                           {-GOAL_SIZE, GOAL_SIZE, GOAL_SIZE},
+                           {GOAL_SIZE, GOAL_SIZE, GOAL_SIZE},
+                           {GOAL_SIZE, -GOAL_SIZE, GOAL_SIZE},
                            {-GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE},
-                           {-GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
-                           {GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE}, 
+                           {-GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE},
+                           {GOAL_SIZE, GOAL_SIZE, -GOAL_SIZE},
                            {GOAL_SIZE, -GOAL_SIZE, -GOAL_SIZE}};
 
-const GLfloat A_GOAL_TEX[][2] = {{0.0f, 0.0f}, 
-                                 {0.1f, 1.0f}, 
-                                 {0.2f, 0.5f}, 
-                                 {0.3f, 0.33f}, 
-                                 {0.4f, 0.25f}, 
-                                 {0.5f, 0.2f}, 
-                                 {0.6f, 0.15f}, 
+const GLfloat A_GOAL_TEX[][2] = {{0.0f, 0.0f},
+                                 {0.1f, 1.0f},
+                                 {0.2f, 0.5f},
+                                 {0.3f, 0.33f},
+                                 {0.4f, 0.25f},
+                                 {0.5f, 0.2f},
+                                 {0.6f, 0.15f},
                                  {1.0f, 0.1f}};
 
 const GLubyte CUBE_INDICES[36] = {0, 3, 2,
@@ -38,11 +38,12 @@ const GLubyte CUBE_INDICES[36] = {0, 3, 2,
                                 0, 5, 4};
 
 const glm::vec3 DEFAULT_GOAL_SPAWN_VELOCITY = glm::vec3(0.0f, 0.0f, 0.01f);
-const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3 (0.0f, 0.0f, 4000.0f);
+const glm::vec3 DEFAULT_GOAL_SPAWN_POSITION = glm::vec3(GOAL_RADIUS, GOAL_RADIUS, 5000.0f);
 
 class GOAL{
   public:
     glm::vec3 pos;
+    glm::vec3 planet;
     glm::vec3 velocity;
     bool MOVE_ALONG_X_POSITIVE;  // to control goal
     bool MOVE_ALONG_X_NEGATIVE;
@@ -50,8 +51,9 @@ class GOAL{
     bool MOVE_ALONG_Y_NEGATIVE;
     bool ACCELERATE;
     bool DECELERATE;
-
+    bool steer;
     GOAL();
+    void toggle_steer();
 };
 
 void update_goal_velocity(GOAL& goal);

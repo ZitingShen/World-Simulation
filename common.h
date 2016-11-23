@@ -91,8 +91,6 @@
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 
 #define TREE_TEXTURE		      "ppms/gnarly.ppm"
-#define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/right.ppm"
-#define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/left.ppm"
 
 #define ENVIRONMENT_TEXTURE_POS_Y "ppms/environment/down.ppm"
 #define ENVIRONMENT_TEXTURE_NEG_Y "ppms/environment/up.ppm"

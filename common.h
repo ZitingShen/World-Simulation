@@ -31,8 +31,8 @@
 #define MIN_FLOCK_RADIUS	      2000.0
 #define MAX_FLOCK_RADIUS		  3000.0
 
-#define BOID_SIZE                 10.0f
-#define GOAL_SIZE				  10.0f
+#define BOID_SIZE                 30.0f
+#define GOAL_SIZE				  30.0f
 
 #define WORLD_SIZE 				  4096.0f       // edge length of island mesh
 #define SUBDIVISIONS              2048           // has to be an even number
@@ -62,7 +62,7 @@
 #define SUN_POINTS				  10000
 #define SUN_RADIUS				  3000.0f
 #define SUN_SIZE				  500.0f
-#define SUN_MOVEMENT			  (0.2*DEGREE_TO_RADIAN)
+#define SUN_MOVEMENT			  (0.4*DEGREE_TO_RADIAN)
 #define SHINENESS				  0.1f
 
 #define GOAL_RADIUS    8000.0f

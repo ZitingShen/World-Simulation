@@ -66,7 +66,11 @@ void update_velocity(vector<BOID>& a_flock, GOAL& a_goal){
       source->velocity += (flock_center - source->pos) * STAY_IN_FLOCK_WEIGHT;
     }
 
+    /* Cap Z-axis Speed */
     source->velocity[2] = max(-Z_SPEED_CAP, min(source->velocity[2], Z_SPEED_CAP));
+    /* Cap Boid Speed */
+    if(glm::length(source->velocity) > BOID_SPEED_CAP)
+      source->velocity = glm::normalize(source->velocity) *  BOID_SPEED_CAP;
   }
 }
 

@@ -6,7 +6,7 @@
 #include "goal.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-enum viewMode {DEFAULT, TRAILING, SIDE, FP, ENV};
+enum viewMode {DEFAULT, TRAILING, SIDE, FP, ENV, FP_TRAILING};
 
 const float CAMERA_SPEED_CAP = 200.0f;
 

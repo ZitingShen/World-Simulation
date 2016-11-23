@@ -101,4 +101,6 @@
 #define SPHERE_POS_Y 500.0f
 #define SPHERE_POS_Z 1000.0f
 
+#define BOID_SPEED_CAP 20.0f
+
 #endif

@@ -272,6 +272,13 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
         PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
         CAMERA_NEAR, CAMERA_FAR);
       break;
+      
+      case GLFW_KEY_O:
+        MY_CAMERA.current_vm = FP_TRAILING;
+        glfwGetWindowSize(window, &WIDTH, &HEIGHT);
+        PROJ_MAT = glm::perspective(40.0f, WIDTH*1.0f/HEIGHT,
+        CAMERA_NEAR, CAMERA_FAR);
+      break;
 
       case GLFW_KEY_Q:
       case GLFW_KEY_ESCAPE:

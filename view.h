@@ -8,7 +8,7 @@
 
 enum viewMode {DEFAULT, TRAILING, SIDE, FP, ENV};
 
-const float CAMERA_SPEED_CAP = 80.0f;
+const float CAMERA_SPEED_CAP = 200.0f;
 
 class camera{
 public:

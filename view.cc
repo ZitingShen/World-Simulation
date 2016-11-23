@@ -36,9 +36,9 @@ void camera::change_view(glm::mat4& MV_MAT,
     case TRAILING:
       distance = 600.0f;
       this->eye = centroid
-                  - flock_direction*distance*1.0f
-                  - flock_direction*distance*1.0f
-                  + this->up*(this->tower*0.8f);
+                  - velocity_direction*distance*1.0f*(this->tower/2000.0f);
+                  - flock_direction*distance*1.0f*(this->tower/2000.0f);
+                  + this->up*0.8f;
       this->center = centroid;
       break;
 
@@ -62,8 +62,7 @@ void camera::change_view(glm::mat4& MV_MAT,
       if (glm::length(camera_movement) > CAMERA_SPEED_CAP)
         camera_movement = glm::normalize(camera_movement) * CAMERA_SPEED_CAP;
 
-      this->eye = flock[0].pos
-               + glm::normalize(flock[0].velocity)*distance*(this->tower/500.0f);
+      this->eye = centroid;
       this->center = center + camera_movement;
       break;
     case ENV:

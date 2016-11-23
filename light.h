@@ -37,6 +37,6 @@ void update_spot_light(spotlight& s_l,
                        mouse& mouse_pos,
                        glm::vec4 pos,
                        glm::vec3 direction,
-                       bool vm);
+                       bool fp);
 
 #endif

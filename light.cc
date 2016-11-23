@@ -13,7 +13,7 @@ void update_light(glm::vec3& sun_pos, LIGHT& THE_LIGHT){
 }
 
 void initialise_spot_light(spotlight& s_l, glm::vec4 pos, glm::vec3 direction){
-  s_l.pos = glm::vec4(glm::vec3(pos), 1);
+  s_l.pos = glm::vec4(glm::vec3(pos), 1.0f);
   s_l.coneAngle = ANGLE;
   s_l.coneDirection = normalize(direction);
 }
@@ -25,11 +25,17 @@ void update_spot_light(spotlight& s_l,
                        mouse& mouse_pos,
                        glm::vec4 pos,
                        glm::vec3 direction,
-                       bool vm){
-  if (!vm){ // just follow the boid and its direction
-    s_l.pos = glm::vec4(glm::vec3(pos), 1);
-    s_l.coneDirection = glm::vec3(0, 0, -1);
+                       bool fp){
+  if (!fp){ // just follow the boid and its direction
+    s_l.pos = glm::vec4(glm::vec3(pos), 1.0f);
+    //s_l.pos = glm::vec4(0, 0, 8000.0f, 1);
+    s_l.coneDirection = normalize(direction);
   }else{ // other wise the headlight follows our cursor
+
+    //glm::vec4 viewport(0, 0, width, height);
+    //glm::vec3 win(width, height, CAMERA_NEAR);
+    //glm::vec3 cursor_world_coord = glm::unProject(win, MV_MAT, PROJ_MAT, viewport);
+
     float mouseX = mouse_pos.x_pos / (width  * 0.5f) - 1.0f;
     float mouseY = mouse_pos.y_pos / (height * 0.5f) - 1.0f;
     glm::mat4 inv = glm::inverse(PROJ_MAT * MV_MAT);

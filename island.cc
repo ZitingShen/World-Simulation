@@ -52,10 +52,7 @@ bool on_edge(int index){
 }
 
 void get_island_centre(MESH& island, glm::vec3& centre){
-  int index = island.vertices.size()/2;
-  centre = glm::vec3(island.vertices[index].pos.x,
-                     island.vertices[index].pos.y,
-                     island.vertices[index].pos.z);
+  centre = island.vertices[island.vertices.size()/2].pos;
 }
 
 void pertube(vector<glm::vec3>& all_vertices,

@@ -26,7 +26,8 @@ camera MY_CAMERA(TOWER_INITIAL_HEIGHT);
 vector<BOID> A_FLOCK;
 GOAL A_GOAL;
 
-glm::vec3 SUN_POS;
+glm::vec3 SUN_POS = glm::vec3(45*DEGREE_TO_RADIAN, 45*DEGREE_TO_RADIAN, 
+  45*DEGREE_TO_RADIAN);
 glm::vec3 SPHERE_POS = glm::vec3(SPHERE_POS_X, SPHERE_POS_Y, SPHERE_POS_Z);
 glm::vec3 ENV_CENTRE = SPHERE_POS;
 /*  for steerable spotlight */
@@ -107,7 +108,8 @@ int main(int argc, char *argv[]){
       if (ENABLE_ISLAND)
         draw_island(ISLAND_MESH, ISLAND_EBOS, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, 
           MY_CAMERA.eye);
-      draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
+      draw_a_sun(SUN_POS, ISLAND_MESH.vertices[ISLAND_MESH.vertices.size()/2].pos, SUN_MESH, 
+        SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_tree(WALNUT_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, WALNUT_POS, 200.0f);
 

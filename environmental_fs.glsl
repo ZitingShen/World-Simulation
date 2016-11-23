@@ -26,16 +26,16 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   float attenuation = (coneAngle - angle) / coneAngle;
   vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
-	vec3 L = normalize(light_position.xyz - pos_eye);
-	vec3 E = normalize(-pos_eye);
-	vec3 H = normalize(L + E);
-	vec3 Ia = RedLight;
-	vec3 Id = RedLight*max(dot(L, normal_eye), 0.0);
-	vec3 Is = RedLight*pow(max(dot(normal_eye, H), 0.0), Shineness);
+  vec3 L = normalize(light_position.xyz - pos_eye);
+  vec3 E = normalize(-pos_eye);
+  vec3 H = normalize(L + E);
+  vec3 Ia = RedLight;
+  vec3 Id = RedLight*max(dot(L, normal_eye), 0.0);
+  vec3 Is = RedLight*pow(max(dot(normal_eye, H), 0.0), Shineness);
 
-	//discard the specular highlight if the
-	//vertex is not facing light
-	if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
+  //discard the specular highlight if the
+  //vertex is not facing light
+  if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
 
   return Ia + Id + Is;
 }

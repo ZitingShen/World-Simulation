@@ -27,16 +27,16 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   float attenuation = (coneAngle - angle) / coneAngle;
   vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
-	vec3 L = normalize(light_position.xyz - pos_eye);
-	vec3 E = normalize(-pos_eye);
-	vec3 H = normalize(L + E);
-	vec3 Ia = RedLight;
-	vec3 Id = RedLight*max(dot(L, normal_eye), 0.0);
-	vec3 Is = RedLight*pow(max(dot(normal_eye, H), 0.0), Shineness);
+  vec3 L = normalize(light_position.xyz - pos_eye);
+  vec3 E = normalize(-pos_eye);
+  vec3 H = normalize(L + E);
+  vec3 Ia = RedLight;
+  vec3 Id = RedLight*max(dot(L, normal_eye), 0.0);
+  vec3 Is = RedLight*pow(max(dot(normal_eye, H), 0.0), Shineness);
 
-	//discard the specular highlight if the
-	//vertex is not facing light
-	if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
+  //discard the specular highlight if the
+  //vertex is not facing light
+  if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
 
   return Ia + Id + Is;
 }
@@ -60,10 +60,12 @@ void main() {
 	//vertex is not facing light
 	if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
 
-    // calculating spotlight
-    vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
+  // calculating spotlight
+  vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
 
-    vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
+  vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
+  if (ifNight != 0 && spotlighting[0] == 0) shadeLight *= 0.8;
+  //vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
 	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
 	if (ifSnow == 1 && vPos[2] > 1500+300*rand(vPos.xy))
 		shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);

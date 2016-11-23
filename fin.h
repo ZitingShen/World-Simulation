@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <cstring>
+#include <string>
 #include <float.h>
 #include "common.h"
 #include "read_ppm.h"
@@ -37,6 +38,7 @@ class MESH {
     FACES     faces;
     glm::vec3 center;
     glm::vec3 size;
+    GLuint texture_counter;
     /* Constructor */
     MESH();
     void setup(GLuint shader, glm::mat4& PROJ_MAT);
@@ -44,6 +46,8 @@ class MESH {
     void compute_face_normal();
     void compute_vertex_normal();
     void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT);
+    void draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT,
+      GLuint ebo);
     void rotate();
 };
 

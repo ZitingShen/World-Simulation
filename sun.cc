@@ -1,6 +1,6 @@
 #include "sun.h"
 
-void init_sun_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
+void init_sun_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   for (unsigned int i = 0; i< mesh.num_v; i++) {
     mesh.vertices[i].tex_coords = glm::vec2(
       static_cast<float>(rand())/static_cast<float>(RAND_MAX), 
@@ -10,6 +10,8 @@ void init_sun_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   if (!read_ppm(SUN_TEXTURE, &mesh.texels[0])) {
     cerr << "SUN_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);

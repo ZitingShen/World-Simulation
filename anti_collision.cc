@@ -1,12 +1,10 @@
 #include "anti_collision.h"
 
 
-void create_predators(vector<PREDATOR>& predators, vector<MESH>& obstacles){
-  predators.resize(obstacles.size());
-  for (int i=0; i<(int)obstacles.size(); i++){
-    predators[i].pos = obstacles[i].center;
-    predators[i].deterrence_range = RANGE;
-  }
+void create_predators(vector<PREDATOR>& predators, MESH& obstacle){
+  predators.resize(1);
+  predators[0].pos = obstacle.center;
+  predators[0].deterrence_range = RANGE;
 }
 
 void apply_predator_deterrence(vector<PREDATOR>& predators, vector<BOID> a_flock){

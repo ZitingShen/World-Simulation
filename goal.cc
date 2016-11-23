@@ -88,7 +88,7 @@ void print_goal(GOAL& goal) {
   cout << endl;
 }
 
-void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
+void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   mesh.num_v = 8;
   mesh.num_f = 12;
   mesh.vertices.resize(8);
@@ -104,6 +104,8 @@ void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   if (!read_ppm(GOAL_TEXTURE, &mesh.texels[0])) {
     cerr << "GOAL_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);
@@ -119,6 +121,5 @@ void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT
   new_mv = glm::translate(new_mv, glm::vec3(goal.pos[0],
                                             goal.pos[1],
                                             goal.pos[2])-mesh.center);
-  cout << goal.pos[0] << " " << goal.pos[1] << " " << goal.pos[2] << endl;
   mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
 }

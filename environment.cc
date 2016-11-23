@@ -1,24 +1,24 @@
-#include "octopus.h"
+#include "environment.h"
 
-void init_octopus_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
+void init_environment_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   mesh.texels.resize(6);
-  if (!read_ppm(OCTOPUS_TEXTURE_POS_X, &mesh.texels[0])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE POS X" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_POS_X, &mesh.texels[0])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE POS X" << endl;
   }
-  if (!read_ppm(OCTOPUS_TEXTURE_NEG_X, &mesh.texels[1])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE NEG X" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_NEG_X, &mesh.texels[1])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE NEG X" << endl;
   }
-  if (!read_ppm(OCTOPUS_TEXTURE_POS_Y, &mesh.texels[2])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE POS Y" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_POS_Y, &mesh.texels[2])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE POS Y" << endl;
   }
-  if (!read_ppm(OCTOPUS_TEXTURE_NEG_Y, &mesh.texels[3])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE NEG Y" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_NEG_Y, &mesh.texels[3])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE NEG Y" << endl;
   }
-  if (!read_ppm(OCTOPUS_TEXTURE_POS_Z, &mesh.texels[4])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE POS Z" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_POS_Z, &mesh.texels[4])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE POS Z" << endl;
   }
-  if (!read_ppm(OCTOPUS_TEXTURE_NEG_Z, &mesh.texels[5])) {
-    cerr << "OCTOPUS_MESH: FAILED TO LOAD TEXTURE NEG Z" << endl;
+  if (!read_ppm(ENVIRONMENT_TEXTURE_NEG_Z, &mesh.texels[5])) {
+    cerr << "ENVIRONMENT_MESH: FAILED TO LOAD TEXTURE NEG Z" << endl;
   }
   mesh.texture_counter = TEXTURE_COUNTER;
   TEXTURE_COUNTER++;
@@ -67,13 +67,12 @@ void init_octopus_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXT
   glUniform1f(shineness, SHINENESS);
 }
 
-void draw_octopus(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
-  glm::vec3& camera, spotlight SPOT_LIGHT){
+void draw_environment(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
+  glm::vec3& camera, spotlight SPOT_LIGHT, glm::vec3& environment_pos){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  glm::vec3 octopus_pos = glm::vec3(OCTOPUS_POS_X, OCTOPUS_POS_Y, OCTOPUS_POS_Z);
-  glm::mat4 view = glm::translate(octopus_pos);
-  view = glm::scale(view, glm::vec3(OCTOPUS_SIZE/mesh.size[1], OCTOPUS_SIZE/mesh.size[1], 
-    OCTOPUS_SIZE/mesh.size[1]));
+  glm::mat4 view = glm::translate(environment_pos);
+  view = glm::scale(view, glm::vec3(ENVIRONMENT_SIZE/mesh.size[1], ENVIRONMENT_SIZE/mesh.size[1], 
+    ENVIRONMENT_SIZE/mesh.size[1]));
   view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
   glm::mat4 move_back = glm::translate(-mesh.center);
   

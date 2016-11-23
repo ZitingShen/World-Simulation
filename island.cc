@@ -1,14 +1,5 @@
 #include "island.h"
 
-int SUBDIVISIONS = 128;
-int ISLAND_SIZE = WORLD_SIZE / SUBDIVISIONS;
-
-void set_island(int new_division){
-  SUBDIVISIONS = new_division;
-  ISLAND_SIZE = WORLD_SIZE / SUBDIVISIONS;
-  cout << "new SUBDIVISIONS = " << SUBDIVISIONS << " new ISLAND_SIZE = " << ISLAND_SIZE << endl;
-}
-
 void get_num_v(int& num_v){
   num_v = (SUBDIVISIONS+1) * (SUBDIVISIONS+1);
 }
@@ -35,11 +26,11 @@ void get_all_vertices(int num_v, vector<glm::vec3>& all_vertices){
       count++;
     }
   }
-  all_vertices[get_index(0, SUBDIVISIONS/2)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
-  all_vertices[get_index(SUBDIVISIONS/2, 0)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
-  all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
-  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = PRECIPICE + get_random() * PERTUBE_LEVEL;
-  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 5 * PRECIPICE + get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(0, SUBDIVISIONS/2)].z = get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, 0)].z = get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS, SUBDIVISIONS/2)].z = get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS)].z = get_random() * PERTUBE_LEVEL;
+  all_vertices[get_index(SUBDIVISIONS/2, SUBDIVISIONS/2)].z = 2*get_random() * PERTUBE_LEVEL;
 }
 
 int get_index(int x, int y){
@@ -48,10 +39,6 @@ int get_index(int x, int y){
 
 float get_random(){
   return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-}
-
-void create_precipice(vector<glm::vec3>& all_vertices){
-  pertube(all_vertices, 0, 0, SUBDIVISIONS, SUBDIVISIONS, (float)PERTUBE_LEVEL);
 }
 
 bool on_edge(int index){
@@ -131,107 +118,83 @@ void pertube(vector<glm::vec3>& all_vertices,
                         new_pertube_level); //upper-right
 }
 
-void generate_faces(vector<GLuint>& all_faces){
+void generate_faces(vector<GLuint>& all_faces, int sub){
   int index;
   /* add all faces on the surface */
-  for(int i=0; i<SUBDIVISIONS; i++){
-      for (int j=0; j<SUBDIVISIONS; j++){
+  for(int i=0; i<SUBDIVISIONS; i+=sub){
+      for (int j=0; j<SUBDIVISIONS; j+=sub){
       index = get_index(j, i);
       /* Lower Triangle */
       all_faces.push_back(index);
-      all_faces.push_back(index+1);
-      all_faces.push_back(index+1+SUBDIVISIONS);
+      all_faces.push_back(index+sub);
+      all_faces.push_back(index+sub+sub*SUBDIVISIONS);
       /* Higher Triangle */
-      all_faces.push_back(index+1);
-      all_faces.push_back(index+1+SUBDIVISIONS+1);
-      all_faces.push_back(index+1+SUBDIVISIONS);
+      all_faces.push_back(index+sub);
+      all_faces.push_back(index+sub+sub*SUBDIVISIONS+sub);
+      all_faces.push_back(index+sub+sub*SUBDIVISIONS);
     }
   }
 }
 
-void generate_island_mesh(vector<MESH>& island, GLuint shader, glm::mat4& PROJ_MAT) {
+void generate_island_mesh(MESH& mesh, vector<vector<GLuint>>& index_groups, vector<GLuint>& ebos, 
+  GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
                           //ofstream& fout, string filename) {
   int num_v, num_f;
   string current_file;
-  vector<vector<glm::vec3> > all_vertices;
+  vector<glm::vec3> all_vertices;
 
-  island.resize(3); // using three levels of island mesh
-  all_vertices.resize(3);
-  for (int island_index=0; island_index<3; island_index++){
-    srand(SEED); // using given seed (UNSIGNED INT)
-    //cout << "getting no. " << island_index << endl;
-    set_island(SUBDIVISIONS*2);
-    get_num_v(num_v);
-    get_num_f(num_f);
-
-    /* data generation */
-    island[island_index].num_v = num_v;
-    island[island_index].num_f = num_f;
-    get_all_vertices(num_v, all_vertices[island_index]);
-    create_precipice(all_vertices[island_index]);
-    generate_faces(island[island_index].faces.draw_indices);
-
-    /* File IO */
-    /*
-    current_file = filename + to_string(island_index) + ".off";
-    //cout << current_file << endl;
-    fout.open(current_file);
-    if(!(fout.good() && fout.is_open())){
-        cerr << "ISLAND_MESH: FAILED TO OPEN FILE" << endl;
-        exit(1);
-    }
-    fout << "OFF" << endl;
-    fout << num_v << " " << num_f << " " << num_e << endl;
-
-    for (int i=0; i<num_v;i++){
-      fout << all_vertices[island_index][i].x << " "
-           << all_vertices[island_index][i].y << " "
-           << all_vertices[island_index][i].z << " " << endl;
-    }
-
-    for (int i=0; i<num_f; i++){
-      fout << 3 << " "
-           << island[island_index].faces.draw_indices[i*3] << " "
-           << island[island_index].faces.draw_indices[i*3 + 1] << " "
-           << island[island_index].faces.draw_indices[i*3 + 2] << " " << endl;
-    }
-
-    fout.close();
-    //cout << "fout done" << endl;
-    */
-
-    /* setting up MESH */
-    island[island_index].num_v = num_v;
-    island[island_index].num_f = num_f;
-    island[island_index].vertices.resize(num_v); // resize to num_v
-    float sea_level = (all_vertices[island_index][SUBDIVISIONS/2].z
-                     + all_vertices[island_index][num_v - SUBDIVISIONS/2].z
-                     + all_vertices[island_index][num_v/2].z
-                     + all_vertices[island_index][num_v/2 - SUBDIVISIONS].z) / 4.0f;
-    for (int i=0; i<num_v; i++) {
-      island[island_index].vertices[i].pos = glm::vec3(all_vertices[island_index][i].x,
-                                                       all_vertices[island_index][i].y,
-                                                       all_vertices[island_index][i].z - sea_level); // sunken island
-      island[island_index].vertices[i].tex_coords[0] = island[island_index].vertices[i].pos[0]/WORLD_SIZE+0.85f;
-      island[island_index].vertices[i].tex_coords[1] = island[island_index].vertices[i].pos[1]/WORLD_SIZE+0.85f;
-    }
-    island[island_index].texels.resize(2);
-    if (!read_ppm(ISLAND_TEXTURE, &island[island_index].texels[0])) {
-      cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
-    }
-    if (!read_ppm(SNOW_TEXTURE, &island[island_index].texels[1])) {
-      cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
-    }
-
-    island[island_index].compute_face_normal();
-    island[island_index].compute_vertex_normal();
-    island[island_index].setup(shader, PROJ_MAT);
+  int subdivisions = SUBDIVISIONS_TIMES*SUBDIVISIONS_TIMES;
+  index_groups.resize(3);
+  ebos.resize(3);
+  for (int i = 0; i < 3; i++){
+    generate_faces(index_groups[i], subdivisions);
+    ebos[i] = make_bo(GL_ELEMENT_ARRAY_BUFFER, &index_groups[i][0], 
+      index_groups[i].size()*sizeof(GLuint));
+    subdivisions /= SUBDIVISIONS_TIMES;
   }
+
+  srand(SEED); // using given seed (UNSIGNED INT)
+  get_num_v(num_v);
+  get_num_f(num_f);
+
+  /* data generation */
+  mesh.num_v = num_v;
+  mesh.num_f = num_f;
+  get_all_vertices(num_v, all_vertices);
+  pertube(all_vertices, 0, 0, SUBDIVISIONS, SUBDIVISIONS, (float)PERTUBE_LEVEL);
   srand(time(NULL)); // reset to time(NULL)
+  /* setting up MESH */
+  mesh.vertices.resize(num_v); // resize to num_v
+  float sea_level = all_vertices[SUBDIVISIONS/2].z;
+  sea_level = all_vertices[num_v-SUBDIVISIONS/2].z>sea_level?all_vertices[num_v-SUBDIVISIONS/2].z:sea_level;
+  sea_level = all_vertices[num_v/2].z>sea_level?all_vertices[num_v/2].z:sea_level;
+  sea_level = all_vertices[num_v/2-SUBDIVISIONS].z>sea_level?all_vertices[num_v/2-SUBDIVISIONS].z:sea_level;
+
+  for (int i=0; i<num_v; i++) {
+    mesh.vertices[i].pos = glm::vec3(all_vertices[i].x,
+                                                     all_vertices[i].y,
+                                                     all_vertices[i].z - sea_level); // sunken island
+    mesh.vertices[i].tex_coords[0] = mesh.vertices[i].pos[0]/WORLD_SIZE+0.85f;
+    mesh.vertices[i].tex_coords[1] = mesh.vertices[i].pos[1]/WORLD_SIZE+0.85f;
+  }
+  mesh.texels.resize(2);
+  if (!read_ppm(ISLAND_TEXTURE, &mesh.texels[0])) {
+    cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
+  }
+  if (!read_ppm(SNOW_TEXTURE, &mesh.texels[1])) {
+    cerr << "ISLAND_MESH: FAILED TO LOAD TEXTURE" << endl;
+  }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER += 2;
+
+  mesh.faces.draw_indices = index_groups[2];
+  mesh.compute_face_normal();
+  mesh.compute_vertex_normal();
+  mesh.setup(shader, PROJ_MAT);
 }
 
-void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
-  LIGHT THE_LIGHT, spotlight SPOT_LIGHT, glm::vec3& eye){
+void draw_island(MESH& mesh, vector<GLuint>& ebos, GLuint shader, 
+  glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT, glm::vec3& eye){
 
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos * MV_MAT;
@@ -243,10 +206,11 @@ void draw_island(vector<MESH>& meshes, GLuint shader, glm::mat4& MV_MAT,
   float distance = glm::distance(eye, ISLAND_POS);
 
   if(distance > 6000) {
-    meshes[0].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT, ebos[0]);
   } else if (distance > 4000) {
-    meshes[1].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT, ebos[1]);
   } else{
-    meshes[2].draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT, ebos[2]);
   }
+  glUniform1i(ifSnow, 0);
 }

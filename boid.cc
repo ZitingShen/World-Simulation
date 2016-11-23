@@ -199,7 +199,7 @@ void print_flock(vector<BOID>& a_flock) {
   cout << endl;
 }
 
-void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
+void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   mesh.num_v = 6;
   mesh.num_f = 4;
   mesh.vertices.resize(6);
@@ -215,6 +215,8 @@ void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   if (!read_ppm(BOID_TEXTURE, &mesh.texels[0])) {
     cerr << "BOID_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);

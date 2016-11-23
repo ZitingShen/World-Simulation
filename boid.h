@@ -55,8 +55,8 @@ void init_a_flock(vector<BOID>& a_flock);
 void teleport_flock(vector<BOID>& a_flock, GOAL& goal, const glm::vec3& pos);
 void apply_goal_attraction(vector<BOID>&a_flock, GOAL& a_goal);
 void print_flock(vector<BOID>& a_flock);
-void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
 
+void init_flock_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER);
 void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader,
   glm::mat4& MV_MAT, LIGHT THE_LIGHT, spotlight SPOT_LIGHT, bool if_fp);
 #endif

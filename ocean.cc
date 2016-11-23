@@ -1,6 +1,6 @@
 #include "ocean.h"
 
-void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
+void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   mesh.num_v = 4;
   mesh.num_f = 2;
   mesh.vertices.resize(4);
@@ -15,6 +15,8 @@ void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   if (!read_ppm(OCEAN_TEXTURE, &mesh.texels[0])) {
     cerr << "OCEAN_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);

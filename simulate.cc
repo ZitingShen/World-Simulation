@@ -8,14 +8,16 @@ int ENABLE_ISLAND = GLFW_TRUE;
 int WIDTH, HEIGHT;
 int IS_PAUSED = GLFW_FALSE;
 int PAUSE_TIME = 0;
+int TEXTURE_COUNTER = 0;
 
 glm::mat4 PROJ_MAT, MV_MAT = glm::mat4();
 LIGHT THE_LIGHT;
 spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, OCTOPUS_MESH;
-MESH WALNUT_MESH;
+MESH ISLAND_MESH, WALNUT_MESH;
 vector<glm::vec3> WALNUT_POS;
-vector<MESH> ISLAND_MESH;
+vector<vector<GLuint>> ISLAND_INDICES;
+vector<GLuint> ISLAND_EBOS;
 vector<PREDATOR> PREDATORS;
 GLuint SHADER, ENVIRONMENT_SHADER;
 
@@ -31,7 +33,6 @@ double x_movement, y_movement;
 
 glm::vec3 EYE;
 
-int island_index = 2;
 float TOWER = TOWER_INITIAL_HEIGHT;
 
 int main(int argc, char *argv[]){
@@ -73,7 +74,7 @@ int main(int argc, char *argv[]){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
 
-    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, EYE);
+    change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH.center, EYE);
 
     update_light(SUN_POS, THE_LIGHT);
     update_spot_light(SPOT_LIGHT,
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]){
       if (ENABLE_GOAL)
         draw_a_goal(A_GOAL, GOAL_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       if (ENABLE_ISLAND)
-        draw_island(ISLAND_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, EYE);
+        draw_island(ISLAND_MESH, ISLAND_EBOS, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, EYE);
       draw_a_sun(SUN_POS, SUN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_ocean(OCEAN_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT);
       draw_tree(WALNUT_MESH, SHADER, MV_MAT, THE_LIGHT, SPOT_LIGHT, WALNUT_POS, 200.0f);
@@ -130,21 +131,22 @@ void init(GLFWwindow* window) {
   PROJ_MAT = glm::perspective(45.0f, WIDTH*1.0f/HEIGHT,
     CAMERA_NEAR, CAMERA_FAR);
   init_a_flock(A_FLOCK);
-  init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT);
-  init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT);
+  init_flock_mesh(BOIDS_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
+  init_goal_mesh(GOAL_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
   read_mesh("meshes/sphere2.off", SUN_MESH, SHADER, PROJ_MAT);
-  init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT);
-  init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT);
-  generate_island_mesh(ISLAND_MESH, SHADER, PROJ_MAT);
+  init_sun_mesh(SUN_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
+  init_ocean_mesh(OCEAN_MESH, SHADER, PROJ_MAT, TEXTURE_COUNTER);
+  generate_island_mesh(ISLAND_MESH, ISLAND_INDICES, ISLAND_EBOS, SHADER, PROJ_MAT, 
+    TEXTURE_COUNTER);
   create_predators(PREDATORS, ISLAND_MESH);
   read_mesh("meshes/walnut.off", WALNUT_MESH, SHADER, PROJ_MAT);
-  init_tree_mesh(WALNUT_MESH, ISLAND_MESH[2], "ppms/walnut.ppm", SHADER, 
-  PROJ_MAT, WALNUT_POS, 20);
-
+  init_tree_mesh(WALNUT_MESH, ISLAND_MESH, "ppms/walnut.ppm", SHADER, 
+  PROJ_MAT, WALNUT_POS, 20, TEXTURE_COUNTER);
+  read_mesh("meshes/neptune.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
+  init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT, TEXTURE_COUNTER);
   glfwGetCursorPos(window, &MOUSE_STATUS.x_pos, &MOUSE_STATUS.y_pos); // get mouse position
   initialise_spot_light(SPOT_LIGHT, glm::vec4(A_FLOCK[0].pos, 1), A_FLOCK[0].velocity);
-  read_mesh("meshes/neptune.off", OCTOPUS_MESH, SHADER, PROJ_MAT);
-  init_octopus_mesh(OCTOPUS_MESH, ENVIRONMENT_SHADER, PROJ_MAT);
+  
 }
 
 void framebuffer_resize(GLFWwindow* window, int width, int height) {
@@ -152,7 +154,7 @@ void framebuffer_resize(GLFWwindow* window, int width, int height) {
 }
 
 void reshape(GLFWwindow* window, int w, int h) {
-  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH[island_index].center, EYE);
+  change_view(MV_MAT, VIEW_MODE, TOWER, A_FLOCK, A_GOAL, ISLAND_MESH.center, EYE);
 }
 
 void cursor(GLFWwindow* window, double xpos, double ypos){
@@ -212,10 +214,6 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_S:
         A_GOAL.MOVE_ALONG_Y_NEGATIVE = true;
-      break;
-
-      case GLFW_KEY_M:
-        island_index = island_index==2?0:island_index+1; //switch between mesh
       break;
 
       case GLFW_KEY_RIGHT:

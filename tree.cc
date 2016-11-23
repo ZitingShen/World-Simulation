@@ -1,7 +1,7 @@
 #include "tree.h"
 
 void init_tree_mesh(MESH& mesh, MESH& island_mesh, const char *texture, GLuint shader, 
-  glm::mat4& PROJ_MAT, vector<glm::vec3>& tree_pos, int TREE_NUM) {
+  glm::mat4& PROJ_MAT, vector<glm::vec3>& tree_pos, int TREE_NUM, int &TEXTURE_COUNTER) {
   for (unsigned int i = 0; i< mesh.num_v; i++) {
     mesh.vertices[i].pos -= mesh.center;
     if (mesh.vertices[i].pos[2] < 0 && 
@@ -25,6 +25,8 @@ void init_tree_mesh(MESH& mesh, MESH& island_mesh, const char *texture, GLuint s
   if (!read_ppm(texture, &mesh.texels[0])) {
     cerr << "TREE: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);

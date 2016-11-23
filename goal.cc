@@ -72,7 +72,7 @@ void print_goal(GOAL& goal) {
   cout << endl;
 }
 
-void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
+void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER) {
   mesh.num_v = 8;
   mesh.num_f = 12;
   mesh.vertices.resize(8);
@@ -88,6 +88,8 @@ void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT) {
   if (!read_ppm(GOAL_TEXTURE, &mesh.texels[0])) {
     cerr << "GOAL_MESH: FAILED TO LOAD TEXTURE" << endl;
   }
+  mesh.texture_counter = TEXTURE_COUNTER;
+  TEXTURE_COUNTER++;
   mesh.compute_face_normal();
   mesh.compute_vertex_normal();
   mesh.setup(shader, PROJ_MAT);

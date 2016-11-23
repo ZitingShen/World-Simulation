@@ -14,7 +14,7 @@ struct PREDATOR{
   float deterrence_range;
 };
 
-void create_predators(vector<PREDATOR>& predators, vector<MESH>& obstacles);
+void create_predators(vector<PREDATOR>& predators, MESH& obstacle);
 void apply_predator_deterrence(vector<PREDATOR>& predators, vector<BOID> a_flock);
 
 //void move_predator(List* a_flock, PREDATOR* a_predator, GOAL* a_goal, bool& guardian);

@@ -34,9 +34,11 @@
 #define BOID_SIZE                 10.0f
 #define GOAL_SIZE				  10.0f
 
-#define WORLD_SIZE 				  2048.0f       // edge length of island mesh
-#define PRECIPICE 				  100.0f
-#define PERTUBE_LEVEL 			1000.0f
+#define WORLD_SIZE 				  4096.0f       // edge length of island mesh
+#define SUBDIVISIONS              2048           // has to be an even number
+#define SUBDIVISIONS_TIMES		  4
+#define ISLAND_SIZE				  (WORLD_SIZE/SUBDIVISIONS)
+#define PERTUBE_LEVEL 			  5000.0f
 
 #define SEPARATION_WEIGHT         0.002f
 #define ALIGNMENT_WEIGHT          0.0008f

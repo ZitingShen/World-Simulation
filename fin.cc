@@ -1,5 +1,7 @@
 #include "fin.h"
 
+const string TEX_UNIFORM[] = {"tex0", "tex1", "tex2", "tex3", "tex4", "tex5"};
+
 GLuint make_bo(GLenum type, const void *buf, GLsizei buf_size) {
   GLuint bufnum;
   glGenBuffers(1, &bufnum);
@@ -46,6 +48,7 @@ void MESH::setup(GLuint shader, glm::mat4& PROJ_MAT){
 
   glGenTextures(texels.size(), textures);
   for (unsigned int i = 0; i < texels.size(); i++) {
+    glActiveTexture(GL_TEXTURE0+texture_counter+i);
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texels[i].sizeX,
       texels[i].sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, texels[i].data);
@@ -227,10 +230,8 @@ void print_mesh_info(MESH& mesh){
 
 void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT) {
   for (unsigned int i = 0; i < texels.size(); i++) {
-    GLuint tex = glGetUniformLocation(shader, "tex") + i;  // to confirm with ziting
-    glActiveTexture(GL_TEXTURE0+i);
-    glBindTexture(GL_TEXTURE_2D, textures[i]);
-    glUniform1i(tex, i);
+    GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
+    glUniform1i(tex, texture_counter+i);
   }
 
   GLuint mv = glGetUniformLocation(shader, "ModelView");
@@ -240,19 +241,44 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SP
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");
   glUniform1f(ifNight, THE_LIGHT.ifNight);
 
-
   /* Adding spotlight */
   GLuint sl_coneAngle = glGetUniformLocation(shader, "coneAngle");
   glUniform1f(sl_coneAngle, SPOT_LIGHT.coneAngle);
-
   GLuint sl_position = glGetUniformLocation(shader, "sp_position");
   glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
-
   GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
   glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
 
   glBindVertexArray(this->vao);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(),
+      GL_UNSIGNED_INT, (void*) 0);
+}
+
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, spotlight SPOT_LIGHT,
+  GLuint ebo) {
+  for (unsigned int i = 0; i < texels.size(); i++) {
+    GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
+    glUniform1i(tex, texture_counter+i);
+  }
+
+  GLuint mv = glGetUniformLocation(shader, "ModelView");
+  glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
+  GLuint light = glGetUniformLocation(shader, "LightPosition");
+  glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
+  GLuint ifNight = glGetUniformLocation(shader, "ifNight");
+  glUniform1f(ifNight, THE_LIGHT.ifNight);
+
+  /* Adding spotlight */
+  GLuint sl_coneAngle = glGetUniformLocation(shader, "coneAngle");
+  glUniform1f(sl_coneAngle, SPOT_LIGHT.coneAngle);
+  GLuint sl_position = glGetUniformLocation(shader, "sp_position");
+  glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
+  GLuint sl_direction = glGetUniformLocation(shader, "coneDirection");
+  glUniform3fv(sl_direction, 1, glm::value_ptr(SPOT_LIGHT.coneDirection));
+
+  glBindVertexArray(this->vao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(),
       GL_UNSIGNED_INT, (void*) 0);
 }

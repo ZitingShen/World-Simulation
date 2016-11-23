@@ -20,7 +20,7 @@ const GLfloat OCEAN_TEX[][2] = {{0.0f, 0.0f},
 const GLubyte OCEAN_INDICES[6] = {0, 3, 2,
                                 0, 2, 1};
 
-void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT);
+void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE_COUNTER);
 void draw_ocean(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
                 spotlight SPOT_LIGHT);
 #endif

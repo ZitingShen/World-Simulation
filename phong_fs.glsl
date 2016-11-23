@@ -41,6 +41,10 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   return Ia + Id + Is;
 }
 
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main() {
 	vec3 whiteLight = normalize(vec3(1.0, 1.0, 1.0));
 	vec3 blueLight = normalize(vec3(0.1, 0.1, 0.2));
@@ -56,14 +60,13 @@ void main() {
 	//vertex is not facing light
 	if(dot(L, normal_eye) < 0.0 ) Is = vec3(0.0, 0.0, 0.0);
 
-  // calculating spotlight
-  vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
+    // calculating spotlight
+    vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
 
-  vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
-  //vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
+    vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
 	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
-	//if (ifSnow == 1)
-	//	shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);
+	if (ifSnow == 1 && vPos[2] > 1500+300*rand(vPos.xy))
+		shadeTex = vec4(texture(tex1, texCoord).rgb, 1.0);
 	fColor = shadeLight*shadeTex;
 
 }

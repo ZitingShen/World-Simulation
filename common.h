@@ -90,12 +90,16 @@
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 #define TREE_TEXTURE		      "ppms/walnut.ppm"
-#define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/right.ppm"
-#define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/left.ppm"
+
+
 #define ENVIRONMENT_TEXTURE_POS_Y "ppms/environment/down.ppm"
 #define ENVIRONMENT_TEXTURE_NEG_Y "ppms/environment/up.ppm"
-#define ENVIRONMENT_TEXTURE_POS_Z "ppms/environment/back.ppm"
-#define ENVIRONMENT_TEXTURE_NEG_Z "ppms/environment/front.ppm"
+
+#define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/front.ppm"
+#define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/back.ppm"
+
+#define ENVIRONMENT_TEXTURE_NEG_Z "ppms/environment/right.ppm"
+#define ENVIRONMENT_TEXTURE_POS_Z "ppms/environment/left.ppm"
 
 #define SPHERE_POS_X 500.0f
 #define SPHERE_POS_Y 500.0f

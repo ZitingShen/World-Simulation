@@ -84,7 +84,7 @@
 #define BOID_TEXTURE			  "ppms/paper.ppm"
 #define GOAL_TEXTURE			  "ppms/fire.ppm"
 #define SUN_TEXTURE				  "ppms/fire.ppm"
-#define OCEAN_TEXTURE			  "ppms/rock.ppm"
+#define OCEAN_TEXTURE			  "ppms/ocean.ppm"
 #define ISLAND_TEXTURE			  "ppms/cliff.ppm"
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 #define OCTOPUS_TEXTURE_POS_X	  "ppms/environment/right.ppm"

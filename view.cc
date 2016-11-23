@@ -29,8 +29,8 @@ void camera::change_view(glm::mat4& MV_MAT,
 
   switch(this->current_vm){
     case DEFAULT:
-      this->eye = glm::vec3(0, 0, tower);
-      this->center = glm::vec3(island_centre.x, 0.1f, island_centre.z);
+      this->eye = glm::vec3(tower*2.5f, tower*2.5f, tower);
+      this->center = glm::vec3(island_centre.x, 0.1f, (TOWER_INITIAL_HEIGHT+tower)*0.5f);
       break;
 
     case TRAILING:

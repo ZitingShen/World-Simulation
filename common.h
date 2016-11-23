@@ -72,10 +72,10 @@
 #define ENVIRONMENT_SIZE			  1200.0
 #define SEED                      314159265
 
-#define TOWER_INITIAL_HEIGHT	  6000.0f
-#define TOWER_ZOOM_STEP			  2000.0f
-#define TOWER_MIN				  2000.0f
-#define TOWER_MAX		          8000.0f
+#define TOWER_INITIAL_HEIGHT	  2000.0f
+#define TOWER_ZOOM_STEP			  500.0f
+#define TOWER_MIN				  500.0f
+#define TOWER_MAX		          4000.0f
 
 #define CAMERA_NEAR               2.0f
 #define CAMERA_FAR                100000000.0f

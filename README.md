@@ -31,7 +31,6 @@ Sun/Lighting:
 Enviornment Mapping:
 	1. Still appears incongruous when some faces meet; not sure if it its the skybox's fault
 
-
 Caveats:
 	1. After pressing 1, 2, 3, you also need to switch to different views to see the boids. Otherwise they might be too small in the default view or not visible in the default view at all.
 

@@ -71,6 +71,7 @@ void draw_environment(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LI
   glm::vec3& camera, spotlight SPOT_LIGHT, glm::vec3& environment_pos){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   glm::mat4 transformation = glm::translate(environment_pos);
+  
   transformation = glm::scale(transformation, glm::vec3(ENVIRONMENT_SIZE/mesh.size[1], 
     ENVIRONMENT_SIZE/mesh.size[1], ENVIRONMENT_SIZE/mesh.size[1]));
   transformation = glm::translate(transformation, -mesh.center);

@@ -13,11 +13,11 @@ uniform mat4 View;
 uniform mat4 Projection;
 uniform vec3 Camera;
 void main(){
-	pos_eye = vec3(Model*View*vec4(vPosition, 1.0));
-	normal_eye = normalize(vec3(Model*View*vec4(vNormal, 0.0)));
+	pos_eye = vec3(View*Model*vec4(vPosition, 1.0));
+	normal_eye = normalize(vec3(View*Model*vec4(vNormal, 0.0)));
 	gl_Position = Projection*vec4(pos_eye, 1.0);
 	incident = normalize(Camera-vec3(Model*vec4(vPosition, 1.0f)));
 	worldNormal = normalize(mat3(Model)*vNormal);
-  /* for spotlight */
-  vPos = vPosition;
+    /* for spotlight */
+    vPos = vPosition;
 }

@@ -14,8 +14,8 @@ uniform mat4 View;
 uniform mat4 Projection;
 
 void main(){
-	pos_eye = vec3(Model*View*vec4(vPosition, 1.0));
-	normal_eye = normalize(vec3(Model*View*vec4(vNormal, 0.0)));
+	pos_eye = vec3(View*Model*vec4(vPosition, 1.0));
+	normal_eye = normalize(vec3(View*Model*vec4(vNormal, 0.0)));
 	texCoord = vTex;
     vPos = vPosition;
 

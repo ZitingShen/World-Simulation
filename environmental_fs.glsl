@@ -9,7 +9,7 @@ uniform vec4 sp_position; //sp position
 uniform vec3 coneDirection;
 uniform float coneAngle;
 
-uniform mat4 Model;
+uniform mat4 View;
 uniform mat4 Projection;
 
 uniform samplerCube cube;
@@ -28,7 +28,7 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   float attenuation = (coneAngle - angle) / coneAngle;
   vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
-  vec3 L = normalize((Projection*Model*light_position).xyz - pos_eye);
+  vec3 L = normalize((Projection*View*light_position).xyz - pos_eye);
   vec3 E = normalize(-pos_eye);
   vec3 H = normalize(L + E);
   vec3 Ia = RedLight;

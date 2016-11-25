@@ -69,7 +69,7 @@
 #define GOAL_MOVEMENT  (0.3*DEGREE_TO_RADIAN)
 
 #define OCEAN_SIZE 				  50000
-#define ENVIRONMENT_SIZE			  1200.0
+#define ENVIRONMENT_SIZE		  1200.0
 #define SEED                      314159265
 
 #define TOWER_INITIAL_HEIGHT	  2000.0f
@@ -91,14 +91,14 @@
 #define SNOW_TEXTURE			  "ppms/snow.ppm"
 #define TREE_TEXTURE		      "ppms/gnarly.ppm"
 
-#define ENVIRONMENT_TEXTURE_POS_Y "ppms/environment/down.ppm"
-#define ENVIRONMENT_TEXTURE_NEG_Y "ppms/environment/up.ppm"
+#define ENVIRONMENT_TEXTURE_POS_Y "ppms/environment/left.ppm"
+#define ENVIRONMENT_TEXTURE_NEG_Y "ppms/environment/right.ppm"
 
-#define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/front.ppm"
-#define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/back.ppm"
+#define ENVIRONMENT_TEXTURE_NEG_X "ppms/environment/back.ppm"
+#define ENVIRONMENT_TEXTURE_POS_X "ppms/environment/front.ppm"
 
-#define ENVIRONMENT_TEXTURE_NEG_Z "ppms/environment/right.ppm"
-#define ENVIRONMENT_TEXTURE_POS_Z "ppms/environment/left.ppm"
+#define ENVIRONMENT_TEXTURE_POS_Z "ppms/environment/down.ppm"
+#define ENVIRONMENT_TEXTURE_NEG_Z "ppms/environment/up.ppm"
 
 #define SPHERE_POS_X 500.0f
 #define SPHERE_POS_Y 500.0f

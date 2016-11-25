@@ -11,7 +11,7 @@ uniform float coneAngle;
 
 uniform sampler2D tex0, tex1, tex2, tex3, tex4, tex5;
 
-uniform mat4 Model;
+uniform mat4 View;
 uniform mat4 Projection;
 uniform vec4 LightPosition;
 uniform float Shineness;
@@ -29,7 +29,7 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   float attenuation = (coneAngle - angle) / coneAngle;
   vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
-  vec3 L = normalize((Projection*Model*light_position).xyz - pos_eye);
+  vec3 L = normalize((Projection*View*light_position).xyz - pos_eye);
   vec3 E = normalize(-pos_eye);
   vec3 H = normalize(L + E);
   vec3 Ia = RedLight;

@@ -16,7 +16,7 @@ spotlight SPOT_LIGHT;
 MESH BOIDS_MESH, GOAL_MESH, SUN_MESH, OCEAN_MESH, SPHERE_MESH;
 MESH ISLAND_MESH, TREE_MESH;
 vector<glm::vec3> TREE_POS;
-vector<vector<GLuint>> ISLAND_INDICES;
+vector<vector<GLuint> > ISLAND_INDICES;
 vector<GLuint> ISLAND_EBOS;
 vector<PREDATOR> PREDATORS;
 GLuint SHADER, ENVIRONMENT_SHADER;
@@ -45,14 +45,7 @@ int main(int argc, char *argv[]){
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(700, 700, "Make a World",
-  	NULL, NULL);
-  if (!window){
-    glfwTerminate();
-    exit(EXIT_FAILURE);
-  }
-  glfwSetWindowPos(window, 100, 0);
-  glfwMakeContextCurrent (window);
+  GLFWwindow* (window);
 
   glewExperimental = GL_TRUE;
   glewInit();
@@ -193,19 +186,19 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
 
       case GLFW_KEY_F1:
-      ENABLE_FLOCK = 1 - ENABLE_FLOCK;
+       ENABLE_FLOCK = 1 - ENABLE_FLOCK;
       break;
 
       case GLFW_KEY_F2:
-      ENABLE_GOAL = 1 - ENABLE_GOAL;
+       ENABLE_GOAL = 1 - ENABLE_GOAL;
       break;
 
       case GLFW_KEY_F3:
-      ENABLE_ISLAND = 1 - ENABLE_ISLAND;
+       ENABLE_ISLAND = 1 - ENABLE_ISLAND;
       break;
  
       case GLFW_KEY_A:
-      A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
+       A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
       break;
 
       case GLFW_KEY_D:

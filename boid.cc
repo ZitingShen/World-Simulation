@@ -232,14 +232,13 @@ void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& M
   for (unsigned int i = 0; i < a_flock.size(); i++){
     if (if_fp && i == 0)
       continue; // dont draw the boid with headlight when in FP mode
-    glm::mat4 new_mv = MV_MAT;
     glm::vec3 rotate_normal = glm::normalize(glm::cross(a_flock[i].velocity,
       SPAWN_VELOCITY));
     float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity,
                                 rotate_normal);
 
-    new_mv = glm::translate(new_mv, a_flock[i].pos);
-    new_mv = glm::rotate(new_mv, angle, rotate_normal);
-    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+    glm::mat4 view_mat = glm::translate(a_flock[i].pos);
+    view_mat = glm::rotate(view_mat, angle, rotate_normal);
+    mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
   }
 }

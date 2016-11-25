@@ -228,15 +228,17 @@ void print_mesh_info(MESH& mesh){
   }
 }
 
-void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, 
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& view_mat, LIGHT& THE_LIGHT, 
   spotlight SPOT_LIGHT) {
   for (unsigned int i = 0; i < texels.size(); i++) {
     GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
     glUniform1i(tex, texture_counter+i);
   }
 
-  GLuint mv = glGetUniformLocation(shader, "ModelView");
+  GLuint mv = glGetUniformLocation(shader, "Model");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
+  GLuint view = glGetUniformLocation(shader, "View");
+  glUniformMatrix4fv(view, 1, GL_FALSE, glm::value_ptr(view_mat));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");
@@ -250,22 +252,23 @@ void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT,
   GLuint sl_position = glGetUniformLocation(shader, "sp_position");
   glUniform4fv(sl_position, 1, glm::value_ptr(SPOT_LIGHT.pos));
   
-
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, this->faces.draw_indices.size(),
       GL_UNSIGNED_INT, (void*) 0);
 }
 
-void MESH::draw(GLuint shader, glm::mat4& MV_MAT, LIGHT& THE_LIGHT, 
+void MESH::draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& view_mat, LIGHT& THE_LIGHT, 
   spotlight SPOT_LIGHT, GLuint ebo) {
   for (unsigned int i = 0; i < texels.size(); i++) {
     GLuint tex = glGetUniformLocation(shader, TEX_UNIFORM[i].c_str()); 
     glUniform1i(tex, texture_counter+i);
   }
 
-  GLuint mv = glGetUniformLocation(shader, "ModelView");
+  GLuint mv = glGetUniformLocation(shader, "Model");
   glUniformMatrix4fv(mv, 1, GL_FALSE, glm::value_ptr(MV_MAT));
+  GLuint view = glGetUniformLocation(shader, "View");
+  glUniformMatrix4fv(view, 1, GL_FALSE, glm::value_ptr(view_mat));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");

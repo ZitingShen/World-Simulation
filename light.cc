@@ -31,15 +31,18 @@ void update_spot_light(spotlight& s_l,
     //s_l.pos = glm::vec4(0, 0, 8000.0f, 1);
     s_l.coneDirection = normalize(direction);
   }else{ // other wise the headlight follows our cursor
-
-    //glm::vec4 viewport(0, 0, width, height);
-    //glm::vec3 win(width, height, CAMERA_NEAR);
-    //glm::vec3 cursor_world_coord = glm::unProject(win, MV_MAT, PROJ_MAT, viewport);
-
     float mouseX = mouse_pos.x_pos / (width  * 0.5f) - 1.0f;
     float mouseY = mouse_pos.y_pos / (height * 0.5f) - 1.0f;
-    glm::mat4 inv = glm::inverse(PROJ_MAT * MV_MAT);
     glm::vec4 screenPos = glm::vec4(-mouseX, mouseY, 1.0f, 1.0f);
+
+    //glm::vec4 viewport(0, 0, width, height);
+    //glm::vec3 win = glm::vec3((float)mouse_pos.x_pos, height-(float)mouse_pos.y_pos, 1.0f);
+    //glm::vec3 far = glm::unProject(win, MV_MAT, PROJ_MAT, viewport);
+    //win = glm::vec3((float)mouse_pos.x_pos, height-(float)mouse_pos.y_pos, 0.0f);
+    //glm::vec3 near = glm::unProject(win, MV_MAT, PROJ_MAT, viewport);
+    //s_l.coneDirection = glm::normalize(far - near);
+    
+    glm::mat4 inv = glm::inverse(PROJ_MAT * MV_MAT);
     glm::vec4 worldPos = inv * screenPos;
 
     s_l.coneDirection = glm::normalize(glm::vec3(worldPos));

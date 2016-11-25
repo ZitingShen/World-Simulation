@@ -213,6 +213,10 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
         A_GOAL.MOVE_ALONG_Y_NEGATIVE = true;
       break;
 
+      case GLFW_KEY_Z:
+        A_GOAL.toggle_steer();
+      break;
+
       case GLFW_KEY_RIGHT:
         A_GOAL.ACCELERATE = true;
       break;

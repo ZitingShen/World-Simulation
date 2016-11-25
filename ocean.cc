@@ -25,9 +25,9 @@ void init_ocean_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT,
 
 void draw_ocean(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
                 spotlight SPOT_LIGHT){
-  glm::mat4 view_mat;
+  glm::mat4 transformation;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
 
-  mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
+  mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT);
 }

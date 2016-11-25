@@ -237,8 +237,8 @@ void draw_a_flock(vector<BOID>& a_flock, MESH& mesh, GLuint shader, glm::mat4& M
     float angle = glm::orientedAngle(SPAWN_VELOCITY, a_flock[i].velocity,
                                 rotate_normal);
 
-    glm::mat4 view_mat = glm::translate(a_flock[i].pos);
-    view_mat = glm::rotate(view_mat, angle, rotate_normal);
-    mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
+    glm::mat4 transformation = glm::translate(a_flock[i].pos);
+    transformation = glm::rotate(transformation, angle, rotate_normal);
+    mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT);
   }
 }

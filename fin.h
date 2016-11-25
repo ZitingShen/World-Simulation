@@ -45,9 +45,9 @@ class MESH {
     void bind(GLuint shader);
     void compute_face_normal();
     void compute_vertex_normal();
-    void draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& view_mat, LIGHT& THE_LIGHT, 
+    void draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& transformation, LIGHT& THE_LIGHT, 
       spotlight SPOT_LIGHT);
-    void draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& view_mat, LIGHT& THE_LIGHT, 
+    void draw(GLuint shader, glm::mat4& MV_MAT, glm::mat4& transformation, LIGHT& THE_LIGHT, 
       spotlight SPOT_LIGHT,
       GLuint ebo);
     void rotate();

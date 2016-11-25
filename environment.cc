@@ -70,19 +70,18 @@ void init_environment_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &
 void draw_environment(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
   glm::vec3& camera, spotlight SPOT_LIGHT, glm::vec3& environment_pos){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
-  glm::mat4 view = glm::translate(environment_pos);
-  view = glm::scale(view, glm::vec3(ENVIRONMENT_SIZE/mesh.size[1], ENVIRONMENT_SIZE/mesh.size[1], 
-    ENVIRONMENT_SIZE/mesh.size[1]));
-  //view = glm::rotate(view, 150*DEGREE_TO_RADIAN, glm::vec3(1.0f, 0.0f, 0.0f));
-  glm::mat4 move_back = glm::translate(-mesh.center);
+  glm::mat4 transformation = glm::translate(environment_pos);
+  transformation = glm::scale(transformation, glm::vec3(ENVIRONMENT_SIZE/mesh.size[1], 
+    ENVIRONMENT_SIZE/mesh.size[1], ENVIRONMENT_SIZE/mesh.size[1]));
+  transformation = glm::translate(transformation, -mesh.center);
   
   GLuint tex = glGetUniformLocation(shader, "cube");
   glUniform1i(tex, mesh.texture_counter);
   
   GLuint model = glGetUniformLocation(shader, "Model");
-  glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(MV_MAT*move_back));
+  glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transformation));
   GLuint vw = glGetUniformLocation(shader, "View");
-  glUniformMatrix4fv(vw, 1, GL_FALSE, glm::value_ptr(view));
+  glUniformMatrix4fv(vw, 1, GL_FALSE, glm::value_ptr(MV_MAT));
   GLuint light = glGetUniformLocation(shader, "LightPosition");
   glUniform4fv(light, 1, glm::value_ptr(THE_LIGHT.light0));
   GLuint ifNight = glGetUniformLocation(shader, "ifNight");

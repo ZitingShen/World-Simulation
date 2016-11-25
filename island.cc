@@ -197,17 +197,17 @@ void draw_island(MESH& mesh, vector<GLuint>& ebos, GLuint shader,
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos * MV_MAT;
 
-  glm::mat4 view_mat = glm::translate(ISLAND_POS);
+  glm::mat4 transformation = glm::translate(ISLAND_POS);
   GLuint ifSnow = glGetUniformLocation(shader, "ifSnow");
   glUniform1i(ifSnow, 1);
   float distance = glm::distance(eye, ISLAND_POS);
 
   if(distance > 6000) {
-    mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT, ebos[0]);
+    mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT, ebos[0]);
   } else if (distance > 4000) {
-    mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT, ebos[1]);
+    mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT, ebos[1]);
   } else{
-    mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT, ebos[2]);
+    mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT, ebos[2]);
   }
   glUniform1i(ifSnow, 0);
 }

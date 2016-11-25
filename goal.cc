@@ -117,10 +117,10 @@ void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT
                  spotlight SPOT_LIGHT){
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
-  glm::mat4 view_mat = glm::translate(goal.pos);
+  glm::mat4 transformation = glm::translate(goal.pos);
 
-  view_mat = glm::translate(view_mat, glm::vec3(goal.pos[0],
+  transformation = glm::translate(transformation, glm::vec3(goal.pos[0],
                                             goal.pos[1],
                                             goal.pos[2])-mesh.center);
-  mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
+  mesh.draw(shader, MV_MAT, transformation, THE_LIGHT, SPOT_LIGHT);
 }

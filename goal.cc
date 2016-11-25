@@ -115,13 +115,12 @@ void init_goal_mesh(MESH& mesh, GLuint shader, glm::mat4& PROJ_MAT, int &TEXTURE
 
 void draw_a_goal(GOAL& goal, MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
                  spotlight SPOT_LIGHT){
-  glm::mat4 new_mv = MV_MAT;
   THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
   SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
-  new_mv = glm::translate(new_mv, goal.pos);
+  glm::mat4 view_mat = glm::translate(goal.pos);
 
-  new_mv = glm::translate(new_mv, glm::vec3(goal.pos[0],
+  view_mat = glm::translate(view_mat, glm::vec3(goal.pos[0],
                                             goal.pos[1],
                                             goal.pos[2])-mesh.center);
-  mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+  mesh.draw(shader, MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
 }

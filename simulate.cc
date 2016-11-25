@@ -205,7 +205,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
       break;
  
       case GLFW_KEY_A:
-      A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
+        A_GOAL.MOVE_ALONG_X_NEGATIVE = true;
       break;
 
       case GLFW_KEY_D:
@@ -218,6 +218,10 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
       case GLFW_KEY_S:
         A_GOAL.MOVE_ALONG_Y_NEGATIVE = true;
+      break;
+
+      case GLFW_KEY_Z:
+        A_GOAL.toggle_steer();
       break;
 
       case GLFW_KEY_RIGHT:

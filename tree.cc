@@ -47,13 +47,12 @@ void draw_tree(MESH& mesh, GLuint shader, glm::mat4& MV_MAT, LIGHT THE_LIGHT,
                spotlight SPOT_LIGHT, vector<glm::vec3>& tree_pos, float TREE_SIZE){
   
   for (unsigned int i = 0; i < tree_pos.size(); i++) {
-    glm::mat4 new_mv = MV_MAT;
     THE_LIGHT.light0 = THE_LIGHT.light0*MV_MAT;
     SPOT_LIGHT.pos = SPOT_LIGHT.pos*MV_MAT;
     
-    new_mv = glm::translate(new_mv, tree_pos[i]+glm::vec3(0, 0, TREE_SIZE*0.8f));
-    new_mv = glm::scale(new_mv, glm::vec3(TREE_SIZE/mesh.size[2], TREE_SIZE/mesh.size[2], 
+    glm::mat4 view_mat = glm::translate(tree_pos[i]+glm::vec3(0, 0, TREE_SIZE*0.8f));
+    view_mat = glm::scale(view_mat, glm::vec3(TREE_SIZE/mesh.size[2], TREE_SIZE/mesh.size[2], 
       TREE_SIZE/mesh.size[2]));
-    mesh.draw(shader, new_mv, THE_LIGHT, SPOT_LIGHT);
+    mesh.draw(shader,MV_MAT, view_mat, THE_LIGHT, SPOT_LIGHT);
   }
 }

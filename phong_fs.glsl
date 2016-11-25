@@ -11,6 +11,8 @@ uniform float coneAngle;
 
 uniform sampler2D tex0, tex1, tex2, tex3, tex4, tex5;
 
+uniform mat4 Model;
+uniform mat4 Projection;
 uniform vec4 LightPosition;
 uniform float Shineness;
 uniform float ifNight;
@@ -27,7 +29,7 @@ vec3 apply_spot_light(vec4 light_position, vec3 direction, float coneAngle){
   float attenuation = (coneAngle - angle) / coneAngle;
   vec3 RedLight = vec3(1.0 * attenuation, 0.0, 0.0);
 
-  vec3 L = normalize(light_position.xyz - pos_eye);
+  vec3 L = normalize((Projection*Model*light_position).xyz - pos_eye);
   vec3 E = normalize(-pos_eye);
   vec3 H = normalize(L + E);
   vec3 Ia = RedLight;
@@ -64,7 +66,7 @@ void main() {
   vec3 spotlighting = apply_spot_light(sp_position, coneDirection, coneAngle);
 
   vec4 shadeLight = vec4(Ia+Id+Is + spotlighting, 1.0);
-  if (ifNight != 0 && spotlighting[0] == 0) shadeLight *= 0.8;
+  if (spotlighting[0] == 0) shadeLight *= 0.95;
   //vec4 shadeLight = vec4(Ia+Id+Is, 1.0);
 	vec4 shadeTex = vec4(texture(tex0, texCoord).rgb, 1.0);
 	if (ifSnow == 1 && vPos[2] > 1500+300*rand(vPos.xy))
